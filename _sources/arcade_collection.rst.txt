@@ -1,0 +1,7 @@
+arcade\_collection package
+==========================
+
+.. automodule:: arcade_collection
+   :members:
+   :undoc-members:
+   :show-inheritance:
