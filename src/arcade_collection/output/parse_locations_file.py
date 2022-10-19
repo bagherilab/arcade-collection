@@ -27,7 +27,11 @@ def parse_locations_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFra
 
     for member in tar.getmembers():
         timepoint = int(member.name.replace(".LOCATIONS.json", "").split("_")[-1])
-        locations_json = json.loads(tar.extractfile(member).read().decode("utf-8"))
+
+        extracted_member = tar.extractfile(member)
+        assert extracted_member is not None
+        locations_json = json.loads(extracted_member.read().decode("utf-8"))
+
         locations = [parse_location_timepoint(timepoint, cell, regions) for cell in locations_json]
         all_locations = all_locations + locations
 

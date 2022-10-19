@@ -24,7 +24,11 @@ def parse_cells_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFrame:
 
     for member in tar.getmembers():
         timepoint = int(member.name.replace(".CELLS.json", "").split("_")[-1])
-        cells_json = json.loads(tar.extractfile(member).read().decode("utf-8"))
+
+        extracted_member = tar.extractfile(member)
+        assert extracted_member is not None
+        cells_json = json.loads(extracted_member.read().decode("utf-8"))
+
         cells = [parse_cell_timepoint(timepoint, cell, regions) for cell in cells_json]
         all_cells = all_cells + cells
 
