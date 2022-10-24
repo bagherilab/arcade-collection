@@ -33,19 +33,19 @@ jobs:
             "categories": [
               {
                 "title": "## 🚀 Features",
-                "labels": ["feature"]
+                "labels": ["type: feature"]
               },
               {
                 "title": "## 🐛 Bug fixes",
-                "labels": ["bug"]
+                "labels": ["type: bug"]
               },
               {
                 "title": "## 🧪 Tests",
-                "labels": ["test"]
+                "labels": ["type: test"]
               },
               {
                 "title": "## 📓 Documentation",
-                "labels": ["docs"]
+                "labels": ["type: docs"]
               }
             ],
             "template": "#{{CHANGELOG}}---\n\n**Full Changelog**: https://github.com/${{ github.repository }}/compare/#{{FROM_TAG}}...${{ env.RELEASE_VERSION }}\n",
