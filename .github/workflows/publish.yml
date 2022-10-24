@@ -1,0 +1,85 @@
+name: publish
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  release:
+    if: ${{ (startsWith(github.event.pull_request.head.ref, 'release/')) && (github.event.pull_request.merged == true) }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout the repo
+      uses: actions/checkout@v2
+
+    - name: Extract version from branch name
+      run: |
+        BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+        VERSION=${BRANCH_NAME#release/}
+        echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: Build changelog
+      id: build_changelog
+      uses: mikepenz/release-changelog-builder-action@v3.4.0
+      with:
+        configurationJson: |
+          {
+            "categories": [
+              {
+                "title": "## 🚀 Features",
+                "labels": ["feature"]
+              },
+              {
+                "title": "## 🐛 Bug fixes",
+                "labels": ["bug"]
+              },
+              {
+                "title": "## 🧪 Tests",
+                "labels": ["test"]
+              },
+              {
+                "title": "## 📓 Documentation",
+                "labels": ["docs"]
+              }
+            ],
+            "template": "#{{CHANGELOG}}---\n\n**Full Changelog**: https://github.com/${{ github.repository }}/compare/#{{FROM_TAG}}...${{ env.RELEASE_VERSION }}\n",
+            "pr_template": "- #{{TITLE}} by @#{{AUTHOR}} in #{{URL}}"
+          }
+        toTag: ${{ github.event.pull_request.merge_commit_sha }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create release
+      uses: ncipollo/release-action@v1
+      with:
+        commit: ${{ github.event.pull_request.merge_commit_sha }}
+        tag: ${{ env.RELEASE_VERSION }}
+        name: ${{ env.RELEASE_VERSION }}
+        body: ${{ steps.build_changelog.outputs.changelog }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - name: Build project
+      run: |
+        poetry build
+
+    - name: Publish package
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.PYPI_TOKEN }}
+        repository_url: https://test.pypi.org/legacy/

@@ -1,0 +1,28 @@
+name: release
+
+on:
+  push:
+    branches:
+      - 'release/*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout the repo
+      uses: actions/checkout@v2
+
+    - name: Extract version from branch name
+      run: |
+        BRANCH_NAME="${{ github.event.push.ref }}"
+        VERSION=${GITHUB_REF##*/}
+        echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: Create pull request
+      uses: repo-sync/pull-request@v2
+      with:
+        destination_branch: ${{ github.event.repository.default_branch }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        pr_title: "Release ${{ env.RELEASE_VERSION }}"

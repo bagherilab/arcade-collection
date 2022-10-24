@@ -23,3 +23,9 @@ build: # run tox tests and lint
 docs: # generates documentation
 	sphinx-apidoc -o docs/ -f -M -e src/* **/tests/
 	make -C docs html
+
+release:
+	poetry version $(version)
+	git checkout -b release/v$$(poetry version -s)
+	git add pyproject.toml
+	git commit -m "Bump version → $$(poetry version -s)"
