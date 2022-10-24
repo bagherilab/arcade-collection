@@ -1,0 +1,15 @@
+arcade\_collection.input package
+================================
+
+.. automodule:: arcade_collection.input
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   arcade_collection.input.group_template_conditions

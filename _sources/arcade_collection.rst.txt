@@ -5,3 +5,11 @@ arcade\_collection package
    :members:
    :undoc-members:
    :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   arcade_collection.input
