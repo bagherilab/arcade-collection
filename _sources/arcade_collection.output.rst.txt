@@ -1,0 +1,17 @@
+arcade\_collection.output package
+=================================
+
+.. automodule:: arcade_collection.output
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   arcade_collection.output.merge_parsed_results
+   arcade_collection.output.parse_cells_file
+   arcade_collection.output.parse_locations_file

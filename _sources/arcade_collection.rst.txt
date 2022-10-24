@@ -13,3 +13,4 @@ Subpackages
    :maxdepth: 4
 
    arcade_collection.input
+   arcade_collection.output
