@@ -1,4 +1,5 @@
 from .convert_to_cells_file import convert_to_cells_file
+from .convert_to_locations_file import convert_to_locations_file
 from .generate_setup_file import generate_setup_file
 from .group_template_conditions import group_template_conditions
 from .merge_region_samples import merge_region_samples
