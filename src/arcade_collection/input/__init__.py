@@ -1,1 +1,2 @@
 from .group_template_conditions import group_template_conditions
+from .merge_region_samples import merge_region_samples
