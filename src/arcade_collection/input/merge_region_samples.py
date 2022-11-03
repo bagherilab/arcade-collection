@@ -62,10 +62,10 @@ def tranform_sample_coordinates(
     coordinates = samples[["x", "y", "z"]].values + offsets
     coordinates = coordinates.astype("int64")
 
-    samples = pd.DataFrame(coordinates, columns=["x", "y", "z"])
-    samples.insert(0, "id", samples["id"])
+    transformed_samples = pd.DataFrame(coordinates, columns=["x", "y", "z"])
+    transformed_samples.insert(0, "id", samples["id"])
 
-    return samples
+    return transformed_samples
 
 
 def filter_valid_samples(samples: pd.DataFrame) -> pd.DataFrame:
