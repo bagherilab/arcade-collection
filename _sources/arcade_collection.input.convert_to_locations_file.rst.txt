@@ -1,0 +1,7 @@
+arcade\_collection.input.convert\_to\_locations\_file module
+============================================================
+
+.. automodule:: arcade_collection.input.convert_to_locations_file
+   :members:
+   :undoc-members:
+   :show-inheritance:

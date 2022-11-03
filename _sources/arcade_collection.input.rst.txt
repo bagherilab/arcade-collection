@@ -12,4 +12,8 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   arcade_collection.input.convert_to_cells_file
+   arcade_collection.input.convert_to_locations_file
+   arcade_collection.input.generate_setup_file
    arcade_collection.input.group_template_conditions
+   arcade_collection.input.merge_region_samples
