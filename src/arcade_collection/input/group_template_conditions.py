@@ -4,18 +4,18 @@ from prefect import task
 
 
 @task
-def group_template_conditions(conditions, max_seeds):
+def group_template_conditions(conditions: list[dict], max_seeds: int) -> list[dict]:
     grouped_conditions = group_seed_ranges(conditions, max_seeds)
     condition_sets = group_condition_sets(grouped_conditions, max_seeds)
     template_conditions = [{"conditions": condition_set} for condition_set in condition_sets]
     return template_conditions
 
 
-def group_seed_ranges(conditions, max_seeds):
+def group_seed_ranges(conditions: list[dict], max_seeds: int) -> list[dict]:
     conditions.sort(key=lambda x: (x["key"], x["seed"]))
     grouped_conditions = []
 
-    for key, condition_group in groupby(conditions, lambda x: x["key"]):
+    for _, condition_group in groupby(conditions, lambda x: x["key"]):
         key_seeds = []
         key_conditions = {}
 
@@ -35,7 +35,7 @@ def group_seed_ranges(conditions, max_seeds):
     return grouped_conditions
 
 
-def find_seed_ranges(seeds, max_seeds):
+def find_seed_ranges(seeds: list[int], max_seeds: int) -> list[tuple[int, int]]:
     seeds.sort()
     ranges = []
 
@@ -54,7 +54,7 @@ def find_seed_ranges(seeds, max_seeds):
     return ranges
 
 
-def group_condition_sets(conditions, max_seeds):
+def group_condition_sets(conditions: list[dict], max_seeds: int) -> list[list[dict]]:
     seed_count = 0
     condition_set = []
     condition_sets = []
