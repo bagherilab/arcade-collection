@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 from prefect import task
 import networkx as nx
@@ -7,7 +7,7 @@ import numpy as np
 
 
 @task
-def calculate_graph_metrics(edges: list[list[int]], weights: list[int] = None) -> dict[str, int]:
+def calculate_graph_metrics(edges: list[list[int]], weights: list[int] = None) -> dict[str, Optional[int]]:
     """
     Calculate graph metrics from a set of edges
 
@@ -22,10 +22,10 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[int] = None) -
     -------
         : dict
     """
-    dir_nxgraph, undir_nxgraph = _make_nxgraphs(edges, weights)
-    dir_igraph, undir_igraph = _make_igraphs(edges, weights)
+    nx_graphs = _make_nxgraphs(edges, weights)
+    ig_graphs = _make_igraphs(edges, weights)
 
-    metrics_dict = {
+    metrics_dict : dict[str, Optional[int]] = {
         "num_edges": None,
         "num_nodes": None,
         "radius": None,
@@ -41,14 +41,18 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[int] = None) -
         "num_comps": None,
     }
 
-    if not dir_nxgraph:
+    if not nx_graphs or not ig_graphs:
         return metrics_dict
 
+    dir_nxgraph, undir_nxgraph = nx_graphs
+    dir_igraph, undir_igraph = ig_graphs
+
+    num_nodes = dir_nxgraph.number_of_nodes()
+    metrics_dict["num_nodes"] = num_nodes
     metrics_dict["num_edges"] = dir_nxgraph.number_of_edges()
-    metrics_dict["num_nodes"] = dir_nxgraph.number_of_nodes()
 
     # Normalization factor for betweenness that igraph does not automatically use
-    betweenness_norm_factor = (metrics_dict["num_nodes"] - 1) * (metrics_dict["num_nodes"] - 2)
+    betweenness_norm_factor = (num_nodes - 1) * (num_nodes - 2)
 
     if not nx.is_connected(undir_nxgraph):
         undir_icomponents = undir_igraph.decompose()
@@ -101,7 +105,7 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[int] = None) -
     return metrics_dict
 
 
-def _make_nxgraphs(edges: list[list[int]], weights: list[int]) -> Tuple[nx.Graph, nx.Graph]:
+def _make_nxgraphs(edges: list[list[int]], weights: Optional[list[int]]) -> Optional[Tuple[nx.Graph, nx.Graph]]:
     """
     Creates a networkx graph from provided edges for certain graph metric calculations and returns
     a tuple with a directed and undirected version of the graph
@@ -117,11 +121,11 @@ def _make_nxgraphs(edges: list[list[int]], weights: list[int]) -> Tuple[nx.Graph
     -------
         : Tuple[nx.Graph, nx.Graph]
     """
-    if not weights:
-        weights = [1] * len(edges)
-
     if len(edges) == 0:
         return None
+
+    if not weights:
+        weights = [1] * len(edges)
 
     dir_graph = nx.DiGraph()
     for idx, edge in enumerate(edges):
@@ -131,7 +135,7 @@ def _make_nxgraphs(edges: list[list[int]], weights: list[int]) -> Tuple[nx.Graph
     return (dir_graph, undir_graph)
 
 
-def _make_igraphs(edges: list[list[int]], weights: list[int]) -> Tuple[ig.Graph, ig.Graph]:
+def _make_igraphs(edges: list[list[int]], weights: Optional[list[int]]) -> Optional[Tuple[ig.Graph, ig.Graph]]:
     """
     Creates an igraph graph from provided edges for certain graph metric calculations and returns
     a tuple with a directed and undirected version of the graph
@@ -147,19 +151,16 @@ def _make_igraphs(edges: list[list[int]], weights: list[int]) -> Tuple[ig.Graph,
     -------
         : Tuple[nx.Graph, nx.Graph]
     """
+    if len(edges) == 0:
+        return None
+
     if not weights:
         weights = [1] * len(edges)
 
-    vertices = set()
     edges_augmented = []
     for idx, edge in enumerate(edges):
-        vertices.update(edge)
         weighted_edge = [edge[0], edge[1], weights[idx]]
         edges_augmented.append(weighted_edge)
-    vertices = sorted(vertices)
-
-    if len(vertices) == 0:
-        return None
 
     dir_graph = ig.Graph.TupleList(edges=edges_augmented, directed=True)
     undir_graph = dir_graph.as_undirected()
