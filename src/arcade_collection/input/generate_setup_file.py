@@ -92,7 +92,9 @@ def make_setup_file(
 
     agents = ET.SubElement(series, "agents")
     populations = ET.SubElement(agents, "populations")
-    population = ET.SubElement(populations, "population", {"id": "X", "init": str(init)})
+    population = ET.SubElement(
+        populations, "population", {"id": "X", "init": str(init)}
+    )
 
     if regions is not None:
         for region in regions:

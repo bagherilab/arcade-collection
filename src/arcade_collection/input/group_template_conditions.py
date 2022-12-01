@@ -7,7 +7,9 @@ from prefect import task
 def group_template_conditions(conditions: list[dict], max_seeds: int) -> list[dict]:
     grouped_conditions = group_seed_ranges(conditions, max_seeds)
     condition_sets = group_condition_sets(grouped_conditions, max_seeds)
-    template_conditions = [{"conditions": condition_set} for condition_set in condition_sets]
+    template_conditions = [
+        {"conditions": condition_set} for condition_set in condition_sets
+    ]
     return template_conditions
 
 

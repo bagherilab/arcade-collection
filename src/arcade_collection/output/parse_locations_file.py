@@ -32,7 +32,10 @@ def parse_locations_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFra
         assert extracted_member is not None
         locations_json = json.loads(extracted_member.read().decode("utf-8"))
 
-        locations = [parse_location_timepoint(timepoint, cell, regions) for cell in locations_json]
+        locations = [
+            parse_location_timepoint(timepoint, cell, regions)
+            for cell in locations_json
+        ]
         all_locations = all_locations + locations
 
     columns = CELLS_COLUMNS + [
@@ -45,7 +48,9 @@ def parse_locations_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFra
 
 def parse_location_timepoint(timepoint: int, loc: dict, regions: list[str]) -> list:
     if "center" in loc:
-        voxels = np.array([voxel for region in loc["location"] for voxel in region["voxels"]])
+        voxels = np.array(
+            [voxel for region in loc["location"] for voxel in region["voxels"]]
+        )
         mins = np.min(voxels, axis=0)
         maxs = np.max(voxels, axis=0)
         parsed = [loc["id"], timepoint, *loc["center"], *mins, *maxs]

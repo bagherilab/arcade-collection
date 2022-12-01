@@ -7,7 +7,9 @@ import numpy as np
 
 
 @task
-def calculate_graph_metrics(edges: list[list[int]], weights: list[int] = None) -> dict[str, Optional[int]]:
+def calculate_graph_metrics(
+    edges: list[list[int]], weights: list[int] = None
+) -> dict[str, Optional[int]]:
     """
     Calculate graph metrics from a set of edges
 
@@ -25,7 +27,7 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[int] = None) -
     nx_graphs = _make_nxgraphs(edges, weights)
     ig_graphs = _make_igraphs(edges, weights)
 
-    metrics_dict : dict[str, Optional[int]] = {
+    metrics_dict: dict[str, Optional[int]] = {
         "num_edges": None,
         "num_nodes": None,
         "radius": None,
@@ -61,7 +63,9 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[int] = None) -
         undir_nxcomponents = [
             undir_nxgraph.subgraph(h) for h in nx.connected_components(undir_nxgraph)
         ]
-        dir_nxcomponents = [dir_nxgraph.subgraph(g) for g in nx.connected_components(undir_nxgraph)]
+        dir_nxcomponents = [
+            dir_nxgraph.subgraph(g) for g in nx.connected_components(undir_nxgraph)
+        ]
 
         eccs = [h.eccentricity() for h in undir_icomponents]
         closeness = list(nx.closeness_centrality(dir_nxgraph).values())
@@ -105,7 +109,9 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[int] = None) -
     return metrics_dict
 
 
-def _make_nxgraphs(edges: list[list[int]], weights: Optional[list[int]]) -> Optional[Tuple[nx.Graph, nx.Graph]]:
+def _make_nxgraphs(
+    edges: list[list[int]], weights: Optional[list[int]]
+) -> Optional[Tuple[nx.Graph, nx.Graph]]:
     """
     Creates a networkx graph from provided edges for certain graph metric calculations and returns
     a tuple with a directed and undirected version of the graph
@@ -135,7 +141,9 @@ def _make_nxgraphs(edges: list[list[int]], weights: Optional[list[int]]) -> Opti
     return (dir_graph, undir_graph)
 
 
-def _make_igraphs(edges: list[list[int]], weights: Optional[list[int]]) -> Optional[Tuple[ig.Graph, ig.Graph]]:
+def _make_igraphs(
+    edges: list[list[int]], weights: Optional[list[int]]
+) -> Optional[Tuple[ig.Graph, ig.Graph]]:
     """
     Creates an igraph graph from provided edges for certain graph metric calculations and returns
     a tuple with a directed and undirected version of the graph
