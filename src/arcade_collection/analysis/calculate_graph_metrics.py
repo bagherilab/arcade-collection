@@ -5,8 +5,9 @@ import networkx as nx
 import igraph as ig
 import numpy as np
 
+
 @task
-def calculate_graph_metrics(edges: list[list[int]], weights: list[int]=None) -> dict[str, int]:
+def calculate_graph_metrics(edges: list[list[int]], weights: list[int] = None) -> dict[str, int]:
     """
     Calculate graph metrics from a set of edges
 
@@ -24,19 +25,21 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[int]=None) -> 
     dir_nxgraph, undir_nxgraph = _make_nxgraphs(edges, weights)
     dir_igraph, undir_igraph = _make_igraphs(edges, weights)
 
-    metrics_dict = {"num_edges": None,
-                    "num_nodes": None,
-                    "radius": None,
-                    "diameter": None,
-                    "avg_in_degrees": None,
-                    "avg_out_degrees": None,
-                    "avg_degree": None,
-                    "avg_ecc": None,
-                    "path": None,
-                    "avg_clust": None,
-                    "avg_clos": None,
-                    "avg_betw": None,
-                    "num_comps": None, }
+    metrics_dict = {
+        "num_edges": None,
+        "num_nodes": None,
+        "radius": None,
+        "diameter": None,
+        "avg_in_degrees": None,
+        "avg_out_degrees": None,
+        "avg_degree": None,
+        "avg_ecc": None,
+        "path": None,
+        "avg_clust": None,
+        "avg_clos": None,
+        "avg_betw": None,
+        "num_comps": None,
+    }
 
     if not dir_nxgraph:
         return metrics_dict
@@ -51,7 +54,9 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[int]=None) -> 
         undir_icomponents = undir_igraph.decompose()
         dir_icomponents = dir_igraph.decompose()
 
-        undir_nxcomponents = [undir_nxgraph.subgraph(h) for h in nx.connected_components(undir_nxgraph)]
+        undir_nxcomponents = [
+            undir_nxgraph.subgraph(h) for h in nx.connected_components(undir_nxgraph)
+        ]
         dir_nxcomponents = [dir_nxgraph.subgraph(g) for g in nx.connected_components(undir_nxgraph)]
 
         eccs = [h.eccentricity() for h in undir_icomponents]
@@ -95,6 +100,7 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[int]=None) -> 
 
     return metrics_dict
 
+
 def _make_nxgraphs(edges: list[list[int]], weights: list[int]) -> Tuple[nx.Graph, nx.Graph]:
     """
     Creates a networkx graph from provided edges for certain graph metric calculations and returns
@@ -123,6 +129,7 @@ def _make_nxgraphs(edges: list[list[int]], weights: list[int]) -> Tuple[nx.Graph
     undir_graph = nx.Graph(dir_graph)
 
     return (dir_graph, undir_graph)
+
 
 def _make_igraphs(edges: list[list[int]], weights: list[int]) -> Tuple[ig.Graph, ig.Graph]:
     """
