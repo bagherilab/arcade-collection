@@ -16,9 +16,7 @@ def merge_region_samples(
     all_region_samples = []
 
     for region in regions:
-        region_samples = tranform_sample_coordinates(
-            samples[region], margins, default_samples
-        )
+        region_samples = tranform_sample_coordinates(samples[region], margins, default_samples)
         region_samples["region"] = region
         all_region_samples.append(region_samples)
 
@@ -90,8 +88,6 @@ def filter_valid_samples(samples: pd.DataFrame) -> pd.DataFrame:
     """
     if "region" in samples.columns:
         num_regions = len(samples.region.unique())
-        samples = samples.groupby("id").filter(
-            lambda x: len(x.region.unique()) == num_regions
-        )
+        samples = samples.groupby("id").filter(lambda x: len(x.region.unique()) == num_regions)
 
     return samples.reset_index(drop=True)

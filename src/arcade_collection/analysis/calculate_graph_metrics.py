@@ -63,9 +63,7 @@ def calculate_graph_metrics(
         undir_nxcomponents = [
             undir_nxgraph.subgraph(h) for h in nx.connected_components(undir_nxgraph)
         ]
-        dir_nxcomponents = [
-            dir_nxgraph.subgraph(g) for g in nx.connected_components(undir_nxgraph)
-        ]
+        dir_nxcomponents = [dir_nxgraph.subgraph(g) for g in nx.connected_components(undir_nxgraph)]
 
         eccs = [h.eccentricity() for h in undir_icomponents]
         closeness = list(nx.closeness_centrality(dir_nxgraph).values())

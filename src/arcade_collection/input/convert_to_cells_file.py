@@ -130,21 +130,13 @@ def convert_to_cell_region(
     region_height = region_samples.z.max() - region_samples.z.min()
 
     region_critical_volume = convert_value_distribution(
-        (
-            reference[f"volume.{region}"]
-            if f"volume.{region}" in reference
-            else region_volume
-        ),
+        (reference[f"volume.{region}"] if f"volume.{region}" in reference else region_volume),
         volume_distributions[region],
         critical_volume_distributions[region],
     )
 
     region_critical_height = convert_value_distribution(
-        (
-            reference[f"height.{region}"]
-            if f"height.{region}" in reference
-            else region_height
-        ),
+        (reference[f"height.{region}"] if f"height.{region}" in reference else region_height),
         height_distributions[region],
         critical_height_distributions[region],
     )
@@ -186,9 +178,7 @@ def get_cell_state(
     :
         Cell state.
     """
-    thresholds = [
-        fraction * critical_volume for fraction in threshold_fractions.values()
-    ]
+    thresholds = [fraction * critical_volume for fraction in threshold_fractions.values()]
     states = list(threshold_fractions.keys())
 
     index = next((ind for ind, thresh in enumerate(thresholds) if thresh > volume), -1)
