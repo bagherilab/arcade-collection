@@ -15,12 +15,12 @@ class TestCalculateGraphMetrics(unittest.TestCase):
             "radius": 2.0,
             "diameter": 4.0,
             "avg_eccentricity": 3.42857,
-            "avg_shortest_path": 1.07143,
+            "avg_shortest_path": 2.23810,
             "avg_in_degrees": 1.0,
             "avg_out_degrees": 1.0,
             "avg_degree": 2.0,
             "avg_clustering": 0.33333,
-            "avg_closeness": 0.23246,
+            "avg_closeness": 0.46299,
             "avg_betweenness": 0.11905,
             "components": 1,
         }
@@ -40,12 +40,12 @@ class TestCalculateGraphMetrics(unittest.TestCase):
             "radius": 2.0,
             "diameter": 4.0,
             "avg_eccentricity": 3.42857,
-            "avg_shortest_path": 1.07143,
+            "avg_shortest_path": 2.23810,
             "avg_in_degrees": 1.0,
             "avg_out_degrees": 1.0,
             "avg_degree": 2.0,
             "avg_clustering": 0.33333,
-            "avg_closeness": 0.23246,
+            "avg_closeness": 0.46299,
             "avg_betweenness": 0.11905,
             "components": 1,
         }
@@ -69,7 +69,7 @@ class TestCalculateGraphMetrics(unittest.TestCase):
             "avg_out_degrees": 0.85714,
             "avg_degree": 1.71429,
             "avg_clustering": 0.5,
-            "avg_closeness": 0.16190,
+            "avg_closeness": 0.82857,
             "avg_betweenness": 0.00952,
             "components": 2,
         }
@@ -84,6 +84,7 @@ class TestCalculateGraphMetrics(unittest.TestCase):
         edges = []
         with self.assertRaises(ValueError):
             calculate_graph_metrics.fn(edges)
+
 
 if __name__ == "__main__":
     unittest.main()
