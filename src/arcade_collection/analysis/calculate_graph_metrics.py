@@ -16,7 +16,7 @@ def calculate_graph_metrics(
     Parameters
     ----------
     edges
-        List of edges ([1,2], [2,4]...) of the graph to be analyzed
+        List of edges defined by end nodes (i.e. [[1,2], [2,4]...]) of the graph to be analyzed
     weights
         (Optional) List of weights in the same order as the list of edges
 
@@ -117,7 +117,7 @@ def _make_nxgraphs(
     Parameters
     ----------
     edges
-        List of edges (i.e. [[1,2], [2,4]...]) of the graph to be analyzed
+        List of edges defined by end nodes (i.e. [[1,2], [2,4]...]) of the graph to be analyzed
     weights
         (Optional) List of weights in the same order as the list of edges
 
@@ -149,7 +149,7 @@ def _make_igraphs(
     Parameters
     ----------
     edges
-        List of edges (i.e. [[1,2], [2,4]...]) of the graph to be analyzed
+        List of edges defined by end nodes (i.e. [[1,2], [2,4]...]) of the graph to be analyzed
     weights
         (Optional) List of weights in the same order as the list of edges
 
