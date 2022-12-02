@@ -1,4 +1,5 @@
-from typing import Tuple, Optional
+from typing import Any, Optional
+from dataclasses import dataclass
 
 from prefect import task
 import networkx as nx
@@ -6,10 +7,33 @@ import igraph as ig
 import numpy as np
 
 
+@dataclass
+class GraphMetrics:
+    """
+    Dataclass for storing graph metrics
+    """
+
+    nodes: int
+    edges: int
+    radius: float
+    diameter: float
+    avg_eccentricity: float
+    avg_shortest_path: float
+    avg_in_degrees: float
+    avg_out_degrees: float
+    avg_degree: float
+    avg_clustering: float
+    avg_closeness: float
+    avg_betweenness: float
+    components: int
+    name: Optional[str] = None
+
+    def __getitem__(self, item: str) -> Any:
+        return getattr(self, item)
+
+
 @task
-def calculate_graph_metrics(
-    edges: list[list[int]], weights: list[int] = None
-) -> dict[str, Optional[int]]:
+def calculate_graph_metrics(edges: list[list[int]], weights: list[float] = None) -> GraphMetrics:
     """
     Calculate graph metrics from a set of edges
 
@@ -24,95 +48,106 @@ def calculate_graph_metrics(
     -------
         : dict
     """
-    nx_graphs = _make_nxgraphs(edges, weights)
-    ig_graphs = _make_igraphs(edges, weights)
 
-    metrics_dict: dict[str, Optional[int]] = {
-        "num_edges": None,
-        "num_nodes": None,
-        "radius": None,
-        "diameter": None,
-        "avg_in_degrees": None,
-        "avg_out_degrees": None,
-        "avg_degree": None,
-        "avg_ecc": None,
-        "path": None,
-        "avg_clust": None,
-        "avg_clos": None,
-        "avg_betw": None,
-        "num_comps": None,
-    }
+    if len(edges) == 0:
+        raise ValueError("Passed edges do not create valid graph.")
+    if not weights:
+        weights = [1.0] * len(edges)
 
-    if not nx_graphs or not ig_graphs:
-        return metrics_dict
+    nxgraph = _make_nxgraph(edges, weights)
+    igraph = _make_igraph(edges, weights)
 
-    dir_nxgraph, undir_nxgraph = nx_graphs
-    dir_igraph, undir_igraph = ig_graphs
+    connected: bool = nx.is_connected(nx.Graph(nxgraph))
 
-    num_nodes = dir_nxgraph.number_of_nodes()
-    metrics_dict["num_nodes"] = num_nodes
-    metrics_dict["num_edges"] = dir_nxgraph.number_of_edges()
+    m_dict = {}
 
-    # Normalization factor for betweenness that igraph does not automatically use
-    betweenness_norm_factor = (num_nodes - 1) * (num_nodes - 2)
+    m_dict["nodes"] = nxgraph.number_of_nodes()
+    m_dict["edges"] = nxgraph.number_of_edges()
+    ecc_metrics = _calc_eccentricity_metrics(igraph, connected)
+    m_dict["radius"], m_dict["diameter"], m_dict["avg_eccentricity"] = ecc_metrics
+    m_dict["avg_shortest_path"] = _calc_path_metrics(nxgraph, connected)
+    degree_metrics = _calc_degree_metrics(igraph)
+    m_dict["avg_in_degrees"], m_dict["avg_out_degrees"], m_dict["avg_degree"] = degree_metrics
+    m_dict["avg_clustering"] = _calc_clustering_metric(igraph)
+    m_dict["avg_closeness"] = _calc_closeness_metric(nxgraph)
+    m_dict["avg_betweenness"] = _calc_betweenness_metric(igraph)
+    m_dict["components"] = _calc_n_components(igraph, connected)
 
-    if not nx.is_connected(undir_nxgraph):
-        undir_icomponents = undir_igraph.decompose()
-        dir_icomponents = dir_igraph.decompose()
+    metrics = GraphMetrics(**m_dict)
 
-        undir_nxcomponents = [
-            undir_nxgraph.subgraph(h) for h in nx.connected_components(undir_nxgraph)
-        ]
-        dir_nxcomponents = [dir_nxgraph.subgraph(g) for g in nx.connected_components(undir_nxgraph)]
-
-        eccs = [h.eccentricity() for h in undir_icomponents]
-        closeness = list(nx.closeness_centrality(dir_nxgraph).values())
-
-        betweenness = dir_igraph.betweenness()
-        betweenness = [betw / betweenness_norm_factor for betw in betweenness]
-
-        radii = [min(ecc) for ecc in eccs]
-        diameters = [max(ecc) for ecc in eccs]
-        paths = [nx.average_shortest_path_length(g) for g in dir_nxcomponents]
-
-        metrics_dict["radius"] = round(np.mean(radii), 5)
-        metrics_dict["diameter"] = round(np.mean(diameters), 5)
-        metrics_dict["avg_ecc"] = round(np.mean([np.mean(ecc) for ecc in eccs]), 5)
-        metrics_dict["path"] = round(np.mean(paths), 5)
-        metrics_dict["avg_in_degrees"] = round(np.mean(dir_igraph.indegree()), 5)
-        metrics_dict["avg_out_degrees"] = round(np.mean(dir_igraph.outdegree()), 5)
-        metrics_dict["avg_degree"] = round(np.mean(undir_igraph.degree()), 5)
-
-        metrics_dict["avg_clust"] = round(undir_igraph.transitivity_undirected(), 5)
-        metrics_dict["avg_clos"] = round(np.mean(closeness), 5)
-        metrics_dict["avg_betw"] = round(np.mean(betweenness), 5)
-        metrics_dict["num_comps"] = len(undir_icomponents)
-    else:
-        ecc = undir_igraph.eccentricity()
-        closeness = list(nx.closeness_centrality(dir_nxgraph).values())
-        betweenness = dir_igraph.betweenness()
-        betweenness = [betw / betweenness_norm_factor for betw in betweenness]
-        metrics_dict["radius"] = round(min(ecc), 5)
-        metrics_dict["diameter"] = round(max(ecc), 5)
-        metrics_dict["path"] = round(nx.average_shortest_path_length(dir_nxgraph), 5)
-        metrics_dict["avg_in_degrees"] = round(np.mean(dir_igraph.indegree()), 5)
-        metrics_dict["avg_out_degrees"] = round(np.mean(dir_igraph.outdegree()), 5)
-        metrics_dict["avg_degree"] = round(np.mean(undir_igraph.degree()), 5)
-        metrics_dict["avg_ecc"] = round(np.mean(ecc), 5)
-        metrics_dict["avg_clust"] = round(undir_igraph.transitivity_undirected(), 5)
-        metrics_dict["avg_clos"] = round(np.mean(closeness), 5)
-        metrics_dict["avg_betw"] = round(np.mean(betweenness), 5)
-        metrics_dict["num_comps"] = 1
-
-    return metrics_dict
+    return metrics
 
 
-def _make_nxgraphs(
-    edges: list[list[int]], weights: Optional[list[int]]
-) -> Optional[Tuple[nx.Graph, nx.Graph]]:
+def _calc_eccentricity_metrics(graph: ig.Graph, connected: bool) -> tuple[float, float, float]:
+    """Helper function to calculate the radius, diameter, and mean eccentricity from igraph"""
+    if not connected:
+        return float("inf"), float("inf"), float("inf")
+
+    eccs = graph.eccentricity(mode="all")
+    radius = min(eccs)
+    diameter = max(eccs)
+    average_ecc = np.mean(eccs)
+    return radius, diameter, average_ecc
+
+
+def _calc_path_metrics(graph: nx.Graph, connected: bool) -> float:
+    """Helper function to calculate the average shortest length from networkx graph"""
+    if not connected:
+        return float("inf")
+    return nx.average_shortest_path_length(graph)
+
+
+def _calc_closeness_metric(graph: nx.Graph) -> float:
+    """Helperfunction to calculate average closeness from networkx graph"""
+    return np.mean(list(nx.closeness_centrality(graph).values()))
+
+
+def _calc_betweenness_metric(graph: ig.Graph) -> float:
+    """Helper function to calcuate normalized betweenness from igraph"""
+    n_nodes = graph.vcount()
+    betweenness_norm_factor = (n_nodes - 1) * (n_nodes - 2)
+    betweenness = np.array(graph.betweenness()) / betweenness_norm_factor
+    return np.mean(betweenness)
+
+
+def _calc_degree_metrics(graph: ig.Graph) -> tuple[float, ...]:
+    """
+    Helper function to calculate the average degree (number of edges per node) from igraph
+
+    Parameters
+    ----------
+    graph: igraph Graph
+
+    Returns
+    -------
+    return_tuple: tuple containing (average_indegree, average_outdegree, average_degree)
+    """
+
+    modes = ("in", "out", "all")
+    return_tuple = tuple(np.mean(graph.degree(mode=mode)) for mode in modes)
+    return return_tuple
+
+
+def _calc_clustering_metric(graph: ig.Graph) -> float:
+    """
+    Helper function to calculate the global transitivity,
+    i.e. the Clustering coefficient from igraph
+    """
+
+    return graph.transitivity_undirected()
+
+
+def _calc_n_components(graph: ig.Graph, connected: bool) -> int:
+    """Helper function to get the number of components (subgraphs) from igraph."""
+    if connected:
+        return 1
+    return len(graph.decompose())
+
+
+def _make_nxgraph(edges: list[list[int]], weights: list[float]) -> nx.Graph:
     """
     Creates a networkx graph from provided edges for certain graph metric calculations and returns
-    a tuple with a directed and undirected version of the graph
+    a directed version of the graph
 
     Parameters
     ----------
@@ -123,28 +158,21 @@ def _make_nxgraphs(
 
     Returns
     -------
-        : Tuple[nx.Graph, nx.Graph]
+    dir_graph
+        Directed nx graph
     """
-    if len(edges) == 0:
-        return None
-
-    if not weights:
-        weights = [1] * len(edges)
 
     dir_graph = nx.DiGraph()
     for idx, edge in enumerate(edges):
         dir_graph.add_edge(edge[0], edge[1], weight=weights[idx])
-    undir_graph = nx.Graph(dir_graph)
 
-    return (dir_graph, undir_graph)
+    return dir_graph
 
 
-def _make_igraphs(
-    edges: list[list[int]], weights: Optional[list[int]]
-) -> Optional[Tuple[ig.Graph, ig.Graph]]:
+def _make_igraph(edges: list[list[int]], weights: list[float]) -> ig.Graph:
     """
     Creates an igraph graph from provided edges for certain graph metric calculations and returns
-    a tuple with a directed and undirected version of the graph
+    a directed version of the graph
 
     Parameters
     ----------
@@ -155,13 +183,9 @@ def _make_igraphs(
 
     Returns
     -------
-        : Tuple[nx.Graph, nx.Graph]
+    dir_graph
+        Directed igraph
     """
-    if len(edges) == 0:
-        return None
-
-    if not weights:
-        weights = [1] * len(edges)
 
     edges_augmented = []
     for idx, edge in enumerate(edges):
@@ -169,6 +193,5 @@ def _make_igraphs(
         edges_augmented.append(weighted_edge)
 
     dir_graph = ig.Graph.TupleList(edges=edges_augmented, directed=True)
-    undir_graph = dir_graph.as_undirected()
 
-    return (dir_graph, undir_graph)
+    return dir_graph
