@@ -166,8 +166,6 @@ def _make_nxgraph(edges: list[list[int]], weights: list[float]) -> nx.Graph:
     dir_graph = nx.DiGraph()
     dir_graph.add_edges_from(edges, weight=weights)
 
-    undir_graph = nx.Graph(dir_graph)
-
     return dir_graph
 
 
@@ -190,6 +188,5 @@ def _make_igraph(edges: list[list[int]], weights: list[float]) -> ig.Graph:
     """
 
     dir_graph = ig.Graph.TupleList(edges=edges, weights=weights, directed=True)
-    undir_graph = dir_graph.as_undirected()
 
     return dir_graph
