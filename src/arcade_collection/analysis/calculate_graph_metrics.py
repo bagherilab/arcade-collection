@@ -117,7 +117,7 @@ def _make_nxgraphs(
     Parameters
     ----------
     edges
-        List of edges ([1,2], [2,4]...) of the graph to be analyzed
+        List of edges (i.e. [[1,2], [2,4]...]) of the graph to be analyzed
     weights
         (Optional) List of weights in the same order as the list of edges
 
@@ -132,8 +132,8 @@ def _make_nxgraphs(
         weights = [1] * len(edges)
 
     dir_graph = nx.DiGraph()
-    for idx, edge in enumerate(edges):
-        dir_graph.add_edge(edge[0], edge[1], weight=weights[idx])
+    dir_graph.add_edges_from(edges, weight=weights)
+
     undir_graph = nx.Graph(dir_graph)
 
     return (dir_graph, undir_graph)
@@ -149,7 +149,7 @@ def _make_igraphs(
     Parameters
     ----------
     edges
-        List of edges ([1,2], [2,4]...) of the graph to be analyzed
+        List of edges (i.e. [[1,2], [2,4]...]) of the graph to be analyzed
     weights
         (Optional) List of weights in the same order as the list of edges
 
@@ -163,12 +163,7 @@ def _make_igraphs(
     if not weights:
         weights = [1] * len(edges)
 
-    edges_augmented = []
-    for idx, edge in enumerate(edges):
-        weighted_edge = [edge[0], edge[1], weights[idx]]
-        edges_augmented.append(weighted_edge)
-
-    dir_graph = ig.Graph.TupleList(edges=edges_augmented, directed=True)
+    dir_graph = ig.Graph.TupleList(edges=edges, weights=weights, directed=True)
     undir_graph = dir_graph.as_undirected()
 
     return (dir_graph, undir_graph)
