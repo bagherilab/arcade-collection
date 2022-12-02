@@ -75,7 +75,10 @@ class TestCalculateGraphMetrics(unittest.TestCase):
         }
 
         returned_metrics = calculate_graph_metrics.fn(edges)
-        self.assertDictEqual(expected_metrics, returned_metrics)
+
+        for key in expected_metrics:
+            with self.subTest(key=key):
+                self.assertAlmostEqual(expected_metrics[key], returned_metrics[key], places=5)
 
     def test_calculate_graph_metrics_given_empty_edges_returns_none(self):
         edges = []
@@ -96,7 +99,10 @@ class TestCalculateGraphMetrics(unittest.TestCase):
         }
 
         returned_metrics = calculate_graph_metrics.fn(edges)
-        self.assertDictEqual(expected_metrics, returned_metrics)
+
+        for key in expected_metrics:
+            with self.subTest(key=key):
+                self.assertAlmostEqual(expected_metrics[key], returned_metrics[key], places=5)
 
 
 if __name__ == "__main__":
