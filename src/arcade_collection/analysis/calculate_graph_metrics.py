@@ -46,7 +46,8 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[float] = None)
 
     Returns
     -------
-        : dict
+    metrics
+        GraphMetrics object that holds graph metrics
     """
 
     if len(edges) == 0:
