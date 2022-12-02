@@ -138,11 +138,12 @@ def _calc_clustering_metric(graph: ig.Graph) -> float:
     return graph.transitivity_undirected()
 
 
-def _calc_n_components(graph: ig.Graph, connected: bool) -> int:
+def _calc_n_components(graph: nx.Graph, connected: bool) -> int:
     """Helper function to get the number of components (subgraphs) from igraph."""
     if connected:
         return 1
-    return len(graph.decompose())
+
+    return len(graph.decompose(mode="weak"))
 
 
 def _make_nxgraph(edges: list[list[int]], weights: list[float]) -> nx.Graph:
