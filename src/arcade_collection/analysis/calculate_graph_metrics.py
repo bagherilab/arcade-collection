@@ -107,7 +107,6 @@ def _calc_path_metrics(graph: ig.Graph, connected: bool) -> float:
 def _calc_closeness_metric(graph: ig.Graph) -> float:
     """Helperfunction to calculate average closeness from igraph"""
     closeness = np.array(graph.closeness())
-    print(closeness)
     return np.mean(closeness)
 
 
