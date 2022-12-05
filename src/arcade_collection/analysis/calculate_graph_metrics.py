@@ -94,12 +94,11 @@ def _calc_path_metrics(graph: ig.Graph, connected: bool) -> float:
     if not connected:
         return float("inf")
 
-    distances = graph.distances(mode="all")
-    distances = np.array(list(distances))
-
     norm_factor = len(graph.vs) * (len(graph.vs) - 1)
     total_distance: int = 0
-    for distance in distances:
+
+    for node in graph.vs:
+        distance = graph.distances(source=node, mode="all")
         total_distance += np.sum(distance)
     return total_distance / norm_factor
 
