@@ -81,7 +81,7 @@ class TestCalculateGraphMetrics(unittest.TestCase):
                 self.assertAlmostEqual(expected_metrics[key], returned_metrics[key], places=5)
 
     def test_calculate_graph_metrics_given_empty_edges_returns_none(self) -> None:
-        edges : list[list[int]] = []
+        edges: list[list[int]] = []
         with self.assertRaises(ValueError):
             calculate_graph_metrics.fn(edges)
 
