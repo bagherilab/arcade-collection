@@ -24,6 +24,7 @@ class GraphMetrics:
     avg_clustering: float
     avg_closeness: float
     avg_betweenness: float
+    coreness: int
     components: int
     name: Optional[str] = None
 
@@ -68,8 +69,9 @@ def calculate_graph_metrics(edges: list[list[int]], weights: list[float] = None)
     degree_metrics = _calc_degree_metrics(igraph)
     m_dict["avg_in_degrees"], m_dict["avg_out_degrees"], m_dict["avg_degree"] = degree_metrics
     m_dict["avg_clustering"] = _calc_clustering_metric(igraph)
-    m_dict["avg_closeness"] = _calc_closeness_metric(igraph)
-    m_dict["avg_betweenness"] = _calc_betweenness_metric(igraph)
+    m_dict["avg_closeness"] = _calc_closeness_metric(igraph, connected)
+    m_dict["avg_betweenness"] = _calc_betweenness_metric(igraph, connected)
+    m_dict["coreness"] = _calc_coreness_metric(igraph, connected)
     m_dict["components"] = _calc_n_components(igraph, connected)
 
     metrics = GraphMetrics(**m_dict)
@@ -82,11 +84,14 @@ def _calc_eccentricity_metrics(graph: ig.Graph, connected: bool) -> tuple[float,
     if not connected:
         return float("inf"), float("inf"), float("inf")
 
-    eccs = graph.eccentricity(mode="all")
+    eccs: list[float] = []
+    for node in graph.vs:
+        distance = graph.distances(source=node, mode="all", weights="weight")
+        eccs.append(max(distance[0]))
     radius = min(eccs)
     diameter = max(eccs)
     average_ecc = np.mean(eccs)
-    return radius, diameter, average_ecc
+    return radius, diameter, float(average_ecc)
 
 
 def _calc_path_metrics(graph: ig.Graph, connected: bool) -> float:
@@ -96,24 +101,34 @@ def _calc_path_metrics(graph: ig.Graph, connected: bool) -> float:
 
     norm_factor = len(graph.vs) * (len(graph.vs) - 1)
     total_distance: int = 0
-
     for node in graph.vs:
-        distance = graph.distances(source=node, mode="all")
+        distance = graph.distances(source=node, mode="all", weights="weight")
         total_distance += np.sum(distance)
-    return total_distance / norm_factor
+    return float(total_distance / norm_factor)
 
 
-def _calc_closeness_metric(graph: ig.Graph) -> float:
+def _calc_closeness_metric(graph: ig.Graph, connected: bool) -> float:
     """Helperfunction to calculate average closeness from igraph"""
-    closeness = np.array(graph.closeness())
-    return np.mean(closeness)
+    if not connected:
+        return float("inf")
+
+    n_nodes = graph.vcount()
+    norm_factor = n_nodes - 1
+    closeness: list[float] = []
+    for node in graph.vs:
+        distance = graph.distances(source=node, mode="all", weights="weight")
+        closeness.append(norm_factor / np.sum(distance))
+    return float(np.mean(closeness))
 
 
-def _calc_betweenness_metric(graph: ig.Graph) -> float:
+def _calc_betweenness_metric(graph: ig.Graph, connected: bool) -> float:
     """Helper function to calcuate normalized betweenness from igraph"""
+    if not connected:
+        return float("inf")
+
     n_nodes = graph.vcount()
     betweenness_norm_factor = (n_nodes - 1) * (n_nodes - 2)
-    betweenness = np.array(graph.betweenness()) / betweenness_norm_factor
+    betweenness = np.array(graph.betweenness(weights="weight")) / betweenness_norm_factor
     return np.mean(betweenness)
 
 
@@ -144,6 +159,15 @@ def _calc_clustering_metric(graph: ig.Graph) -> float:
     return graph.transitivity_undirected()
 
 
+def _calc_coreness_metric(graph: ig.Graph, connected: bool) -> float:
+    """Helper function to get the assortivity from igraph."""
+    if not connected:
+        return float("inf")
+
+    coreness = graph.coreness(mode="all")
+    return float(np.mean(coreness))
+
+
 def _calc_n_components(graph: ig.Graph, connected: bool) -> int:
     """Helper function to get the number of components (subgraphs) from igraph."""
     if connected:
@@ -170,6 +194,6 @@ def _make_igraph(edges: list[list[int]], weights: list[float]) -> ig.Graph:
         Directed igraph
     """
 
-    dir_graph = ig.Graph.TupleList(edges=edges, weights=weights, directed=True)
-
+    dir_graph = ig.Graph.TupleList(edges=edges, directed=True)
+    dir_graph.es["weight"] = weights
     return dir_graph
