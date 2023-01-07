@@ -1,12 +1,12 @@
-from typing import List, Union
 import json
+from os import path
 import tarfile
-from prefect import task
+from typing import List, Union
 
+import ntpath
 import numpy as np
 import pandas as pd
-import ntpath
-from os import path
+from prefect import task
 
 
 GROWTH_COLUMNS = [
