@@ -1,62 +1,102 @@
 from typing import List, Union
 import json
 import tarfile
-
-import pandas as pd
 from prefect import task
+
+import numpy as np
+import pandas as pd
+import ntpath
+from os import path
+
+
+GROWTH_COLUMNS = [
+    "TICK",
+    "SEED",
+    "U",
+    "V",
+    "W",
+    "Z",
+    "POSITION",
+    "POPULATION",
+    "STATE",
+    "VOLUME",
+    "CYCLE",
+]
 
 
 @task
 def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
     all_timepoints = []
     for member in tar.getmembers():
-        seed = 0
+        extracted_member = tar.extractfile(member)
+        if extracted_member is not None:
+            base = ntpath.basename(member.name)
+            base_file = path.splitext(base)
+            file_name = base_file[0]
+            extension = base_file[1]
+            if file_name[0] != "." and extension == ".json":
+                extracted_json = json.loads(extracted_member.read().decode("utf-8"))
+                seed = extracted_json["seed"]
+
+                for timepoint in extracted_json["timepoints"]:
+                    one_timepoint = parse_growth_timepoint(timepoint, seed)
+                    for data in one_timepoint:
+                        all_timepoints.append(data)
+
+    timepoints_df = pd.DataFrame(all_timepoints, columns=GROWTH_COLUMNS)
+    return timepoints_df
 
 
-def parse_growth_timepoint():
-    time_index = self.timepoints.index(timepoint)
+def convert_state_to_string(state_index: int) -> str:
+    if state_index == 0:
+        return "NEU"
+    elif state_index == 1:
+        return "APO"
+    elif state_index == 2:
+        return "QUI"
+    elif state_index == 3:
+        return "MIG"
+    elif state_index == 4:
+        return "PRO"
+    elif state_index == 5:
+        return "SEN"
+    elif state_index == 6:
+        return "NEC"
 
+
+def parse_growth_timepoint(timepoint: dict, seed: int) -> List[list]:
     parsed_data = []
-    sim_timepoint = loaded_simulation["timepoints"][time_index]["cells"]
-    param_timepoint = loaded_param_simulation["timepoints"][time_index]["cells"]
 
-    for (location, cells), (_, param_cells) in zip(sim_timepoint, param_timepoint):
+    for (location, cells) in timepoint["cells"]:
         u = int(location[0])
         v = int(location[1])
         w = int(location[2])
         z = int(location[3])
-        szudzik_coordinate = self.get_szudzik_pair(u, v)
 
-        for cell, param_cell in zip(cells, param_cells):
+        for cell in cells:
             population = cell[1]
             state = cell[2]
             position = cell[3]
             volume = np.round(cell[4])
-            cycle = np.round(np.mean(cell[5]))
-            max_height = param_cell[4][3]
-            meta_pref = param_cell[4][8]
-            migra_threshold = param_cell[4][9]
-
+            if len(cell[5]) == 0:
+                cycle = -1
+            else:
+                cycle = np.round(np.mean(cell[5]))
+            time = timepoint["time"]
             data_list = [
-                self.key,
-                self.seed,
-                timepoint,
-                szudzik_coordinate,
+                time,
+                seed,
                 u,
                 v,
                 w,
                 z,
                 position,
-                str(population),
-                str(state),
+                population,
+                convert_state_to_string(state),
                 volume,
                 cycle,
-                max_height,
-                meta_pref,
-                migra_threshold,
             ]
 
             parsed_data.append(data_list)
 
-    columns = [feature.name for feature in self.get_feature_list()]
-    return pd.DataFrame(parsed_data, columns=columns)
+    return parsed_data
