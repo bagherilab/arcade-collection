@@ -2,6 +2,7 @@ import tarfile
 
 import unittest
 from unittest import mock
+from unittest.mock import mock_open
 
 from arcade_collection.output.parse_growth_file import parse_growth_file
 
