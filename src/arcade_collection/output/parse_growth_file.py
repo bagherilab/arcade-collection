@@ -1,7 +1,7 @@
 import json
 from os import path
 import tarfile
-from typing import List, Union
+from typing import List
 
 import ntpath
 import numpy as np
@@ -26,6 +26,19 @@ GROWTH_COLUMNS = [
 
 @task
 def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
+    """
+    Parse the tumor growth tar file.
+
+    Parameters
+    ---------
+    tar :
+        Tar file of simulations.
+
+    Returns
+    -------
+    :
+        Data of all timepoints of all simulations in tar file.
+    """
     all_timepoints = []
     for member in tar.getmembers():
         extracted_member = tar.extractfile(member)
@@ -48,6 +61,19 @@ def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
 
 
 def convert_state_to_string(state_index: int) -> str:
+    """
+    Convert the numbers that represent cell state into an annotation.
+
+    Parameters
+    ---------
+    state_index :
+        The index of cell states.
+
+    Returns
+    -------
+    :
+        The cell state annotation.
+    """
     if state_index == 0:
         return "NEU"
     elif state_index == 1:
@@ -65,6 +91,19 @@ def convert_state_to_string(state_index: int) -> str:
 
 
 def parse_growth_timepoint(timepoint: dict, seed: int) -> List[list]:
+    """
+    Parse one timepoint of the simulation
+
+    Parameters
+    ---------
+    timepoint :
+        The data of one timepoint.
+
+    Returns
+    -------
+    :
+        Parsed data of the timepoint.
+    """
     parsed_data = []
 
     for (location, cells) in timepoint["cells"]:
