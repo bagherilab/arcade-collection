@@ -1,7 +1,7 @@
 import json
 from os import path
 import tarfile
-from typing import List
+from typing import List, Union
 
 import ntpath
 import numpy as np
@@ -30,7 +30,7 @@ def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
     Parse the tumor growth tar file.
 
     Parameters
-    ---------
+    ----------
     tar :
         Tar file of simulations.
 
@@ -60,12 +60,12 @@ def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
     return timepoints_df
 
 
-def convert_state_to_string(state_index: int) -> str:
+def convert_state_to_string(state_index: int) -> Union[str, None]:
     """
     Convert the numbers that represent cell state into an annotation.
 
     Parameters
-    ---------
+    ----------
     state_index :
         The index of cell states.
 
@@ -89,13 +89,15 @@ def convert_state_to_string(state_index: int) -> str:
     elif state_index == 6:
         return "NEC"
 
+    return None
+
 
 def parse_growth_timepoint(timepoint: dict, seed: int) -> List[list]:
     """
     Parse one timepoint of the simulation
 
     Parameters
-    ---------
+    ----------
     timepoint :
         The data of one timepoint.
 
