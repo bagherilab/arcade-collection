@@ -1,7 +1,7 @@
-from typing import List, Dict, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 
-from prefect import task
 import pandas as pd
+from prefect import task
 
 
 @task

@@ -1,6 +1,6 @@
-from typing import List, Union
 import json
 import tarfile
+from typing import List, Union
 
 import pandas as pd
 from prefect import task
