@@ -1,9 +1,9 @@
-from typing import List, Tuple, Optional
 import xml.etree.ElementTree as ET
+from typing import List, Optional, Tuple
 
-from prefect import task
 import numpy as np
 import pandas as pd
+from prefect import task
 
 
 @task

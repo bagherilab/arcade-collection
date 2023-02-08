@@ -1,8 +1,8 @@
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
-from prefect import task
 import numpy as np
 import pandas as pd
+from prefect import task
 
 
 @task
