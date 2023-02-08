@@ -44,6 +44,11 @@ jobs:
         source .venv/bin/activate
         black -l 100 --check src/ tests/
 
+    - name: Check with isort
+      run: |
+        source .venv/bin/activate
+        isort -l 100 --check src/ tests/
+
     - name: Check with mypy
       run: |
         source .venv/bin/activate
