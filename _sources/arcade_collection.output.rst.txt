@@ -12,6 +12,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   arcade_collection.output.convert_model_units
    arcade_collection.output.extract_tick_json
    arcade_collection.output.get_location_voxels
    arcade_collection.output.merge_parsed_results
