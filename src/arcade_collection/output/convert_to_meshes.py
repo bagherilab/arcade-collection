@@ -1,9 +1,11 @@
 import tarfile
 
 import numpy as np
-from arcade_collection.output import extract_tick_json, get_location_voxels
 from prefect import task
 from skimage import measure
+
+from arcade_collection.output.extract_tick_json import extract_tick_json
+from arcade_collection.output.get_location_voxels import get_location_voxels
 
 
 @task
