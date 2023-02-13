@@ -8,9 +8,22 @@ from prefect import task
 def convert_model_units(
     data: pd.DataFrame, ds: float, dt: float, regions: Optional[Union[list[str], str]] = None
 ) -> None:
-    data["time"] = dt * data["TICK"]
-    data["volume"] = ds * ds * ds * data["NUM_VOXELS"]
-    data["height"] = ds * (data["MAX_Z"] - data["MIN_Z"] + 1)
+    data["time"] = round(dt * data["TICK"], 2)
+
+    if "NUM_VOXELS" in data.columns:
+        data["volume"] = ds * ds * ds * data["NUM_VOXELS"]
+
+    if "MAX_Z" in data.columns and "MIN_Z" in data.columns:
+        data["height"] = ds * (data["MAX_Z"] - data["MIN_Z"] + 1)
+
+    if "CX" in data.columns:
+        data["cx"] = ds * data["CX"]
+
+    if "CY" in data.columns:
+        data["cy"] = ds * data["CY"]
+
+    if "CZ" in data.columns:
+        data["cz"] = ds * data["CZ"]
 
     if regions is None:
         return
