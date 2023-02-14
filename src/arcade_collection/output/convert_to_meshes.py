@@ -10,13 +10,13 @@ from arcade_collection.output.get_location_voxels import get_location_voxels
 
 @task
 def convert_to_meshes(
-    series_key: str, data: tarfile.TarFile, frame_spec: tuple[int, int, int], regions: list[str]
+    series_key: str, data_tar: tarfile.TarFile, frame_spec: tuple[int, int, int], regions: list[str]
 ) -> list[tuple[int, int, str, str]]:
     frames = list(np.arange(*frame_spec))
     meshes = []
 
     for frame in frames:
-        locations = extract_tick_json.fn(data, series_key, frame, "LOCATIONS")
+        locations = extract_tick_json.fn(data_tar, series_key, frame, "LOCATIONS")
 
         for location in locations:
             location_id = location["id"]

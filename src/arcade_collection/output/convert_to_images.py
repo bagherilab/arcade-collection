@@ -10,7 +10,7 @@ from arcade_collection.output.get_location_voxels import get_location_voxels
 @task
 def convert_to_images(
     series_key: str,
-    data: tarfile.TarFile,
+    data_tar: tarfile.TarFile,
     frame_spec: tuple[int, int, int],
     regions: list[str],
     box: tuple[int, int, int],
@@ -22,7 +22,7 @@ def convert_to_images(
     array = np.zeros((len(frames), len(regions), height, width, length), "uint16")
 
     for index, frame in enumerate(frames):
-        locations = extract_tick_json.fn(data, series_key, frame, "LOCATIONS")
+        locations = extract_tick_json.fn(data_tar, series_key, frame, "LOCATIONS")
 
         for location in locations:
             location_id = location["id"]
