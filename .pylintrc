@@ -4,7 +4,7 @@
 disable=missing-module-docstring
 
 # Set good names.
-good-names=i,j,x,y,z
+good-names=i,j,x,y,z,ds,dt
 
 [DESIGN]
 
