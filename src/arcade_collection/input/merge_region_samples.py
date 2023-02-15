@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -7,7 +7,7 @@ from prefect import task
 
 @task
 def merge_region_samples(
-    samples: dict[str, pd.DataFrame], margins: Tuple[int, int, int]
+    samples: dict[str, pd.DataFrame], margins: tuple[int, int, int]
 ) -> pd.DataFrame:
     default_samples = samples["DEFAULT"]
     all_samples = tranform_sample_coordinates(default_samples, margins)
@@ -33,7 +33,7 @@ def merge_region_samples(
 
 def tranform_sample_coordinates(
     samples: pd.DataFrame,
-    margins: Tuple[int, int, int],
+    margins: tuple[int, int, int],
     reference: Optional[pd.DataFrame] = None,
 ) -> pd.DataFrame:
     """

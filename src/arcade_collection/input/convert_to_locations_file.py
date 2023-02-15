@@ -1,12 +1,12 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 
 import pandas as pd
 from prefect import task
 
 
 @task
-def convert_to_locations_file(samples: pd.DataFrame) -> List[Dict]:
-    locations: List[Dict] = []
+def convert_to_locations_file(samples: pd.DataFrame) -> list[dict]:
+    locations: list[dict] = []
     samples_by_id = samples.groupby("id")
 
     for i, (_, group) in enumerate(samples_by_id):
@@ -49,7 +49,7 @@ def convert_to_location(cell_id: int, samples: pd.DataFrame) -> dict:
     return location
 
 
-def get_center_voxel(samples: pd.DataFrame) -> Tuple[int, int, int]:
+def get_center_voxel(samples: pd.DataFrame) -> tuple[int, int, int]:
     """
     Gets coordinates of center voxel of samples.
 
@@ -72,7 +72,7 @@ def get_center_voxel(samples: pd.DataFrame) -> Tuple[int, int, int]:
 
 def get_location_voxels(
     samples: pd.DataFrame, region: Optional[str] = None
-) -> List[Tuple[int, int, int]]:
+) -> list[tuple[int, int, int]]:
     """
     Get list of voxel coordinates from samples dataframe.
 

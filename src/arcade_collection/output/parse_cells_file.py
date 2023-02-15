@@ -1,6 +1,6 @@
 import json
 import tarfile
-from typing import List, Union
+from typing import Union
 
 import pandas as pd
 from prefect import task
@@ -20,7 +20,7 @@ CELLS_COLUMNS = [
 
 @task
 def parse_cells_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFrame:
-    all_cells: List[List[Union[str, int]]] = []
+    all_cells: list[list[Union[str, int]]] = []
 
     for member in tar.getmembers():
         timepoint = int(member.name.replace(".CELLS.json", "").split("_")[-1])
