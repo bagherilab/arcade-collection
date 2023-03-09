@@ -28,6 +28,10 @@ def convert_to_meshes(
                         location, region if region != "DEFAULT" else None
                     )
                 ]
+
+                if len(voxels) == 0:
+                    continue
+
                 array = make_mesh_array(voxels)
                 mesh = make_mesh_object(array)
 
