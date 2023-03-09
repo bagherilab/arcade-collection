@@ -34,6 +34,10 @@ def convert_to_images(
                         location, region if region != "DEFAULT" else None
                     )
                 ]
+
+                if len(voxels) == 0:
+                    continue
+
                 array[index, channel][tuple(np.transpose(voxels))] = 1 if binary else location_id
 
     return split_array_chunks(array, chunk_size)
