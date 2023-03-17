@@ -1,9 +1,6 @@
 from itertools import groupby
 
-from prefect import task
 
-
-@task
 def group_template_conditions(conditions: list[dict], max_seeds: int) -> list[dict]:
     grouped_conditions = group_seed_ranges(conditions, max_seeds)
     condition_sets = group_condition_sets(grouped_conditions, max_seeds)

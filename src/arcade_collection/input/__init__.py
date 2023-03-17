@@ -1,5 +1,14 @@
-from .convert_to_cells_file import convert_to_cells_file
-from .convert_to_locations_file import convert_to_locations_file
-from .generate_setup_file import generate_setup_file
-from .group_template_conditions import group_template_conditions
-from .merge_region_samples import merge_region_samples
+import importlib
+import os
+import sys
+
+from prefect import task
+
+for module_file in os.listdir(os.path.dirname(__file__)):
+    if module_file == "__init__.py" or not module_file.endswith(".py"):
+        continue
+
+    module_name = module_file.replace(".py", "")
+
+    module = importlib.import_module(f".{module_name}", package=__name__)
+    setattr(sys.modules[__name__], module_name, task(getattr(module, module_name)))

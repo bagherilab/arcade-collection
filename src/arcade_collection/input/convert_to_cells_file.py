@@ -1,8 +1,6 @@
 import pandas as pd
-from prefect import task
 
 
-@task
 def convert_to_cells_file(
     samples: pd.DataFrame,
     reference: pd.DataFrame,

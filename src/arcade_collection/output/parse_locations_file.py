@@ -4,7 +4,6 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
-from prefect import task
 
 CELLS_COLUMNS = [
     "ID",
@@ -21,7 +20,6 @@ CELLS_COLUMNS = [
 ]
 
 
-@task
 def parse_locations_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFrame:
     all_locations: list[list[Union[str, int]]] = []
 

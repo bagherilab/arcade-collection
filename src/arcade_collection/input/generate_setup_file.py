@@ -3,10 +3,8 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
-from prefect import task
 
 
-@task
 def generate_setup_file(
     samples: pd.DataFrame, margins: tuple[int, int, int], potts_terms: list[str]
 ) -> str:

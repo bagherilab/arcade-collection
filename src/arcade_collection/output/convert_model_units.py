@@ -1,10 +1,8 @@
 from typing import Optional, Union
 
 import pandas as pd
-from prefect import task
 
 
-@task
 def convert_model_units(
     data: pd.DataFrame, ds: float, dt: float, regions: Optional[Union[list[str], str]] = None
 ) -> None:
