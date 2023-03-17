@@ -1,14 +1,12 @@
 import tarfile
 
 import numpy as np
-from prefect import task
 from skimage import measure
 
 from arcade_collection.output.extract_tick_json import extract_tick_json
 from arcade_collection.output.get_location_voxels import get_location_voxels
 
 
-@task
 def convert_to_meshes(
     series_key: str, data_tar: tarfile.TarFile, frame_spec: tuple[int, int, int], regions: list[str]
 ) -> list[tuple[int, int, str, str]]:
@@ -16,7 +14,7 @@ def convert_to_meshes(
     meshes = []
 
     for frame in frames:
-        locations = extract_tick_json.fn(data_tar, series_key, frame, "LOCATIONS")
+        locations = extract_tick_json(data_tar, series_key, frame, "LOCATIONS")
 
         for location in locations:
             location_id = location["id"]
@@ -24,7 +22,7 @@ def convert_to_meshes(
             for region in regions:
                 voxels = [
                     (z, y, x)
-                    for x, y, z in get_location_voxels.fn(
+                    for x, y, z in get_location_voxels(
                         location, region if region != "DEFAULT" else None
                     )
                 ]

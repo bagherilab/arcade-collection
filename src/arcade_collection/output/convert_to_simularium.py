@@ -1,7 +1,6 @@
 import tarfile
 
 import numpy as np
-from prefect import task
 from simulariumio import (
     DISPLAY_TYPE,
     AgentData,
@@ -18,7 +17,6 @@ from simulariumio import (
 from arcade_collection.output.extract_tick_json import extract_tick_json
 
 
-@task
 def convert_to_simularium(
     series_key: str,
     cells_data_tar: tarfile.TarFile,
@@ -77,7 +75,7 @@ def get_agent_data(series_key: str, cells_tar: tarfile.TarFile, frames: list[int
 
     max_agents = 0
     for frame in frames:
-        cells = extract_tick_json.fn(cells_tar, series_key, frame, "CELLS")
+        cells = extract_tick_json(cells_tar, series_key, frame, "CELLS")
         max_agents = max(max_agents, len(cells))
 
     return AgentData.from_dimensions(DimensionData(total_frames, max_agents))
@@ -99,7 +97,7 @@ def convert_cells_tar(
     frame: int,
     index: int,
 ) -> None:
-    cells = extract_tick_json.fn(tar, series_key, frame, "CELLS")
+    cells = extract_tick_json(tar, series_key, frame, "CELLS")
     data.n_agents[index] = len(cells)
 
     for i, cell in enumerate(cells):
@@ -119,7 +117,7 @@ def convert_locations_tar(
     height: int,
     ds: float,
 ) -> None:
-    locations = extract_tick_json.fn(tar, series_key, frame, "LOCATIONS")
+    locations = extract_tick_json(tar, series_key, frame, "LOCATIONS")
 
     for i, location in enumerate(locations):
         data.positions[index][i] = np.array(

@@ -1,10 +1,8 @@
 from typing import Optional
 
 import pandas as pd
-from prefect import task
 
 
-@task
 def convert_to_locations_file(samples: pd.DataFrame) -> list[dict]:
     locations: list[dict] = []
     samples_by_id = samples.groupby("id")

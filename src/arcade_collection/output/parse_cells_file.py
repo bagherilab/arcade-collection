@@ -3,7 +3,6 @@ import tarfile
 from typing import Union
 
 import pandas as pd
-from prefect import task
 
 CELLS_COLUMNS = [
     "ID",
@@ -18,7 +17,6 @@ CELLS_COLUMNS = [
 ]
 
 
-@task
 def parse_cells_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFrame:
     all_cells: list[list[Union[str, int]]] = []
 

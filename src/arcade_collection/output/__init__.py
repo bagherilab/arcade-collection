@@ -1,9 +1,14 @@
-from .convert_model_units import convert_model_units
-from .convert_to_images import convert_to_images
-from .convert_to_meshes import convert_to_meshes
-from .convert_to_simularium import convert_to_simularium
-from .extract_tick_json import extract_tick_json
-from .get_location_voxels import get_location_voxels
-from .merge_parsed_results import merge_parsed_results
-from .parse_cells_file import parse_cells_file
-from .parse_locations_file import parse_locations_file
+import importlib
+import os
+import sys
+
+from prefect import task
+
+for module_file in os.listdir(os.path.dirname(__file__)):
+    if module_file == "__init__.py" or not module_file.endswith(".py"):
+        continue
+
+    module_name = module_file.replace(".py", "")
+
+    module = importlib.import_module(f".{module_name}", package=__name__)
+    setattr(sys.modules[__name__], module_name, task(getattr(module, module_name)))

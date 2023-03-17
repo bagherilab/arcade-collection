@@ -1,13 +1,11 @@
 import tarfile
 
 import numpy as np
-from prefect import task
 
 from arcade_collection.output.extract_tick_json import extract_tick_json
 from arcade_collection.output.get_location_voxels import get_location_voxels
 
 
-@task
 def convert_to_images(
     series_key: str,
     data_tar: tarfile.TarFile,
@@ -22,7 +20,7 @@ def convert_to_images(
     array = np.zeros((len(frames), len(regions), height, width, length), "uint16")
 
     for index, frame in enumerate(frames):
-        locations = extract_tick_json.fn(data_tar, series_key, frame, "LOCATIONS")
+        locations = extract_tick_json(data_tar, series_key, frame, "LOCATIONS")
 
         for location in locations:
             location_id = location["id"]
@@ -30,7 +28,7 @@ def convert_to_images(
             for channel, region in enumerate(regions):
                 voxels = [
                     (z, y, x)
-                    for x, y, z in get_location_voxels.fn(
+                    for x, y, z in get_location_voxels(
                         location, region if region != "DEFAULT" else None
                     )
                 ]
