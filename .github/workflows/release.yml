@@ -6,7 +6,23 @@ on:
       - 'release/*'
 
 jobs:
+  check:
+    outputs:
+      status: ${{ steps.current_pr.outputs.pr_found }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Get current PR
+      uses: 8BitJonny/gh-get-current-pr@2.2.0
+      id: current_pr
+
   release:
+    needs: check
+
+    if: needs.check.outputs.status == 'false'
+
     runs-on: ubuntu-latest
 
     steps:
