@@ -46,6 +46,10 @@ jobs:
               {
                 "title": "### Documentation",
                 "labels": ["type: docs"]
+              },
+              {
+                "title": "### Admin",
+                "labels": ["type: admin"]
               }
             ],
             "template": "# [${{ env.RELEASE_VERSION }}](https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_VERSION }}) - ${{ env.CURRENT_DATE }}\n\n> Compare with [`#{{FROM_TAG}}`](https://github.com/${{ github.repository }}/compare/#{{FROM_TAG}}...${{ env.RELEASE_VERSION }})\n\n#{{CHANGELOG}}",

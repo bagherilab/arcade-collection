@@ -46,6 +46,10 @@ jobs:
               {
                 "title": "## 📓 Documentation",
                 "labels": ["type: docs"]
+              },
+              {
+                "title": "## 📁 Admin",
+                "labels": ["type: admin"]
               }
             ],
             "template": "#{{CHANGELOG}}---\n\n**Full Changelog**: https://github.com/${{ github.repository }}/compare/#{{FROM_TAG}}...${{ env.RELEASE_VERSION }}\n",
