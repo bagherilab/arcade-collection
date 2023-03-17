@@ -1,6 +1,6 @@
 # [v0.6.2](https://github.com/bagherilab/arcade-collection/releases/tag/v0.6.2) - 2023-03-09
 
-<small>[Compare with v0.6.1](https://github.com/bagherilab/arcade-collection/compare/v0.6.1...v0.6.2)</small>
+<sup>[Compare with v0.6.1](https://github.com/bagherilab/arcade-collection/compare/v0.6.1...v0.6.2)</sup>
 
 ## Bug fixes
 
@@ -8,7 +8,7 @@
 
 # [v0.6.1](https://github.com/bagherilab/arcade-collection/releases/tag/v0.6.1) - 2023-02-22
 
-<small>[Compare with v0.6.0](https://github.com/bagherilab/arcade-collection/compare/v0.6.0...v0.6.1)</small>
+<sup>[Compare with v0.6.0](https://github.com/bagherilab/arcade-collection/compare/v0.6.0...v0.6.1)</sup>
 
 ## Features
 
@@ -16,7 +16,7 @@
 
 # [v0.6.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.6.0) - 2023-02-15
 
-<small>[Compare with v0.5.0](https://github.com/bagherilab/arcade-collection/compare/v0.5.0...v0.6.0)</small>
+<sup>[Compare with v0.5.0](https://github.com/bagherilab/arcade-collection/compare/v0.5.0...v0.6.0)</sup>
 
 ## Features
 
@@ -28,7 +28,7 @@
 
 # [v0.5.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.5.0) - 2023-02-13
 
-<small>[Compare with v0.4.0](https://github.com/bagherilab/arcade-collection/compare/v0.4.0...v0.5.0)</small>
+<sup>[Compare with v0.4.0](https://github.com/bagherilab/arcade-collection/compare/v0.4.0...v0.5.0)</sup>
 
 ## Features
 
@@ -40,7 +40,7 @@
 
 # [v0.4.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.4.0) - 2022-11-17
 
-<small>[Compare with v0.3.0](https://github.com/bagherilab/arcade-collection/compare/v0.3.0...v0.4.0)</small>
+<sup>[Compare with v0.3.0](https://github.com/bagherilab/arcade-collection/compare/v0.3.0...v0.4.0)</sup>
 
 ## Features
 
@@ -53,7 +53,7 @@
 
 # [v0.3.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.3.0) - 2022-11-02
 
-<small>[Compare with v0.2.0](https://github.com/bagherilab/arcade-collection/compare/v0.2.0...v0.3.0)</small>
+<sup>[Compare with v0.2.0](https://github.com/bagherilab/arcade-collection/compare/v0.2.0...v0.3.0)</sup>
 
 ## Features
 
@@ -61,15 +61,13 @@
 
 # [v0.2.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.2.0) - 2022-10-24
 
-<small>[Compare with v0.1.0](https://github.com/bagherilab/arcade-collection/compare/v0.1.0...v0.2.0)</small>
+<sup>[Compare with v0.1.0](https://github.com/bagherilab/arcade-collection/compare/v0.1.0...v0.2.0)</sup>
 
 ## Features
 
 - Add parse cells and locations file tasks by [@jessicasyu](https://github.com/jessicasyu) in [#3](https://github.com/bagherilab/arcade-collection/pull/3)
 
 # [v0.1.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.1.0) - 2022-10-24
-
-<small>[Compare with 94df9089f7c394678b93b477485c1e68ced0def1](https://github.com/bagherilab/arcade-collection/compare/94df9089f7c394678b93b477485c1e68ced0def1...v0.1.0)</small>
 
 ## Features
 
