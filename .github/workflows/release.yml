@@ -52,7 +52,7 @@ jobs:
                 "labels": ["type: admin"]
               }
             ],
-            "template": "# [${{ env.RELEASE_VERSION }}](https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_VERSION }}) - ${{ env.CURRENT_DATE }}\n\n> Compare with [`#{{FROM_TAG}}`](https://github.com/${{ github.repository }}/compare/#{{FROM_TAG}}...${{ env.RELEASE_VERSION }})\n\n#{{CHANGELOG}}",
+            "template": "# [${{ env.RELEASE_VERSION }}](https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_VERSION }}) - ${{ env.CURRENT_DATE }}\n\n> Compare with [#{{FROM_TAG}}](https://github.com/${{ github.repository }}/compare/#{{FROM_TAG}}...${{ env.RELEASE_VERSION }})\n\n#{{CHANGELOG}}",
             "pr_template": "- #{{TITLE}} by [@#{{AUTHOR}}](https://github.com/#{{AUTHOR}}) in [##{{NUMBER}}](#{{URL}})"
           }
         toTag: ${{ github.sha }}
@@ -60,7 +60,7 @@ jobs:
 
     - name: Update changelog
       run: |
-        printf "%s%s" "${{ steps.build_changelog.outputs.changelog }}" "$(cat CHANGELOG.md)" > CHANGELOG.md
+        printf "%s%s\n" "${{ steps.build_changelog.outputs.changelog }}" "$(cat CHANGELOG.md)" > CHANGELOG.md
 
     - uses: EndBug/add-and-commit@v9
       with:
