@@ -8,7 +8,7 @@ on:
       - closed
 
 jobs:
-  release:
+  publish:
     if: ${{ (startsWith(github.event.pull_request.head.ref, 'release/')) && (github.event.pull_request.merged == true) }}
 
     runs-on: ubuntu-latest
