@@ -12,13 +12,57 @@ jobs:
     steps:
 
     - name: Checkout the repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Extract version from branch name
       run: |
         BRANCH_NAME="${{ github.event.push.ref }}"
         VERSION=${GITHUB_REF##*/}
         echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: Get current date
+      run: |
+        echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+    - name: Build changelog
+      id: build_changelog
+      uses: mikepenz/release-changelog-builder-action@v3.4.0
+      with:
+        configurationJson: |
+          {
+            "categories": [
+              {
+                "title": "### Features",
+                "labels": ["type: feature"]
+              },
+              {
+                "title": "### Bug fixes",
+                "labels": ["type: bug"]
+              },
+              {
+                "title": "### Tests",
+                "labels": ["type: test"]
+              },
+              {
+                "title": "### Documentation",
+                "labels": ["type: docs"]
+              }
+            ],
+            "template": "# [${{ env.RELEASE_VERSION }}](https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_VERSION }}) - ${{ env.CURRENT_DATE }}\n\n> Compare with [`#{{FROM_TAG}}`](https://github.com/${{ github.repository }}/compare/#{{FROM_TAG}}...${{ env.RELEASE_VERSION }})\n\n#{{CHANGELOG}}",
+            "pr_template": "- #{{TITLE}} by [@#{{AUTHOR}}](https://github.com/#{{AUTHOR}}) in [##{{NUMBER}}](#{{URL}})"
+          }
+        toTag: ${{ github.sha }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update changelog
+      run: |
+        printf "%s%s" "${{ steps.build_changelog.outputs.changelog }}" "$(cat CHANGELOG.md)" > CHANGELOG.md
+
+    - uses: EndBug/add-and-commit@v9
+      with:
+          add: "CHANGELOG.md"
+          message: "Update CHANGELOG.md for ${{ env.RELEASE_VERSION }}"
+          push: 'origin ${{ github.event.push.ref }}'
 
     - name: Create pull request
       uses: repo-sync/pull-request@v2
