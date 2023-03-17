@@ -1,6 +1,6 @@
 # [v0.6.2](https://github.com/bagherilab/arcade-collection/releases/tag/v0.6.2) - 2023-03-09
 
-<sup>[Compare with v0.6.1](https://github.com/bagherilab/arcade-collection/compare/v0.6.1...v0.6.2)</sup>
+> [Compare with `v0.6.1`](https://github.com/bagherilab/arcade-collection/compare/v0.6.1...v0.6.2)
 
 ### Bug fixes
 
@@ -8,7 +8,7 @@
 
 # [v0.6.1](https://github.com/bagherilab/arcade-collection/releases/tag/v0.6.1) - 2023-02-22
 
-<sup>[Compare with v0.6.0](https://github.com/bagherilab/arcade-collection/compare/v0.6.0...v0.6.1)</sup>
+> [Compare with v0.6.0](https://github.com/bagherilab/arcade-collection/compare/v0.6.0...v0.6.1)
 
 ### Features
 
@@ -16,7 +16,7 @@
 
 # [v0.6.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.6.0) - 2023-02-15
 
-<sup>[Compare with v0.5.0](https://github.com/bagherilab/arcade-collection/compare/v0.5.0...v0.6.0)</sup>
+> [Compare with v0.5.0](https://github.com/bagherilab/arcade-collection/compare/v0.5.0...v0.6.0)
 
 ### Features
 
@@ -28,7 +28,7 @@
 
 # [v0.5.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.5.0) - 2023-02-13
 
-<sup>[Compare with v0.4.0](https://github.com/bagherilab/arcade-collection/compare/v0.4.0...v0.5.0)</sup>
+> [Compare with v0.4.0](https://github.com/bagherilab/arcade-collection/compare/v0.4.0...v0.5.0)
 
 ### Features
 
@@ -40,7 +40,7 @@
 
 # [v0.4.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.4.0) - 2022-11-17
 
-<sup>[Compare with v0.3.0](https://github.com/bagherilab/arcade-collection/compare/v0.3.0...v0.4.0)</sup>
+> [Compare with v0.3.0](https://github.com/bagherilab/arcade-collection/compare/v0.3.0...v0.4.0)
 
 ### Features
 
@@ -53,7 +53,7 @@
 
 # [v0.3.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.3.0) - 2022-11-02
 
-<sup>[Compare with v0.2.0](https://github.com/bagherilab/arcade-collection/compare/v0.2.0...v0.3.0)</sup>
+> [Compare with v0.2.0](https://github.com/bagherilab/arcade-collection/compare/v0.2.0...v0.3.0)
 
 ### Features
 
@@ -61,7 +61,7 @@
 
 # [v0.2.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.2.0) - 2022-10-24
 
-<sup>[Compare with v0.1.0](https://github.com/bagherilab/arcade-collection/compare/v0.1.0...v0.2.0)</sup>
+> [Compare with v0.1.0](https://github.com/bagherilab/arcade-collection/compare/v0.1.0...v0.2.0)
 
 ### Features
 

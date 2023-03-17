@@ -32,23 +32,23 @@ jobs:
           {
             "categories": [
               {
-                "title": "## Features",
+                "title": "### Features",
                 "labels": ["type: feature"]
               },
               {
-                "title": "## Bug fixes",
+                "title": "### Bug fixes",
                 "labels": ["type: bug"]
               },
               {
-                "title": "## Tests",
+                "title": "### Tests",
                 "labels": ["type: test"]
               },
               {
-                "title": "## Documentation",
+                "title": "### Documentation",
                 "labels": ["type: docs"]
               }
             ],
-            "template": "# [${{ env.RELEASE_VERSION }}](https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_VERSION }}) - ${{ env.CURRENT_DATE }}\n\n<small>[Compare with #{{FROM_TAG}}](https://github.com/${{ github.repository }}/compare/#{{FROM_TAG}}...${{ env.RELEASE_VERSION }})</small>\n\n#{{CHANGELOG}}",
+            "template": "# [${{ env.RELEASE_VERSION }}](https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_VERSION }}) - ${{ env.CURRENT_DATE }}\n\n> [Compare with `#{{FROM_TAG}}`](https://github.com/${{ github.repository }}/compare/#{{FROM_TAG}}...${{ env.RELEASE_VERSION }})\n\n#{{CHANGELOG}}",
             "pr_template": "- #{{TITLE}} by [@#{{AUTHOR}}](https://github.com/#{{AUTHOR}}) in [##{{NUMBER}}](#{{URL}})"
           }
         toTag: ${{ github.sha }}
