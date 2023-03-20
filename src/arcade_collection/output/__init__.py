@@ -5,7 +5,7 @@ import sys
 from prefect import task
 
 for module_file in os.listdir(os.path.dirname(__file__)):
-    if module_file == "__init__.py" or not module_file.endswith(".py"):
+    if "__" in module_file or not module_file.endswith(".py"):
         continue
 
     module_name = module_file.replace(".py", "")
