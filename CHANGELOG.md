@@ -2,12 +2,9 @@
 
 > Compare with [v0.6.2](https://github.com/bagherilab/arcade-collection/compare/v0.6.2...v0.7.0)
 
-### Features
-
-- Move prefect task decorator to init by [@jessicasyu](https://github.com/jessicasyu) in [#26](https://github.com/bagherilab/arcade-collection/pull/26)
-
 ### Admin
 
+- Move prefect task decorator to init by [@jessicasyu](https://github.com/jessicasyu) in [#26](https://github.com/bagherilab/arcade-collection/pull/26)
 - Add changelog and update actions by [@jessicasyu](https://github.com/jessicasyu) in [#25](https://github.com/bagherilab/arcade-collection/pull/25)
 - Update action versions by [@jessicasyu](https://github.com/jessicasyu) in [#27](https://github.com/bagherilab/arcade-collection/pull/27)
 
