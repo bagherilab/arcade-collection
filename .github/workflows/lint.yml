@@ -52,4 +52,4 @@ jobs:
     - name: Check with mypy
       run: |
         source .venv/bin/activate
-        mypy --config-file mypy.ini src
+        mypy src
