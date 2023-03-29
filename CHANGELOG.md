@@ -1,3 +1,12 @@
+# [v0.7.2](https://github.com/bagherilab/arcade-collection/releases/tag/v0.7.2) - 2023-03-29
+
+> Compare with [v0.7.1](https://github.com/bagherilab/arcade-collection/compare/v0.7.1...v0.7.2)
+
+### Admin
+
+- Add task decorator to init imports by [@jessicasyu](https://github.com/jessicasyu) in [#32](https://github.com/bagherilab/arcade-collection/pull/32)
+- Update pyproject.toml and dependencies by [@jessicasyu](https://github.com/jessicasyu) in [#33](https://github.com/bagherilab/arcade-collection/pull/33)
+
 # [v0.7.1](https://github.com/bagherilab/arcade-collection/releases/tag/v0.7.1) - 2023-03-28
 
 > Compare with [v0.7.0](https://github.com/bagherilab/arcade-collection/compare/v0.7.0...v0.7.1)
