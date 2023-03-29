@@ -35,3 +35,54 @@ profile = "black"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-module-docstring",
+]
+good-names = ["i", "j", "k", "x", "y", "z", "ds", "dt"]
+
+[tool.pylint.design]
+max-args = 10 # maximum number of arguments for function / method
+
+[tool.pylint.similarities]
+min-similarity-lines = 10 # minimum lines number of a similarity
+
+[tool.mypy]
+mypy_path = "src"
+explicit_package_bases = true
+namespace_packages = true
+
+[[tool.mypy.overrides]]
+module = [
+    "pandas",
+    "simulariumio",
+    "skimage",
+]
+ignore_missing_imports = true
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+isolated_build = True
+envlist = py{39,310}, format, lint, typecheck
+skipsdist=True
+
+[testenv]
+allowlist_externals = poetry
+commands =
+    poetry run pytest --cov-report html --cov=src/ tests/
+
+[testenv:format]
+commands =
+    poetry run black -l 100 src/ tests/
+    poetry run isort -l 100 src/ tests/
+
+[testenv:lint]
+commands =
+    poetry run pylint --ignore-patterns=test.*?py src/ tests/ --fail-under=9.0
+
+[testenv:typecheck]
+commands =
+    poetry run mypy --disallow-untyped-calls --disallow-untyped-defs --disallow-incomplete-defs src
+"""
