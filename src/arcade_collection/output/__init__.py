@@ -1,6 +1,3 @@
-import importlib
-import sys
-
 from prefect import task
 
 from .convert_model_units import convert_model_units
@@ -13,19 +10,12 @@ from .merge_parsed_results import merge_parsed_results
 from .parse_cells_file import parse_cells_file
 from .parse_locations_file import parse_locations_file
 
-TASK_MODULES = [
-    convert_model_units,
-    convert_to_images,
-    convert_to_meshes,
-    convert_to_simularium,
-    extract_tick_json,
-    get_location_voxels,
-    merge_parsed_results,
-    parse_cells_file,
-    parse_locations_file,
-]
-
-for task_module in TASK_MODULES:
-    MODULE_NAME = task_module.__name__
-    module = importlib.import_module(f".{MODULE_NAME}", package=__name__)
-    setattr(sys.modules[__name__], MODULE_NAME, task(getattr(module, MODULE_NAME)))
+convert_model_units = task(convert_model_units)
+convert_to_images = task(convert_to_images)
+convert_to_meshes = task(convert_to_meshes)
+convert_to_simularium = task(convert_to_simularium)
+extract_tick_json = task(extract_tick_json)
+get_location_voxels = task(get_location_voxels)
+merge_parsed_results = task(merge_parsed_results)
+parse_cells_file = task(parse_cells_file)
+parse_locations_file = task(parse_locations_file)
