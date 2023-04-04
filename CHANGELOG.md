@@ -1,3 +1,11 @@
+# [v0.8.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.8.0) - 2023-04-04
+
+> Compare with [v0.7.2](https://github.com/bagherilab/arcade-collection/compare/v0.7.2...v0.8.0)
+
+### Features
+
+- Add separate option to convert to images task by [@jessicasyu](https://github.com/jessicasyu) in [#35](https://github.com/bagherilab/arcade-collection/pull/35)
+
 # [v0.7.2](https://github.com/bagherilab/arcade-collection/releases/tag/v0.7.2) - 2023-03-29
 
 > Compare with [v0.7.1](https://github.com/bagherilab/arcade-collection/compare/v0.7.1...v0.7.2)
