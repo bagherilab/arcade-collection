@@ -1,4 +1,5 @@
 import tarfile
+from typing import Optional
 
 import numpy as np
 
@@ -14,7 +15,8 @@ def convert_to_images(
     box: tuple[int, int, int],
     chunk_size: int,
     binary: bool,
-) -> list[tuple[int, int, np.ndarray]]:
+    separate: bool,
+) -> list[tuple[int, int, np.ndarray, Optional[int]]]:
     length, width, height = box
     frames = list(np.arange(*frame_spec))
     array = np.zeros((len(frames), len(regions), height, width, length), "uint16")
@@ -38,7 +40,16 @@ def convert_to_images(
 
                 array[index, channel][tuple(np.transpose(voxels))] = 1 if binary else location_id
 
-    return split_array_chunks(array, chunk_size)
+    if separate:
+        chunks = [
+            (i, j, chunk, frame)
+            for index, frame in enumerate(frames)
+            for i, j, chunk in split_array_chunks(array[[index], :, :, :, :], chunk_size)
+        ]
+    else:
+        chunks = [(i, j, chunk, None) for i, j, chunk in split_array_chunks(array, chunk_size)]
+
+    return chunks
 
 
 def split_array_chunks(array: np.ndarray, chunk_size: int) -> list[tuple[int, int, np.ndarray]]:
@@ -66,7 +77,7 @@ def split_array_chunks(array: np.ndarray, chunk_size: int) -> list[tuple[int, in
             width_end = width_splits[j + 1]
 
             # Extract chunk from full contents.
-            chunk = array[:, :, :, length_start:length_end, width_start:width_end]
+            chunk = np.copy(array[:, :, :, length_start:length_end, width_start:width_end])
 
             if np.sum(chunk) != 0:
                 chunks.append((i, j, chunk))
