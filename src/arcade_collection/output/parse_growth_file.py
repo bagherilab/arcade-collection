@@ -56,7 +56,7 @@ def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
     return timepoints_df
 
 
-def convert_state_to_string(state_index: int) -> Union[str, None]:
+def convert_state_to_string(state_index: int, state_list: List[str]) -> Union[str, None]:
     """
     Convert the numbers that represent cell state into an annotation.
 
@@ -64,28 +64,16 @@ def convert_state_to_string(state_index: int) -> Union[str, None]:
     ----------
     state_index :
         The index of cell states.
+    state_list :
+        The list of cell states.
 
     Returns
     -------
     :
         The cell state annotation.
     """
-    if state_index == 0:
-        return "NEU"
-    elif state_index == 1:
-        return "APO"
-    elif state_index == 2:
-        return "QUI"
-    elif state_index == 3:
-        return "MIG"
-    elif state_index == 4:
-        return "PRO"
-    elif state_index == 5:
-        return "SEN"
-    elif state_index == 6:
-        return "NEC"
 
-    return None
+    return state_list[state_index]
 
 
 def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
@@ -134,7 +122,7 @@ def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
                 z,
                 position,
                 population,
-                convert_state_to_string(state),
+                convert_state_to_string(state, ["NEU", "APO", "QUI", "MIG", "PRO", "SEN", "NEC"]),
                 volume,
                 cycle,
             ]
