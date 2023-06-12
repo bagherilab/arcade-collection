@@ -3,7 +3,6 @@ from os import path
 import tarfile
 from typing import List, Union
 
-import ntpath
 import numpy as np
 import pandas as pd
 from prefect import task
@@ -42,19 +41,16 @@ def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
     all_timepoints = []
     for member in tar.getmembers():
         extracted_member = tar.extractfile(member)
-        if extracted_member is not None:
-            base = ntpath.basename(member.name)
-            base_file = path.splitext(base)
-            file_name = base_file[0]
-            extension = base_file[1]
-            if file_name[0] != "." and extension == ".json":
-                extracted_json = json.loads(extracted_member.read().decode("utf-8"))
-                seed = extracted_json["seed"]
+        extracted_json = json.loads(extracted_member.read().decode("utf-8"))
+        seed = extracted_json["seed"]
 
-                for timepoint in extracted_json["timepoints"]:
-                    one_timepoint = parse_growth_timepoint(timepoint, seed)
-                    for data in one_timepoint:
-                        all_timepoints.append(data)
+        all_timepoints.extend(
+            [
+                data
+                for timepoint in extracted_json["timepoints"]
+                for data in parse_growth_timepoint(timepoint, seed)
+            ]
+        )
 
     timepoints_df = pd.DataFrame(all_timepoints, columns=GROWTH_COLUMNS)
     return timepoints_df
@@ -92,9 +88,14 @@ def convert_state_to_string(state_index: int) -> Union[str, None]:
     return None
 
 
-def parse_growth_timepoint(timepoint: dict, seed: int) -> List[list]:
+def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
     """
-    Parse one timepoint of the simulation
+    Parse one timepoint of the simulation.
+
+    The original data contains data of every timepoint at a seed in a
+    dictionary. The current data contains data of one cell per row, with tick,
+    seed, coordinates (u, v, w, z), position, population, state, volume, and
+    averaged cycle.
 
     Parameters
     ----------
@@ -107,6 +108,7 @@ def parse_growth_timepoint(timepoint: dict, seed: int) -> List[list]:
         Parsed data of the timepoint.
     """
     parsed_data = []
+    time = timepoint["time"]
 
     for (location, cells) in timepoint["cells"]:
         u = int(location[0])
@@ -118,12 +120,11 @@ def parse_growth_timepoint(timepoint: dict, seed: int) -> List[list]:
             population = cell[1]
             state = cell[2]
             position = cell[3]
-            volume = np.round(cell[4])
+            volume = cell[4]
             if len(cell[5]) == 0:
-                cycle = -1
+                cycle = None
             else:
-                cycle = np.round(np.mean(cell[5]))
-            time = timepoint["time"]
+                cycle = np.mean(cell[5])
             data_list = [
                 time,
                 seed,
