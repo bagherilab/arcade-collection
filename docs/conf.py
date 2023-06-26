@@ -14,7 +14,8 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../src'))
 
-import sphinx_rtd_theme
+
+from sphinx.ext.autosummary.generate import AutosummaryRenderer
 
 # -- Project information -----------------------------------------------------
 
@@ -62,9 +63,19 @@ autodoc_mock_imports = []
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# -- Patch custom template filters -------------------------------------------
+
+def custom_fullname_filter(fullname):
+    return ".".join(fullname.split(".")[1:])
+
+def custom_module_filter(module):
+    return module.split(".")[0]
+
+def patch_init(self, app):
+    AutosummaryRenderer.__original_init__(self, app)
+    self.env.filters["custom_fullname"] = custom_fullname_filter
+    self.env.filters["custom_module"] = custom_module_filter
+
+AutosummaryRenderer.__original_init__ = AutosummaryRenderer.__init__
+AutosummaryRenderer.__init__ = patch_init
