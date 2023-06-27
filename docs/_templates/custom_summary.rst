@@ -1,4 +1,4 @@
-{{ objname | escape | underline}}
+{{ fullname | escape | underline}}
 
 .. automodule:: {{ fullname }}
     :members:
@@ -55,7 +55,7 @@
 
 .. autosummary::
    :toctree:
-   :template: custom_template.rst
+   :template: custom_module.rst
    :recursive:
 {% for item in modules %}
    {{ item | custom_fullname }}

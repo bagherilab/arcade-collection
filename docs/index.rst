@@ -9,7 +9,7 @@ Module reference
 .. autosummary::
    :toctree: _summary
    :caption: Module reference
-   :template: custom_template.rst
+   :template: custom_summary.rst
    :recursive:
 
    arcade_collection.input
