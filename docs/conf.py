@@ -10,20 +10,21 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
+import importlib.metadata
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../src'))
+from datetime import datetime
 
-import sphinx_rtd_theme
+from sphinx.ext.autosummary.generate import AutosummaryRenderer
+
+sys.path.insert(0, os.path.abspath("../src"))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Container collection'
-copyright = 'YYYY, AUTHOR_NAME'
-author = 'AUTHOR_NAME'
-
-# The full version, including alpha/beta/rc tags
-release = 'VERSION NUMBER X.X.X'
+project = "ARCADE Collection"
+author = importlib.metadata.metadata("arcade-collection")["Author"]
+copyright = f"{datetime.now().year}, {author}, Bagheri Lab"
+release = importlib.metadata.version("arcade-collection")
 
 # -- General configuration ---------------------------------------------------
 
@@ -32,39 +33,62 @@ release = 'VERSION NUMBER X.X.X'
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
-    "sphinx_rtd_theme",
-    "sphinx_mdinclude",
+    "myst_parser",
+    "sphinx_copybutton",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # Decides whether module names are prepended to all object names.
 add_module_names = False
 
 # Default options for autodoc directives.
 autodoc_default_options = {
-    'member-order': 'bysource',
-    'undoc-members': True,
+    "member-order": "bysource",
+    "undoc-members": True,
 }
 
-# List of modules to be mocked up. Useful when some external dependencies are not met at build time and break the building process.
+# List of modules to be mocked up. Useful when some external dependencies are
+# not met at build time and break the building process.
 autodoc_mock_imports = []
+
+# Controls how to represent typehints.
+autodoc_typehints = "description"
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
+html_theme = "furo"
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# The name for this set of Sphinx documents.
+html_title = f"<strong>{project}</strong> <br />{release}"
+
+# -- Patch custom template filters -------------------------------------------
+
+
+def custom_fullname_filter(fullname):
+    return ".".join(fullname.split(".")[1:])
+
+
+def custom_module_filter(module):
+    return module.split(".")[0]
+
+
+def patch_init(self, app):
+    AutosummaryRenderer.__original_init__(self, app)
+    self.env.filters["custom_fullname"] = custom_fullname_filter
+    self.env.filters["custom_module"] = custom_module_filter
+
+
+AutosummaryRenderer.__original_init__ = AutosummaryRenderer.__init__
+AutosummaryRenderer.__init__ = patch_init
