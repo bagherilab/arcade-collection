@@ -1,7 +1,0 @@
-arcade_collection
-=================
-
-.. toctree::
-   :maxdepth: 4
-
-   arcade_collection

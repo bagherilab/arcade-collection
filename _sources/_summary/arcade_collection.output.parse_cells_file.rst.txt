@@ -1,0 +1,22 @@
+parse\_cells\_file
+==================
+
+.. automodule:: arcade_collection.output.parse_cells_file
+    :members:
+    :undoc-members:
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

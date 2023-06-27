@@ -1,7 +1,0 @@
-arcade\_collection.input.generate\_setup\_file module
-=====================================================
-
-.. automodule:: arcade_collection.input.generate_setup_file
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -1,7 +1,0 @@
-arcade\_collection.output.convert\_to\_images module
-====================================================
-
-.. automodule:: arcade_collection.output.convert_to_images
-   :members:
-   :undoc-members:
-   :show-inheritance:

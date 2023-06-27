@@ -1,7 +1,0 @@
-arcade\_collection.input.group\_template\_conditions module
-===========================================================
-
-.. automodule:: arcade_collection.input.group_template_conditions
-   :members:
-   :undoc-members:
-   :show-inheritance:

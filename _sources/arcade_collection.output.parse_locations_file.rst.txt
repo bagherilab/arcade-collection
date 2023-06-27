@@ -1,7 +1,0 @@
-arcade\_collection.output.parse\_locations\_file module
-=======================================================
-
-.. automodule:: arcade_collection.output.parse_locations_file
-   :members:
-   :undoc-members:
-   :show-inheritance:

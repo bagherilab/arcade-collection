@@ -1,0 +1,22 @@
+parse\_locations\_file
+======================
+
+.. automodule:: arcade_collection.output.parse_locations_file
+    :members:
+    :undoc-members:
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

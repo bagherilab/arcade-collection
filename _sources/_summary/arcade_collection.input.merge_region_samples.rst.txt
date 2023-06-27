@@ -1,0 +1,22 @@
+merge\_region\_samples
+======================
+
+.. automodule:: arcade_collection.input.merge_region_samples
+    :members:
+    :undoc-members:
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

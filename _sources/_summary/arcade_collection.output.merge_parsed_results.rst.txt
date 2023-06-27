@@ -1,0 +1,22 @@
+merge\_parsed\_results
+======================
+
+.. automodule:: arcade_collection.output.merge_parsed_results
+    :members:
+    :undoc-members:
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

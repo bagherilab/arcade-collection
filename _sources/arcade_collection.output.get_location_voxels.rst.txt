@@ -1,7 +1,0 @@
-arcade\_collection.output.get\_location\_voxels module
-======================================================
-
-.. automodule:: arcade_collection.output.get_location_voxels
-   :members:
-   :undoc-members:
-   :show-inheritance:

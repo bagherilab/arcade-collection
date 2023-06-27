@@ -1,0 +1,22 @@
+generate\_setup\_file
+=====================
+
+.. automodule:: arcade_collection.input.generate_setup_file
+    :members:
+    :undoc-members:
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

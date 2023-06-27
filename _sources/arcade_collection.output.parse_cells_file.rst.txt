@@ -1,7 +1,0 @@
-arcade\_collection.output.parse\_cells\_file module
-===================================================
-
-.. automodule:: arcade_collection.output.parse_cells_file
-   :members:
-   :undoc-members:
-   :show-inheritance:

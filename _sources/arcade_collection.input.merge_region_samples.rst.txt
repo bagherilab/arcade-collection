@@ -1,7 +1,0 @@
-arcade\_collection.input.merge\_region\_samples module
-======================================================
-
-.. automodule:: arcade_collection.input.merge_region_samples
-   :members:
-   :undoc-members:
-   :show-inheritance:

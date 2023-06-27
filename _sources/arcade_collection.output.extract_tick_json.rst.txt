@@ -1,7 +1,0 @@
-arcade\_collection.output.extract\_tick\_json module
-====================================================
-
-.. automodule:: arcade_collection.output.extract_tick_json
-   :members:
-   :undoc-members:
-   :show-inheritance:

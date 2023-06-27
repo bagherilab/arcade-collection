@@ -1,7 +1,0 @@
-arcade\_collection.input.convert\_to\_cells\_file module
-========================================================
-
-.. automodule:: arcade_collection.input.convert_to_cells_file
-   :members:
-   :undoc-members:
-   :show-inheritance:

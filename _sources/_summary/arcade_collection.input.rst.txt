@@ -1,0 +1,39 @@
+﻿arcade\_collection.input
+========================
+
+.. automodule:: arcade_collection.input
+    :members:
+    :undoc-members:
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+
+.. currentmodule:: arcade_collection
+
+.. autosummary::
+   :toctree:
+   :template: custom_module.rst
+   :recursive:
+
+   input.convert_to_cells_file
+   input.convert_to_locations_file
+   input.generate_setup_file
+   input.group_template_conditions
+   input.merge_region_samples
+
