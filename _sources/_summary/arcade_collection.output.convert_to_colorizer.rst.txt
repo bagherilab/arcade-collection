@@ -1,0 +1,22 @@
+convert\_to\_colorizer
+======================
+
+.. automodule:: arcade_collection.output.convert_to_colorizer
+    :members:
+    :undoc-members:
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
