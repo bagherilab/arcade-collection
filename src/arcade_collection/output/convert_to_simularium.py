@@ -1,6 +1,9 @@
+import random
 import tarfile
+from typing import Optional, Union
 
 import numpy as np
+import pandas as pd
 from simulariumio import (
     DISPLAY_TYPE,
     AgentData,
@@ -15,6 +18,7 @@ from simulariumio import (
 )
 
 from arcade_collection.output.extract_tick_json import extract_tick_json
+from arcade_collection.output.get_location_voxels import get_location_voxels
 
 
 def convert_to_simularium(
@@ -26,20 +30,27 @@ def convert_to_simularium(
     ds: float,
     dt: float,
     phase_colors: dict[str, str],
+    resolution: Optional[int] = None,
 ) -> str:
     length, width, height = box
     frames = list(np.arange(*frame_spec))
 
-    meta_data = get_meta_data(series_key, length, width, height, ds)
-    agent_data = get_agent_data(series_key, cells_data_tar, frames)
-    agent_data.display_data = get_display_data(phase_colors)
+    data = format_tar_data(series_key, cells_data_tar, locations_data_tar, frames, resolution)
 
-    for index, frame in enumerate(frames):
+    meta_data = get_meta_data(series_key, length, width, height, ds)
+    agent_data = get_agent_data(data)
+    agent_data.display_data = get_display_data(data, phase_colors)
+
+    for index, (frame, group) in enumerate(data.groupby("frame")):
+        n_agents = len(group)
         agent_data.times[index] = float(frame) * dt
-        convert_cells_tar(agent_data, cells_data_tar, series_key, frame, index)
-        convert_locations_tar(
-            agent_data, locations_data_tar, series_key, frame, index, length, width, height, ds
-        )
+        agent_data.n_agents[index] = n_agents
+        agent_data.unique_ids[index][:n_agents] = range(0, n_agents)
+        agent_data.types[index][:n_agents] = group["name"]
+        agent_data.radii[index][:n_agents] = group["radius"]
+        agent_data.positions[index][:n_agents, 0] = (group["x"] - length / 2.0) * ds
+        agent_data.positions[index][:n_agents, 1] = (width / 2.0 - group["y"]) * ds
+        agent_data.positions[index][:n_agents, 2] = (group["z"] - height / 2.0) * ds
 
     return TrajectoryConverter(
         TrajectoryData(
@@ -70,60 +81,133 @@ def get_meta_data(series_key: str, length: int, width: int, height: int, ds: flo
     return meta_data
 
 
-def get_agent_data(series_key: str, cells_tar: tarfile.TarFile, frames: list[int]) -> AgentData:
-    total_frames = len(frames)
-
-    max_agents = 0
-    for frame in frames:
-        cells = extract_tick_json(cells_tar, series_key, frame, "CELLS")
-        max_agents = max(max_agents, len(cells))
-
+def get_agent_data(data: pd.DataFrame) -> AgentData:
+    total_frames = len(data["frame"].unique())
+    max_agents = data.groupby("frame")["name"].count().max()
     return AgentData.from_dimensions(DimensionData(total_frames, max_agents))
 
 
-def get_display_data(phase_colors: dict[str, str]) -> DisplayData:
+def get_display_data(data: pd.DataFrame, phase_colors: dict[str, str]) -> DisplayData:
     display_data = {}
 
-    for phase, color in phase_colors.items():
-        display_data[phase] = DisplayData(name=phase, color=color, display_type=DISPLAY_TYPE.SPHERE)
+    for name in data["name"].unique():
+        _, cell_id, phase = name.split("#")
+
+        random.seed(cell_id)
+        jitter = (random.random() - 0.5) / 2
+
+        display_data[name] = DisplayData(
+            name=name,
+            display_type=DISPLAY_TYPE.SPHERE,
+            color=shade_color(phase_colors[phase], jitter),
+        )
 
     return display_data
 
 
-def convert_cells_tar(
-    data: AgentData,
-    tar: tarfile.TarFile,
+def format_tar_data(
     series_key: str,
-    frame: int,
-    index: int,
-) -> None:
-    cells = extract_tick_json(tar, series_key, frame, "CELLS")
-    data.n_agents[index] = len(cells)
+    cells_tar: tarfile.TarFile,
+    locs_tar: tarfile.TarFile,
+    frames: list[int],
+    resolution: Optional[int],
+) -> pd.DataFrame:
+    data: list[list[Union[int, str, float]]] = []
 
-    for i, cell in enumerate(cells):
-        data.unique_ids[index][i] = cell["id"]
-        data.types[index].append(cell["phase"])
-        data.radii[index][i] = (cell["voxels"] ** (1.0 / 3)) / 1.5
+    for frame in frames:
+        cells = extract_tick_json(cells_tar, series_key, frame, "CELLS")
+        locations = extract_tick_json(locs_tar, series_key, frame, "LOCATIONS")
+
+        for cell, location in zip(cells, locations):
+            regions = [loc["region"] for loc in location["location"]]
+
+            for region in regions:
+                name = f"{region}#{cell['id']}#{cell['phase']}"
+
+                all_voxels = get_location_voxels(location, region if region != "DEFAULT" else None)
+                all_voxels = [(x, y, z) for x, y, z in all_voxels]
+
+                if resolution is None:
+                    radius = (len(all_voxels) ** (1.0 / 3)) / 1.5
+                    center = list(np.array(all_voxels).mean(axis=0))
+                    data = data + [[name, int(frame), radius] + center]
+                else:
+                    radius = resolution / 2
+                    center_offset = (resolution - 1) / 2
+
+                    resolution_voxels = get_resolution_voxels(all_voxels, resolution)
+                    border_voxels = filter_border_voxels(set(resolution_voxels), resolution)
+                    center_voxels = [
+                        [x + center_offset, y + center_offset, z + center_offset]
+                        for x, y, z in border_voxels
+                    ]
+
+                    data = data + [[name, int(frame), radius] + voxel for voxel in center_voxels]
+
+    return pd.DataFrame(data, columns=["name", "frame", "radius", "x", "y", "z"])
 
 
-def convert_locations_tar(
-    data: AgentData,
-    tar: tarfile.TarFile,
-    series_key: str,
-    frame: int,
-    index: int,
-    length: int,
-    width: int,
-    height: int,
-    ds: float,
-) -> None:
-    locations = extract_tick_json(tar, series_key, frame, "LOCATIONS")
+def get_resolution_voxels(
+    voxels: list[tuple[int, int, int]], resolution: int
+) -> list[tuple[int, int, int]]:
+    df = pd.DataFrame(voxels, columns=["x", "y", "z"])
 
-    for i, location in enumerate(locations):
-        data.positions[index][i] = np.array(
-            [
-                (location["center"][0] - length / 2) * ds,
-                (width / 2 - location["center"][1]) * ds,
-                (location["center"][2] - height / 2) * ds,
-            ]
-        )
+    min_x, min_y, min_z = df.min()
+    max_x, max_y, max_z = df.max()
+
+    samples = [
+        (sx, sy, sz)
+        for sx in np.arange(min_x, max_x, resolution)
+        for sy in np.arange(min_y, max_y, resolution)
+        for sz in np.arange(min_z, max_z, resolution)
+    ]
+
+    offsets = [
+        (dx, dy, dz)
+        for dx in range(resolution)
+        for dy in range(resolution)
+        for dz in range(resolution)
+    ]
+
+    resolution_voxels = []
+
+    for sx, sy, sz in samples:
+        sample_voxels = [(sx + dx, sy + dy, sz + dz) for dx, dy, dz in offsets]
+
+        if len(set(sample_voxels) - set(voxels)) < len(offsets) / 2:
+            resolution_voxels.append((sx, sy, sz))
+
+    return resolution_voxels
+
+
+def filter_border_voxels(
+    voxels: set[tuple[int, int, int]], resolution: int
+) -> list[tuple[int, int, int]]:
+    offsets = [
+        (resolution, 0, 0),
+        (-resolution, 0, 0),
+        (0, resolution, 0),
+        (0, -resolution, 0),
+        (0, 0, resolution),
+        (0, 0, -resolution),
+    ]
+    filtered_voxels = []
+
+    for x, y, z in voxels:
+        neighbors = [(x + dx, y + dy, z + dz) for dx, dy, dz in offsets]
+        if len(set(neighbors) - set(voxels)) != 0:
+            filtered_voxels.append((x, y, z))
+
+    return filtered_voxels
+
+
+def shade_color(color: str, alpha: float) -> str:
+    old_color = color.replace("#", "")
+    old_red, old_green, old_blue = [int(old_color[i : i + 2], 16) for i in (0, 2, 4)]
+    layer_color = 0 if alpha < 0 else 255
+
+    new_red = round(old_red + (layer_color - old_red) * abs(alpha))
+    new_green = round(old_green + (layer_color - old_green) * abs(alpha))
+    new_blue = round(old_blue + (layer_color - old_blue) * abs(alpha))
+
+    return f"#{new_red:02x}{new_green:02x}{new_blue:02x}"
