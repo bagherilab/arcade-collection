@@ -14,8 +14,9 @@ def convert_to_images(
     regions: list[str],
     box: tuple[int, int, int],
     chunk_size: int,
-    binary: bool,
-    separate: bool,
+    binary: bool = False,
+    separate: bool = False,
+    flatten: bool = False,
 ) -> list[tuple[int, int, np.ndarray, Optional[int]]]:
     length, width, height = box
     frames = list(np.arange(*frame_spec))
@@ -40,7 +41,13 @@ def convert_to_images(
 
                 array[index, channel][tuple(np.transpose(voxels))] = 1 if binary else location_id
 
-    if separate:
+    if separate and flatten:
+        chunks = [
+            (i, j, flatten_array_chunk(chunk), frame)
+            for index, frame in enumerate(frames)
+            for i, j, chunk in split_array_chunks(array[[index], :, :, :, :], chunk_size)
+        ]
+    elif separate:
         chunks = [
             (i, j, chunk, frame)
             for index, frame in enumerate(frames)
@@ -83,3 +90,15 @@ def split_array_chunks(array: np.ndarray, chunk_size: int) -> list[tuple[int, in
                 chunks.append((i, j, chunk))
 
     return chunks
+
+
+def flatten_array_chunk(array: np.ndarray) -> np.ndarray:
+    array_flat = array[0, 0, :, :, :].max(axis=0)
+
+    array_rgba = np.zeros((*array_flat.shape, 4), dtype=np.uint8)
+    array_rgba[:, :, 0] = (array_flat & 0x000000FF) >> 0
+    array_rgba[:, :, 1] = (array_flat & 0x0000FF00) >> 8
+    array_rgba[:, :, 2] = (array_flat & 0x00FF0000) >> 16
+    array_rgba[:, :, 3] = 255  # (array_flat & 0x00FF0000) >> 24
+
+    return array_rgba
