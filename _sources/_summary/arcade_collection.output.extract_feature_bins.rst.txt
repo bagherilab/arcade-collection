@@ -1,0 +1,22 @@
+extract\_feature\_bins
+======================
+
+.. automodule:: arcade_collection.output.extract_feature_bins
+    :members:
+    :undoc-members:
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

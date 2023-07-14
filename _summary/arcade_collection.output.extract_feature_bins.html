@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="get_location_voxels" href="arcade_collection.output.get_location_voxels.html" /><link rel="prev" title="extract_feature_bins" href="arcade_collection.output.extract_feature_bins.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="extract_tick_json" href="arcade_collection.output.extract_tick_json.html" /><link rel="prev" title="convert_to_simularium" href="arcade_collection.output.convert_to_simularium.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>extract_tick_json - ARCADE Collection 0.8.1</title>
+        <title>extract_feature_bins - ARCADE Collection 0.8.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -171,8 +171,8 @@
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.convert_to_simularium.html">convert_to_simularium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.extract_feature_bins.html">extract_feature_bins</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">extract_tick_json</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">extract_feature_bins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
@@ -222,22 +222,38 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-arcade_collection.output.extract_tick_json">
-<span id="extract-tick-json"></span><h1>extract_tick_json<a class="headerlink" href="#module-arcade_collection.output.extract_tick_json" title="Permalink to this heading">#</a></h1>
+          <section id="module-arcade_collection.output.extract_feature_bins">
+<span id="extract-feature-bins"></span><h1>extract_feature_bins<a class="headerlink" href="#module-arcade_collection.output.extract_feature_bins" title="Permalink to this heading">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="arcade_collection.output.extract_tick_json.extract_tick_json">
-<span class="sig-name descname"><span class="pre">extract_tick_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tick</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arcade_collection/output/extract_tick_json.html#extract_tick_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.extract_tick_json.extract_tick_json" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="arcade_collection.output.extract_feature_bins.extract_feature_bins">
+<span class="sig-name descname"><span class="pre">extract_feature_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_tars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arcade_collection/output/extract_feature_bins.html#extract_feature_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.extract_feature_bins.extract_feature_bins" title="Permalink to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tar</strong> (<em>TarFile</em>) – </p></li>
-<li><p><strong>key</strong> (<em>str</em>) – </p></li>
-<li><p><strong>tick</strong> (<em>int</em>) – </p></li>
-<li><p><strong>extension</strong> (<em>str</em>) – </p></li>
+<li><p><strong>data_tars</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>tarfile.TarFile</em><em>]</em>) – </p></li>
+<li><p><strong>frame</strong> (<em>int</em>) – </p></li>
+<li><p><strong>scale</strong> (<em>float</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list[dict]</p>
+<dd class="field-even"><p><em>DataFrame</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arcade_collection.output.extract_feature_bins.bin_to_hex">
+<span class="sig-name descname"><span class="pre">bin_to_hex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arcade_collection/output/extract_feature_bins.html#bin_to_hex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.extract_feature_bins.bin_to_hex" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coordinates</strong> (<em>list</em><em>[</em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>values</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>int</em><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>scale</strong> (<em>float</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[tuple[float, float], list[list[int]]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -249,23 +265,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="arcade_collection.output.get_location_voxels.html">
+          <a class="next-page" href="arcade_collection.output.extract_tick_json.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">get_location_voxels</div>
+                <div class="title">extract_tick_json</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="arcade_collection.output.extract_feature_bins.html">
+          <a class="prev-page" href="arcade_collection.output.convert_to_simularium.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">extract_feature_bins</div>
+                <div class="title">convert_to_simularium</div>
                 
               </div>
             </a>
@@ -299,8 +315,9 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">extract_tick_json</a><ul>
-<li><a class="reference internal" href="#arcade_collection.output.extract_tick_json.extract_tick_json"><code class="docutils literal notranslate"><span class="pre">extract_tick_json()</span></code></a></li>
+<li><a class="reference internal" href="#">extract_feature_bins</a><ul>
+<li><a class="reference internal" href="#arcade_collection.output.extract_feature_bins.extract_feature_bins"><code class="docutils literal notranslate"><span class="pre">extract_feature_bins()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.output.extract_feature_bins.bin_to_hex"><code class="docutils literal notranslate"><span class="pre">bin_to_hex()</span></code></a></li>
 </ul>
 </li>
 </ul>
