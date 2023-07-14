@@ -1,3 +1,13 @@
+# [v0.9.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.9.0) - 2023-07-14
+
+> Compare with [v0.8.1](https://github.com/bagherilab/arcade-collection/compare/v0.8.1...v0.9.0)
+
+### Features
+
+- Add resolution to convert to simularium task by [@jessicasyu](https://github.com/jessicasyu) in [#44](https://github.com/bagherilab/arcade-collection/pull/44)
+- Add task for converting to colorizer format by [@jessicasyu](https://github.com/jessicasyu) in [#45](https://github.com/bagherilab/arcade-collection/pull/45)
+- Add extract feature bins task by [@jessicasyu](https://github.com/jessicasyu) in [#46](https://github.com/bagherilab/arcade-collection/pull/46)
+
 # [v0.8.1](https://github.com/bagherilab/arcade-collection/releases/tag/v0.8.1) - 2023-06-29
 
 > Compare with [v0.8.0](https://github.com/bagherilab/arcade-collection/compare/v0.8.0...v0.8.1)
