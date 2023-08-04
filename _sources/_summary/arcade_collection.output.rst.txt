@@ -36,7 +36,6 @@
    output.convert_to_images
    output.convert_to_meshes
    output.convert_to_simularium
-   output.extract_feature_bins
    output.extract_tick_json
    output.get_location_voxels
    output.merge_parsed_results
