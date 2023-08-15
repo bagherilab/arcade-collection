@@ -1,8 +1,8 @@
 {{ objname | escape | underline}}
 
 .. automodule:: {{ fullname }}
-    :members:
-    :undoc-members:
+   :members:
+   :undoc-members:
 
    {% block attributes %}
    {% if attributes %}

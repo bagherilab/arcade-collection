@@ -62,7 +62,7 @@ autodoc_default_options = {
 autodoc_mock_imports = []
 
 # Controls how to represent typehints.
-autodoc_typehints = "description"
+autodoc_typehints = "signature"
 
 # -- Options for HTML output -------------------------------------------------
 
