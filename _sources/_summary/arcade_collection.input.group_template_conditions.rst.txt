@@ -2,8 +2,8 @@ group\_template\_conditions
 ===========================
 
 .. automodule:: arcade_collection.input.group_template_conditions
-    :members:
-    :undoc-members:
+   :members:
+   :undoc-members:
 
    
    

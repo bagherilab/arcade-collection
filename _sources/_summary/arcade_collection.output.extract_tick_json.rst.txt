@@ -2,8 +2,8 @@ extract\_tick\_json
 ===================
 
 .. automodule:: arcade_collection.output.extract_tick_json
-    :members:
-    :undoc-members:
+   :members:
+   :undoc-members:
 
    
    

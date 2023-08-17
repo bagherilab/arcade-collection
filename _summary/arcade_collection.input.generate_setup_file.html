@@ -225,52 +225,37 @@
 <span id="generate-setup-file"></span><h1>generate_setup_file<a class="headerlink" href="#module-arcade_collection.input.generate_setup_file" title="Permalink to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.generate_setup_file.generate_setup_file">
-<span class="sig-name descname"><span class="pre">generate_setup_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">potts_terms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arcade_collection/input/generate_setup_file.html#generate_setup_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.generate_setup_file.generate_setup_file" title="Permalink to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>samples</strong> (<em>DataFrame</em>) – </p></li>
-<li><p><strong>margins</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>]</em>) – </p></li>
-<li><p><strong>potts_terms</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">generate_setup_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">potts_terms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/generate_setup_file.html#generate_setup_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.generate_setup_file.generate_setup_file" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.generate_setup_file.calculate_sample_bounds">
-<span class="sig-name descname"><span class="pre">calculate_sample_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arcade_collection/input/generate_setup_file.html#calculate_sample_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.generate_setup_file.calculate_sample_bounds" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">calculate_sample_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/generate_setup_file.html#calculate_sample_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.generate_setup_file.calculate_sample_bounds" title="Permalink to this definition">#</a></dt>
 <dd><p>Calculate transformed sample bounds including margin.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>samples</strong> (<em>DataFrame</em>) – Sample cell ids and coordinates.</p></li>
-<li><p><strong>margins</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>]</em>) – Margin size in x, y, and z directions.</p></li>
+<li><p><strong>samples</strong> – Sample cell ids and coordinates.</p></li>
+<li><p><strong>margins</strong> – Margin size in x, y, and z directions.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Bounds in x, y, and z directions.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple[int, int, int]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.generate_setup_file.make_setup_file">
-<span class="sig-name descname"><span class="pre">make_setup_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/arcade_collection/input/generate_setup_file.html#make_setup_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.generate_setup_file.make_setup_file" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">make_setup_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/generate_setup_file.html#make_setup_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.generate_setup_file.make_setup_file" title="Permalink to this definition">#</a></dt>
 <dd><p>Create ARCADE setup file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>init</strong> (<em>int</em>) – Number of initial cells.</p></li>
-<li><p><strong>bounds</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>]</em>) – Bounds in x, y, and z directions.</p></li>
-<li><p><strong>regions</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – List of regions.</p></li>
-<li><p><strong>terms</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Potts Hamiltonian terms for setup file.</p></li>
+<li><p><strong>init</strong> – Number of initial cells.</p></li>
+<li><p><strong>bounds</strong> – Bounds in x, y, and z directions.</p></li>
+<li><p><strong>regions</strong> – List of regions.</p></li>
+<li><p><strong>terms</strong> – List of Potts Hamiltonian terms for setup file.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

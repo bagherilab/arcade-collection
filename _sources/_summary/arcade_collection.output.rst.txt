@@ -2,8 +2,8 @@
 =========================
 
 .. automodule:: arcade_collection.output
-    :members:
-    :undoc-members:
+   :members:
+   :undoc-members:
 
    
    

@@ -2,8 +2,8 @@ convert\_to\_locations\_file
 ============================
 
 .. automodule:: arcade_collection.input.convert_to_locations_file
-    :members:
-    :undoc-members:
+   :members:
+   :undoc-members:
 
    
    

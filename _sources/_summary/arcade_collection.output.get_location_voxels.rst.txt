@@ -2,8 +2,8 @@ get\_location\_voxels
 =====================
 
 .. automodule:: arcade_collection.output.get_location_voxels
-    :members:
-    :undoc-members:
+   :members:
+   :undoc-members:
 
    
    

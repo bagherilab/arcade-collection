@@ -2,8 +2,8 @@ convert\_to\_images
 ===================
 
 .. automodule:: arcade_collection.output.convert_to_images
-    :members:
-    :undoc-members:
+   :members:
+   :undoc-members:
 
    
    
