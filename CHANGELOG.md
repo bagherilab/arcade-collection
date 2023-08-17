@@ -1,3 +1,19 @@
+# [v0.9.1](https://github.com/bagherilab/arcade-collection/releases/tag/v0.9.1) - 2023-08-17
+
+> Compare with [v0.9.0](https://github.com/bagherilab/arcade-collection/compare/v0.9.0...v0.9.1)
+
+### Bug fixes
+
+- Remove extract feature bins task by [@jessicasyu](https://github.com/jessicasyu) in [#48](https://github.com/bagherilab/arcade-collection/pull/48)
+
+### Documentation
+
+- Add module docstrings by [@jessicasyu](https://github.com/jessicasyu) in [#49](https://github.com/bagherilab/arcade-collection/pull/49)
+
+### Admin
+
+- Update publish workflow to use trusted publisher by [@jessicasyu](https://github.com/jessicasyu) in [#50](https://github.com/bagherilab/arcade-collection/pull/50)
+
 # [v0.9.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.9.0) - 2023-07-14
 
 > Compare with [v0.8.1](https://github.com/bagherilab/arcade-collection/compare/v0.8.1...v0.9.0)
