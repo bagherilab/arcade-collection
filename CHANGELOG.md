@@ -1,3 +1,11 @@
+# [v0.9.2](https://github.com/bagherilab/arcade-collection/releases/tag/v0.9.2) - 2023-08-18
+
+> Compare with [v0.9.1](https://github.com/bagherilab/arcade-collection/compare/v0.9.1...v0.9.2)
+
+### Admin
+
+- Update workflow permissions and badges by [@jessicasyu](https://github.com/jessicasyu) in [#52](https://github.com/bagherilab/arcade-collection/pull/52)
+
 # [v0.9.1](https://github.com/bagherilab/arcade-collection/releases/tag/v0.9.1) - 2023-08-17
 
 > Compare with [v0.9.0](https://github.com/bagherilab/arcade-collection/compare/v0.9.0...v0.9.1)
