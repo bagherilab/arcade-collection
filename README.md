@@ -1,5 +1,5 @@
-[![Build Status](https://bagherilab.github.io/arcade-collection/_badges/build.svg)](https://github.com/bagherilab/arcade-collection/actions?query=workflow%3Abuild)
-[![Lint Status](https://bagherilab.github.io/arcade-collection/_badges/lint.svg)](https://github.com/bagherilab/arcade-collection/actions?query=workflow%3Alint)
+[![Build status](https://bagherilab.github.io/arcade-collection/_badges/build.svg)](https://github.com/bagherilab/arcade-collection/actions?query=workflow%3Abuild)
+[![Lint status](https://bagherilab.github.io/arcade-collection/_badges/lint.svg)](https://github.com/bagherilab/arcade-collection/actions?query=workflow%3Alint)
 [![Documentation](https://bagherilab.github.io/arcade-collection/_badges/documentation.svg)](https://bagherilab.github.io/arcade-collection/)
 [![Coverage](https://bagherilab.github.io/arcade-collection/_badges/coverage.svg)](https://bagherilab.github.io/arcade-collection/_coverage/)
 [![Code style](https://bagherilab.github.io/arcade-collection/_badges/style.svg)](https://github.com/psf/black)
