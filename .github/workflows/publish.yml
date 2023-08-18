@@ -96,7 +96,7 @@ jobs:
         file: docs/_badges/version.svg
         label: version
         value: ${{ env.RELEASE_VERSION }}
-        color: steelblue
+        color: teal
         template: docs/_badges/template.svg
         overwrite: true
 

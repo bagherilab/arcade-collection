@@ -85,7 +85,7 @@ jobs:
       uses: knightdave/anybadge-action@v1.1.0
       with:
         file: docs/_badges/documentation.svg
-        label: documentation
+        label: docs
         value: passing
         color: green
         template: docs/_badges/template.svg
@@ -96,7 +96,7 @@ jobs:
       uses: knightdave/anybadge-action@v1.1.0
       with:
         file: docs/_badges/documentation.svg
-        label: documentation
+        label: docs
         value: failing
         color: red
         template: docs/_badges/template.svg
