@@ -73,6 +73,15 @@ jobs:
         template: docs/_badges/template.svg
         overwrite: true
 
+    - name: Publish badge
+      if: ${{ github.ref == 'refs/heads/main' && matrix.python-version == '3.10' }}
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages
+        folder: docs/_badges
+        target-folder: _badges
+        clean: false
+
   result:
     if: ${{ always() }}
 
