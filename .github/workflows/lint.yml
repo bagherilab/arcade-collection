@@ -53,3 +53,34 @@ jobs:
       run: |
         source .venv/bin/activate
         mypy src
+
+    - name: Generate passing badge
+      if: success()
+      uses: knightdave/anybadge-action@v1.1.0
+      with:
+        file: docs/_badges/lint.svg
+        label: lint
+        value: passing
+        color: green
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Generate failing badge
+      if: failure()
+      uses: knightdave/anybadge-action@v1.1.0
+      with:
+        file: docs/_badges/lint.svg
+        label: lint
+        value: failing
+        color: red
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Publish badge
+      if: success() || failure()
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages
+        folder: docs/_badges
+        target-folder: _badges
+        clean: false

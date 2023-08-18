@@ -45,11 +45,61 @@ jobs:
     - name: Test with pytest
       run: |
         source .venv/bin/activate
-        pytest --cov-report xml --cov=src/ tests/
+        pytest --cov-report html --cov=src/ tests/
+        rm htmlcov/.gitignore
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+    - name: Publish coverage report
+      if: ${{ github.ref == 'refs/heads/main' && matrix.python-version == '3.10' }}
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage.xml
-        verbose: true
+        branch: gh-pages
+        folder: htmlcov
+        target-folder: _coverage
+
+    - name: Extract coverage percent
+      if: ${{ github.ref == 'refs/heads/main' && matrix.python-version == '3.10' }}
+      run: |
+        echo "COVERAGE=$(grep -oP 'pc_cov">\K([0-9]+)' htmlcov/index.html)" >> $GITHUB_ENV
+
+    - name: Generate coverage badge
+      if: ${{ github.ref == 'refs/heads/main' && matrix.python-version == '3.10' }}
+      uses: knightdave/anybadge-action@v1.1.0
+      with:
+        file: docs/_badges/coverage.svg
+        label: coverage
+        value: ${{ env.COVERAGE }}
+        value_format: "%d%%"
+        anybadge_args: 50=red 60=orange 80=yellow 100=green
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Generate passing badge
+      if: success()
+      uses: knightdave/anybadge-action@v1.1.0
+      with:
+        file: docs/_badges/build.svg
+        label: build
+        value: passing
+        color: green
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Generate failing badge
+      if: failure()
+      uses: knightdave/anybadge-action@v1.1.0
+      with:
+        file: docs/_badges/build.svg
+        label: build
+        value: failing
+        color: red
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Publish badge
+      if: success() || failure()
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages
+        folder: docs/_badges
+        target-folder: _badges
+        clean: false
