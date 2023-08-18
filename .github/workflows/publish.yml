@@ -88,3 +88,23 @@ jobs:
 
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@release/v1
+
+    - name: Generate version badge
+      if: success()
+      uses: knightdave/anybadge-action@v1.1.0
+      with:
+        file: docs/_badges/version.svg
+        label: version
+        value: ${{ env.RELEASE_VERSION }}
+        color: steelblue
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Publish badge
+      if: success()
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages
+        folder: docs/_badges
+        target-folder: _badges
+        clean: false
