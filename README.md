@@ -1,8 +1,10 @@
-[![Build Status](https://github.com/bagherilab/arcade-collection/workflows/build/badge.svg)](https://github.com/bagherilab/arcade-collection/actions?query=workflow%3Abuild)
-[![Codecov](https://img.shields.io/codecov/c/gh/bagherilab/arcade-collection?token=OXH1XGZOCI)](https://codecov.io/gh/bagherilab/arcade-collection)
-[![Lint Status](https://github.com/bagherilab/arcade-collection/workflows/lint/badge.svg)](https://github.com/bagherilab/arcade-collection/actions?query=workflow%3Alint)
-[![Documentation](https://github.com/bagherilab/arcade-collection/workflows/documentation/badge.svg)](https://bagherilab.github.io/arcade-collection/)
-[![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Build Status](https://bagherilab.github.io/arcade-collection/_badges/build.svg)](https://github.com/bagherilab/arcade-collection/actions?query=workflow%3Abuild)
+[![Lint Status](https://bagherilab.github.io/arcade-collection/_badges/lint.svg)](https://github.com/bagherilab/arcade-collection/actions?query=workflow%3Alint)
+[![Documentation](https://bagherilab.github.io/arcade-collection/_badges/documentation.svg)](https://bagherilab.github.io/arcade-collection/)
+[![Coverage](https://bagherilab.github.io/arcade-collection/_badges/coverage.svg)](https://bagherilab.github.io/arcade-collection/_coverage/)
+[![Code style](https://bagherilab.github.io/arcade-collection/_badges/style.svg)](https://github.com/psf/black)
+[![Version](https://bagherilab.github.io/arcade-collection/_badges/version.svg)](https://pypi.org/project/arcade-collection/)
+[![License](https://bagherilab.github.io/arcade-collection/_badges/license.svg)](https://github.com/bagherilab/arcade-collection/blob/main/LICENSE)
 
 Collection of tasks for working with ARCADE.
 Designed to be used both in [Prefect](https://docs.prefect.io/latest/) workflows and as modular, useful pieces of code.
