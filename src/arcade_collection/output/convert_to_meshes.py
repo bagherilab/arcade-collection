@@ -28,7 +28,7 @@ def convert_to_meshes(
 
             for region in regions:
                 voxels = [
-                    (x, width - y, z)
+                    (x, width - y - 1, z)
                     for x, y, z in get_location_voxels(
                         location, region if region != "DEFAULT" else None
                     )
