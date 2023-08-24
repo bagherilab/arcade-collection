@@ -31,6 +31,7 @@ def convert_to_simularium(
     dt: float,
     phase_colors: dict[str, str],
     resolution: Optional[int] = None,
+    url: Optional[str] = None,
 ) -> str:
     length, width, height = box
     frames = list(np.arange(*frame_spec))
@@ -39,7 +40,7 @@ def convert_to_simularium(
 
     meta_data = get_meta_data(series_key, length, width, height, ds)
     agent_data = get_agent_data(data)
-    agent_data.display_data = get_display_data(data, phase_colors)
+    agent_data.display_data = get_display_data(series_key, data, phase_colors, url)
 
     for index, (frame, group) in enumerate(data.groupby("frame")):
         n_agents = len(group)
@@ -87,20 +88,30 @@ def get_agent_data(data: pd.DataFrame) -> AgentData:
     return AgentData.from_dimensions(DimensionData(total_frames, max_agents))
 
 
-def get_display_data(data: pd.DataFrame, phase_colors: dict[str, str]) -> DisplayData:
+def get_display_data(
+    series_key: str, data: pd.DataFrame, phase_colors: dict[str, str], url: Optional[str] = None
+) -> DisplayData:
     display_data = {}
 
     for name in data["name"].unique():
-        _, cell_id, phase = name.split("#")
+        region, cell_id, phase, frame = name.split("#")
 
         random.seed(cell_id)
         jitter = (random.random() - 0.5) / 2
 
-        display_data[name] = DisplayData(
-            name=name,
-            display_type=DISPLAY_TYPE.SPHERE,
-            color=shade_color(phase_colors[phase], jitter),
-        )
+        if url is not None:
+            display_data[name] = DisplayData(
+                name=cell_id,
+                display_type=DISPLAY_TYPE.OBJ,
+                url=f"{url}/{series_key}_{int(frame):06d}_{int(cell_id):06d}_{region}.MESH.obj",
+                color=shade_color(phase_colors[phase], jitter),
+            )
+        else:
+            display_data[name] = DisplayData(
+                name=cell_id,
+                display_type=DISPLAY_TYPE.SPHERE,
+                color=shade_color(phase_colors[phase], jitter),
+            )
 
     return display_data
 
@@ -122,15 +133,18 @@ def format_tar_data(
             regions = [loc["region"] for loc in location["location"]]
 
             for region in regions:
-                name = f"{region}#{cell['id']}#{cell['phase']}"
+                name = f"{region}#{cell['id']}#{cell['phase']}#"
 
                 all_voxels = get_location_voxels(location, region if region != "DEFAULT" else None)
-                all_voxels = [(x, y, z) for x, y, z in all_voxels]
 
                 if resolution is None:
                     radius = (len(all_voxels) ** (1.0 / 3)) / 1.5
                     center = list(np.array(all_voxels).mean(axis=0))
                     data = data + [[name, int(frame), radius] + center]
+                elif resolution == 0:
+                    radius = 1
+                    center = list(np.array(all_voxels).mean(axis=0))
+                    data = data + [[f"{name}{frame}", int(frame), radius] + center]
                 else:
                     radius = resolution / 2
                     center_offset = (resolution - 1) / 2
