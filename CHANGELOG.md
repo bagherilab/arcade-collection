@@ -1,3 +1,15 @@
+# [v0.10.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.10.0) - 2023-08-28
+
+> Compare with [v0.9.3](https://github.com/bagherilab/arcade-collection/compare/v0.9.3...v0.10.0)
+
+### Features
+
+- Update convert to simularium task to display meshes by [@jessicasyu](https://github.com/jessicasyu) in [#57](https://github.com/bagherilab/arcade-collection/pull/57)
+
+### Admin
+
+- Update build workflow to get results across matrix by [@jessicasyu](https://github.com/jessicasyu) in [#56](https://github.com/bagherilab/arcade-collection/pull/56)
+
 # [v0.9.3](https://github.com/bagherilab/arcade-collection/releases/tag/v0.9.3) - 2023-08-18
 
 > Compare with [v0.9.2](https://github.com/bagherilab/arcade-collection/compare/v0.9.2...v0.9.3)
