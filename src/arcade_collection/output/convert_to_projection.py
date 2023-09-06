@@ -20,7 +20,7 @@ def convert_to_projection(
     dt: float,
     scale: int,
 ) -> mpl.figure.Figure:
-    fig = plt.figure(figsize=(4, 4), constrained_layout=True)
+    fig = plt.figure(figsize=(10, 10), constrained_layout=True)
     length, width, height = box
 
     ax = fig.add_subplot()
