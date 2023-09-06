@@ -15,6 +15,7 @@ numpy = "^1.24.2"
 pandas = "^1.5.3"
 scikit-image = "^0.19.3"
 simulariumio = "^1.7.0"
+matplotlib = "^3.7.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
@@ -41,7 +42,7 @@ build-backend = "poetry.core.masonry.api"
 disable = [
     "missing-module-docstring",
 ]
-good-names = ["i", "j", "k", "x", "y", "z", "ds", "dt"]
+good-names = ["i", "j", "k", "x", "y", "z", "ds", "dt", "ax"]
 
 [tool.pylint.design]
 max-args = 10 # maximum number of arguments for function / method
@@ -56,6 +57,7 @@ namespace_packages = true
 
 [[tool.mypy.overrides]]
 module = [
+    "matplotlib.*",
     "pandas.*",
     "simulariumio.*",
     "skimage.*",
