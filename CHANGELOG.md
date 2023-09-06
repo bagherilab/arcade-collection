@@ -1,3 +1,15 @@
+# [v0.11.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.11.0) - 2023-09-06
+
+> Compare with [v0.10.0](https://github.com/bagherilab/arcade-collection/compare/v0.10.0...v0.11.0)
+
+### Features
+
+- Add task for converting to projection format by [@jessicasyu](https://github.com/jessicasyu) in [#59](https://github.com/bagherilab/arcade-collection/pull/59)
+
+### Bug fixes
+
+- Fix get location voxels return type by [@jessicasyu](https://github.com/jessicasyu) in [#60](https://github.com/bagherilab/arcade-collection/pull/60)
+
 # [v0.10.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.10.0) - 2023-08-28
 
 > Compare with [v0.9.3](https://github.com/bagherilab/arcade-collection/compare/v0.9.3...v0.10.0)
