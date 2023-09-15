@@ -1,5 +1,4 @@
 import unittest
-from math import sqrt
 
 from arcade_collection.convert.convert_to_simularium import convert_to_simularium
 
