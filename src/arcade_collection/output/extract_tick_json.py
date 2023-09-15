@@ -4,8 +4,12 @@ from typing import Optional, Union
 
 
 def extract_tick_json(
-    tar: tarfile.TarFile, key: str, tick: Union[int, float], extension: Optional[str] = None
-) -> Union[dict, list]:
+    tar: tarfile.TarFile,
+    key: str,
+    tick: Union[int, float],
+    extension: Optional[str] = None,
+    field: Optional[str] = None,
+) -> list:
     formatted_tick = f"_{tick:06d}" if isinstance(tick, int) else ""
 
     if extension is None:
@@ -17,6 +21,6 @@ def extract_tick_json(
     tick_json = json.loads(member.read().decode("utf-8"))
 
     if isinstance(tick, float):
-        tick_json = next(item for item in tick_json["timepoints"] if item["time"] == tick)
+        tick_json = next(item for item in tick_json["timepoints"] if item["time"] == tick)[field]
 
     return tick_json
