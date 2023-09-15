@@ -1,4 +1,4 @@
-"""Tasks for convert ARCADE files to other formats."""
+"""Tasks for converting ARCADE files to other formats."""
 
 from prefect import task
 
