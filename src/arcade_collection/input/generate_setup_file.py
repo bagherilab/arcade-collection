@@ -1,14 +1,12 @@
-from typing import List, Tuple, Optional
 import xml.etree.ElementTree as ET
+from typing import Optional
 
-from prefect import task
 import numpy as np
 import pandas as pd
 
 
-@task
 def generate_setup_file(
-    samples: pd.DataFrame, margins: Tuple[int, int, int], potts_terms: List[str]
+    samples: pd.DataFrame, margins: tuple[int, int, int], potts_terms: list[str]
 ) -> str:
     init = len(samples["id"].unique())
     bounds = calculate_sample_bounds(samples, margins)
@@ -18,8 +16,8 @@ def generate_setup_file(
 
 
 def calculate_sample_bounds(
-    samples: pd.DataFrame, margins: Tuple[int, int, int]
-) -> Tuple[int, int, int]:
+    samples: pd.DataFrame, margins: tuple[int, int, int]
+) -> tuple[int, int, int]:
     """
     Calculate transformed sample bounds including margin.
 
@@ -46,9 +44,9 @@ def calculate_sample_bounds(
 
 def make_setup_file(
     init: int,
-    bounds: Tuple[int, int, int],
-    terms: List[str],
-    regions: Optional[List[str]] = None,
+    bounds: tuple[int, int, int],
+    terms: list[str],
+    regions: Optional[list[str]] = None,
 ) -> str:
     """
     Create ARCADE setup file.

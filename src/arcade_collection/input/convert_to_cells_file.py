@@ -1,20 +1,16 @@
-from typing import List, Dict, Tuple
-
-from prefect import task
 import pandas as pd
 
 
-@task
 def convert_to_cells_file(
     samples: pd.DataFrame,
     reference: pd.DataFrame,
-    volume_distributions: Dict[str, tuple[float, float]],
-    height_distributions: Dict[str, tuple[float, float]],
-    critical_volume_distributions: Dict[str, tuple[float, float]],
-    critical_height_distributions: Dict[str, tuple[float, float]],
-    state_thresholds: Dict[str, float],
-) -> List[Dict]:
-    cells: List[Dict] = []
+    volume_distributions: dict[str, tuple[float, float]],
+    height_distributions: dict[str, tuple[float, float]],
+    critical_volume_distributions: dict[str, tuple[float, float]],
+    critical_height_distributions: dict[str, tuple[float, float]],
+    state_thresholds: dict[str, float],
+) -> list[dict]:
+    cells: list[dict] = []
     samples_by_id = samples.groupby("id")
 
     for i, (cell_id, group) in enumerate(samples_by_id):
@@ -39,11 +35,11 @@ def convert_to_cell(
     cell_id: int,
     samples: pd.DataFrame,
     reference: dict,
-    volume_distributions: Dict[str, tuple[float, float]],
-    height_distributions: Dict[str, tuple[float, float]],
-    critical_volume_distributions: Dict[str, tuple[float, float]],
-    critical_height_distributions: Dict[str, tuple[float, float]],
-    state_thresholds: Dict[str, float],
+    volume_distributions: dict[str, tuple[float, float]],
+    height_distributions: dict[str, tuple[float, float]],
+    critical_volume_distributions: dict[str, tuple[float, float]],
+    critical_height_distributions: dict[str, tuple[float, float]],
+    state_thresholds: dict[str, float],
 ) -> dict:
     """
     Convert samples to ARCADE .CELLS json format.
@@ -121,10 +117,10 @@ def convert_to_cell_region(
     region: str,
     region_samples: pd.DataFrame,
     reference: dict,
-    volume_distributions: Dict[str, tuple[float, float]],
-    height_distributions: Dict[str, tuple[float, float]],
-    critical_volume_distributions: Dict[str, tuple[float, float]],
-    critical_height_distributions: Dict[str, tuple[float, float]],
+    volume_distributions: dict[str, tuple[float, float]],
+    height_distributions: dict[str, tuple[float, float]],
+    critical_volume_distributions: dict[str, tuple[float, float]],
+    critical_height_distributions: dict[str, tuple[float, float]],
 ) -> dict:
     region_volume = len(region_samples)
     region_height = region_samples.z.max() - region_samples.z.min()
@@ -151,7 +147,7 @@ def convert_to_cell_region(
 def get_cell_state(
     volume: float,
     critical_volume: float,
-    threshold_fractions: Dict[str, float],
+    threshold_fractions: dict[str, float],
 ) -> str:
     """
     Estimates cell state based on cell volume.
@@ -187,8 +183,8 @@ def get_cell_state(
 
 def convert_value_distribution(
     value: float,
-    source_distribution: Tuple[float, float],
-    target_distribution: Tuple[float, float],
+    source_distribution: tuple[float, float],
+    target_distribution: tuple[float, float],
 ) -> float:
     """
     Estimates target value based on source value and source and target distributions.

@@ -1,10 +1,9 @@
-from typing import List, Union
 import json
 import tarfile
+from typing import Union
 
 import numpy as np
 import pandas as pd
-from prefect import task
 
 CELLS_COLUMNS = [
     "ID",
@@ -21,9 +20,8 @@ CELLS_COLUMNS = [
 ]
 
 
-@task
 def parse_locations_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFrame:
-    all_locations: List[List[Union[str, int]]] = []
+    all_locations: list[list[Union[str, int]]] = []
 
     for member in tar.getmembers():
         timepoint = int(member.name.replace(".LOCATIONS.json", "").split("_")[-1])

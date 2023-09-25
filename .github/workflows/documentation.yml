@@ -12,25 +12,101 @@ jobs:
     steps:
 
     - name: Checkout the repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.9
 
+    - name: Install poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v3
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+
     - name: Install dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: |
-        python -m pip install --upgrade pip
-        pip install Sphinx sphinx-rtd-theme sphinx-mdinclude
+        poetry install --no-interaction --no-root
+
+    - name: Install library
+      run: |
+        poetry install --no-interaction
 
     - name: Generate documentation with Sphinx
       run: |
+        source .venv/bin/activate
         make docs
         touch docs/_build/html/.nojekyll
 
     - name: Publish docs
-      uses: JamesIves/github-pages-deploy-action@4.1.4
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: gh-pages
-        folder: docs/_build/html/
+        folder: docs/_build/html
+        clean-exclude: |
+          _badges
+          _coverage
+
+    - name: Generate style badge
+      uses: knightdave/anybadge-action@v1.1.0
+      with:
+        file: docs/_badges/style.svg
+        label: code style
+        value: black
+        color: black
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Extract license
+      run: |
+        echo "LICENSE=$(grep -oP 'license = "\K([A-z-0-9]+)(?=")' pyproject.toml)" >> $GITHUB_ENV
+
+    - name: Generate license badge
+      uses: knightdave/anybadge-action@v1.1.0
+      with:
+        file: docs/_badges/license.svg
+        label: license
+        value: ${{ env.LICENSE }}
+        color: yellowgreen
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Generate passing badge
+      if: success()
+      uses: knightdave/anybadge-action@v1.1.0
+      with:
+        file: docs/_badges/documentation.svg
+        label: docs
+        value: passing
+        color: green
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Generate failing badge
+      if: failure()
+      uses: knightdave/anybadge-action@v1.1.0
+      with:
+        file: docs/_badges/documentation.svg
+        label: docs
+        value: failing
+        color: red
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Publish badge
+      if: success() || failure()
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages
+        folder: docs/_badges
+        target-folder: _badges
+        clean: false

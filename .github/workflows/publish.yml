@@ -8,15 +8,20 @@ on:
       - closed
 
 jobs:
-  release:
+  publish:
     if: ${{ (startsWith(github.event.pull_request.head.ref, 'release/')) && (github.event.pull_request.merged == true) }}
 
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: read
+
     steps:
 
     - name: Checkout the repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Extract version from branch name
       run: |
@@ -46,6 +51,10 @@ jobs:
               {
                 "title": "## 📓 Documentation",
                 "labels": ["type: docs"]
+              },
+              {
+                "title": "## 📁 Admin",
+                "labels": ["type: admin"]
               }
             ],
             "template": "#{{CHANGELOG}}---\n\n**Full Changelog**: https://github.com/${{ github.repository }}/compare/#{{FROM_TAG}}...${{ env.RELEASE_VERSION }}\n",
@@ -61,10 +70,9 @@ jobs:
         tag: ${{ env.RELEASE_VERSION }}
         name: ${{ env.RELEASE_VERSION }}
         body: ${{ steps.build_changelog.outputs.changelog }}
-        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.9
 
@@ -80,5 +88,23 @@ jobs:
 
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@release/v1
+
+    - name: Generate version badge
+      if: success()
+      uses: knightdave/anybadge-action@v1.1.0
       with:
-        password: ${{ secrets.PYPI_TOKEN }}
+        file: docs/_badges/version.svg
+        label: version
+        value: ${{ env.RELEASE_VERSION }}
+        color: teal
+        template: docs/_badges/template.svg
+        overwrite: true
+
+    - name: Publish badge
+      if: success()
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages
+        folder: docs/_badges
+        target-folder: _badges
+        clean: false
