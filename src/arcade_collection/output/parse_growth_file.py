@@ -1,7 +1,5 @@
 import json
-from os import path
 import tarfile
-from typing import List, Union
 
 import numpy as np
 import pandas as pd
@@ -20,6 +18,16 @@ GROWTH_COLUMNS = [
     "STATE",
     "VOLUME",
     "CYCLE",
+]
+
+CELL_STATES = [
+    "NEUTRAL",
+    "APOPTOTIC",
+    "QUIESCENT",
+    "MIGRATORY",
+    "PROLIFERATIVE",
+    "SENESCENT",
+    "NECROTIC",
 ]
 
 
@@ -56,26 +64,6 @@ def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
     return timepoints_df
 
 
-def convert_state_to_string(state_index: int, state_list: List[str]) -> Union[str, None]:
-    """
-    Convert the numbers that represent cell state into an annotation.
-
-    Parameters
-    ----------
-    state_index :
-        The index of cell states.
-    state_list :
-        The list of cell states.
-
-    Returns
-    -------
-    :
-        The cell state annotation.
-    """
-
-    return state_list[state_index]
-
-
 def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
     """
     Parse one timepoint of the simulation.
@@ -99,20 +87,16 @@ def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
     time = timepoint["time"]
 
     for (location, cells) in timepoint["cells"]:
-        u = int(location[0])
-        v = int(location[1])
-        w = int(location[2])
-        z = int(location[3])
+        u, v, w, z = location
 
         for cell in cells:
-            population = cell[1]
-            state = cell[2]
-            position = cell[3]
-            volume = cell[4]
-            if len(cell[5]) == 0:
+            _, population, state, position, volume, cycles = cell
+
+            if len(cycles) == 0:
                 cycle = None
             else:
-                cycle = np.mean(cell[5])
+                cycle = np.mean(cycles)
+
             data_list = [
                 time,
                 seed,
@@ -122,7 +106,7 @@ def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
                 z,
                 position,
                 population,
-                convert_state_to_string(state, ["NEU", "APO", "QUI", "MIG", "PRO", "SEN", "NEC"]),
+                CELL_STATES[state],
                 volume,
                 cycle,
             ]

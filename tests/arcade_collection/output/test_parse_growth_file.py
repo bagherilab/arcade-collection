@@ -67,22 +67,22 @@ class TestParseGrowthFile(unittest.TestCase):
             "POSITION": [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
             "POPULATION": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 2, 0],
             "STATE": [
-                "QUI",
-                "QUI",
-                "QUI",
-                "MIG",
-                "APO",
-                "PRO",
-                "QUI",
-                "MIG",
-                "QUI",
-                "QUI",
-                "QUI",
-                "MIG",
-                "APO",
-                "PRO",
-                "QUI",
-                "NEC",
+                "QUIESCENT",
+                "QUIESCENT",
+                "QUIESCENT",
+                "MIGRATORY",
+                "APOPTOTIC",
+                "PROLIFERATIVE",
+                "QUIESCENT",
+                "MIGRATORY",
+                "QUIESCENT",
+                "QUIESCENT",
+                "QUIESCENT",
+                "MIGRATORY",
+                "APOPTOTIC",
+                "PROLIFERATIVE",
+                "QUIESCENT",
+                "NECROTIC",
             ],
             "VOLUME": [
                 2322.26,
@@ -123,9 +123,4 @@ class TestParseGrowthFile(unittest.TestCase):
         }
 
         expected_df = pd.DataFrame(expected_dict)
-        print(returned_df)
-
-        print("-----")
-
-        print(expected_df)
         self.assertTrue(expected_df.equals(returned_df))
