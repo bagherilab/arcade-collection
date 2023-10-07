@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 from prefect import task
 
-
 GROWTH_COLUMNS = [
     "TICK",
     "SEED",

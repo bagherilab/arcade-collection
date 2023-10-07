@@ -1,10 +1,10 @@
 import tarfile
-
-import numpy as np
-import pandas as pd
 import unittest
 from unittest import mock
 from unittest.mock import mock_open
+
+import numpy as np
+import pandas as pd
 
 from arcade_collection.output.parse_growth_file import parse_growth_file
 
