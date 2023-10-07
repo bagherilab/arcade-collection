@@ -48,16 +48,17 @@ def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
     all_timepoints = []
     for member in tar.getmembers():
         extracted_member = tar.extractfile(member)
-        extracted_json = json.loads(extracted_member.read().decode("utf-8"))
-        seed = extracted_json["seed"]
+        if extracted_member is not None:
+            extracted_json = json.loads(extracted_member.read().decode("utf-8"))
+            seed = extracted_json["seed"]
 
-        all_timepoints.extend(
-            [
-                data
-                for timepoint in extracted_json["timepoints"]
-                for data in parse_growth_timepoint(timepoint, seed)
-            ]
-        )
+            all_timepoints.extend(
+                [
+                    data
+                    for timepoint in extracted_json["timepoints"]
+                    for data in parse_growth_timepoint(timepoint, seed)
+                ]
+            )
 
     timepoints_df = pd.DataFrame(all_timepoints, columns=GROWTH_COLUMNS)
     return timepoints_df
