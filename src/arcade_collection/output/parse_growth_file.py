@@ -31,56 +31,93 @@ CELL_STATES = [
 
 def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
     """
-    Parse the tumor growth tar file.
+    Parses a tumor growth simulation tar file.
 
     Parameters
     ----------
     tar :
-        Tar file of simulations.
+        Tar file of simulations for different seeds.
 
     Returns
     -------
     :
-        Data of all timepoints of all simulations in tar file.
+        Parsed simulation data for all seeds and timepoints.
     """
+
     all_timepoints = []
+
     for member in tar.getmembers():
         extracted_member = tar.extractfile(member)
-        if extracted_member is not None:
-            extracted_json = json.loads(extracted_member.read().decode("utf-8"))
-            seed = extracted_json["seed"]
+        assert extracted_member is not None
+        extracted_json = json.loads(extracted_member.read().decode("utf-8"))
 
-            all_timepoints.extend(
-                [
-                    data
-                    for timepoint in extracted_json["timepoints"]
-                    for data in parse_growth_timepoint(timepoint, seed)
-                ]
-            )
+        seed = extracted_json["seed"]
+        all_timepoints.extend(
+            [
+                data
+                for timepoint in extracted_json["timepoints"]
+                for data in parse_growth_timepoint(timepoint, seed)
+            ]
+        )
 
     timepoints_df = pd.DataFrame(all_timepoints, columns=GROWTH_COLUMNS)
+
     return timepoints_df
 
 
 def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
     """
-    Parse one timepoint of the simulation.
+    Parses a simulation timepoint into a list of features per cell.
 
-    The original data contains data of every timepoint at a seed in a
-    dictionary. The current data contains data of one cell per row, with tick,
-    seed, coordinates (u, v, w, z), position, population, state, volume, and
-    averaged cycle.
+    The original data contains cell features in the form:
+
+    .. code-block:: json
+
+        {
+            "time": time,
+            "cells": [
+                [
+                    [u, v, w, z],
+                    [
+                        [
+                            type,
+                            population,
+                            state,
+                            position,
+                            volume,
+                            [cell, cycle, lengths, ...]
+                        ],
+                        ...
+                    ]
+                ],
+                ...
+            ]
+        }
+
+    Parsed data is formatted into:
+
+    .. code-block:: json
+
+        [
+            [time, seed, u, v, w, z, position, population, state, volume, cycle],
+            [time, seed, u, v, w, z, position, population, state, volume, cycle],
+            ...
+        ]
+
+    Cell cycle length is `None` if the cell has not yet divided. Otherwise, cell
+    cycle is the average of all cell cycle lengths.
 
     Parameters
     ----------
     timepoint :
-        The data of one timepoint.
+        Data for a timepoint.
 
     Returns
     -------
     :
         Parsed data of the timepoint.
     """
+
     parsed_data = []
     time = timepoint["time"]
 
