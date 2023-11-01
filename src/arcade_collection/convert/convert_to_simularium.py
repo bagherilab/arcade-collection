@@ -109,9 +109,9 @@ def convert_to_simularium(
     agent_data.positions[:, :, 1] = (width / 2.0 - agent_data.positions[:, :, 1]) * ds
     agent_data.positions[:, :, 2] = (agent_data.positions[:, :, 2] - height / 2.0) * dz
 
-    agent_data.subpoints[:, :, 0::3] = (agent_data.subpoints[:, :, 0::3] - length / 2.0) * ds
-    agent_data.subpoints[:, :, 1::3] = (width / 2.0 - agent_data.subpoints[:, :, 1::3]) * ds
-    agent_data.subpoints[:, :, 2::3] = (agent_data.subpoints[:, :, 2::3] - height / 2.0) * dz
+    agent_data.subpoints[:, :, 0::3] = (agent_data.subpoints[:, :, 0::3]) * ds
+    agent_data.subpoints[:, :, 1::3] = (-agent_data.subpoints[:, :, 1::3]) * ds
+    agent_data.subpoints[:, :, 2::3] = (agent_data.subpoints[:, :, 2::3]) * dz
 
     return TrajectoryConverter(
         TrajectoryData(
