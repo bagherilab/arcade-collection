@@ -1,0 +1,22 @@
+parse\_growth\_file
+===================
+
+.. automodule:: arcade_collection.output.parse_growth_file
+   :members:
+   :undoc-members:
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

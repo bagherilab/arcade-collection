@@ -36,5 +36,6 @@
    output.get_location_voxels
    output.merge_parsed_results
    output.parse_cells_file
+   output.parse_growth_file
    output.parse_locations_file
 
