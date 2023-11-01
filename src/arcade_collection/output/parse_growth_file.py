@@ -3,7 +3,6 @@ import tarfile
 
 import numpy as np
 import pandas as pd
-from prefect import task
 
 GROWTH_COLUMNS = [
     "TICK",
@@ -30,7 +29,6 @@ CELL_STATES = [
 ]
 
 
-@task
 def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
     """
     Parse the tumor growth tar file.
