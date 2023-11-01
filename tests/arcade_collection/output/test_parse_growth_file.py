@@ -1,7 +1,6 @@
 import tarfile
 import unittest
 from unittest import mock
-from unittest.mock import mock_open
 
 import numpy as np
 import pandas as pd
@@ -38,7 +37,7 @@ class TestParseGrowthFile(unittest.TestCase):
         }
         tar_object.extractfile.side_effect = lambda fname, *args, **kwargs: mock_contents[fname]
 
-        returned_df = parse_growth_file.fn(tar_object)
+        returned_df = parse_growth_file(tar_object)
 
         expected_dict = {
             "TICK": [
