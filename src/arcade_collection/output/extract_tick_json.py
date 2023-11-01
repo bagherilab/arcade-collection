@@ -2,6 +2,8 @@ import json
 import tarfile
 from typing import Optional, Union
 
+import numpy as np
+
 
 def extract_tick_json(
     tar: tarfile.TarFile,
@@ -10,7 +12,7 @@ def extract_tick_json(
     extension: Optional[str] = None,
     field: Optional[str] = None,
 ) -> list:
-    formatted_tick = f"_{tick:06d}" if isinstance(tick, int) else ""
+    formatted_tick = f"_{tick:06d}" if isinstance(tick, (int, np.integer)) else ""
 
     if extension is None:
         member = tar.extractfile(f"{key}{formatted_tick}.json")
