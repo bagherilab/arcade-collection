@@ -5,6 +5,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Rectangle
+from skimage import measure
 
 from arcade_collection.output.extract_tick_json import extract_tick_json
 from arcade_collection.output.get_location_voxels import get_location_voxels
@@ -19,6 +20,7 @@ def convert_to_projection(
     ds: float,
     dt: float,
     scale: int,
+    colors: dict[str, str],
 ) -> mpl.figure.Figure:
     fig = plt.figure(figsize=(10, 10), constrained_layout=True)
     length, width, height = box
@@ -40,37 +42,24 @@ def convert_to_projection(
     ax_vert.set_xlim([0, height - 1])
     ax_vert.get_xaxis().set_ticks([])
 
+    ax.set_facecolor("#000")
+    ax_horz.set_facecolor("#000")
+    ax_vert.set_facecolor("#000")
+
     locations = extract_tick_json(data_tar, series_key, frame, "LOCATIONS")
 
-    if len(regions) == 1:
-        region = None if regions[0] == "DEFAULT" else regions[0]
+    for region in regions:
+        color = colors[region]
 
-        arr_1 = create_projection_array(locations, length, width, height, region)
-        ax.imshow(arr_1, cmap="bone", interpolation="none", vmin=0, vmax=1)
+        for location in locations:
+            for contour in get_array_contours(location, length, width, height, region):
+                ax.plot(contour[:, 0], contour[:, 1], linewidth=0.5, color=color, alpha=0.5)
 
-        arr_2 = create_projection_array(locations, length, width, height, region, (0, 2, 1))
-        ax_horz.imshow(arr_2, cmap="bone", interpolation="none", vmin=0, vmax=1)
+            for contour in get_array_contours(location, length, width, height, region, (0, 2, 1)):
+                ax_horz.plot(contour[:, 0], contour[:, 1], linewidth=0.5, color=color, alpha=0.5)
 
-        arr_3 = create_projection_array(locations, length, width, height, region, (2, 1, 0))
-        ax_vert.imshow(arr_3, cmap="bone", interpolation="none", vmin=0, vmax=1)
-    elif len(regions) == 2:
-        region_a = None if regions[0] == "DEFAULT" else regions[0]
-        region_b = None if regions[1] == "DEFAULT" else regions[1]
-
-        arr_a1 = create_projection_array(locations, length, width, height, region_a)
-        arr_b1 = create_projection_array(locations, length, width, height, region_b)
-        arr_1 = join_projection_arrays(arr_a1, arr_b1)
-        ax.imshow(arr_1, interpolation="none")
-
-        arr_a2 = create_projection_array(locations, length, width, height, region_a, (0, 2, 1))
-        arr_b2 = create_projection_array(locations, length, width, height, region_b, (0, 2, 1))
-        arr_2 = join_projection_arrays(arr_a2, arr_b2)
-        ax_horz.imshow(arr_2, interpolation="none")
-
-        arr_a3 = create_projection_array(locations, length, width, height, region_a, (2, 1, 0))
-        arr_b3 = create_projection_array(locations, length, width, height, region_b, (2, 1, 0))
-        arr_3 = join_projection_arrays(arr_a3, arr_b3)
-        ax_vert.imshow(arr_3, interpolation="none")
+            for contour in get_array_contours(location, length, width, height, region, (2, 1, 0)):
+                ax_vert.plot(contour[:, 0], contour[:, 1], linewidth=0.5, color=color, alpha=0.5)
 
     add_frame_timestamp(ax, length, width, dt, frame, "#ffffff")
     add_frame_scalebar(ax, length, width, ds, scale, "#ffffff")
@@ -78,61 +67,37 @@ def convert_to_projection(
     return fig
 
 
-def create_projection_array(
-    locations: list,
+def get_array_contours(
+    location: dict,
     length: int,
     width: int,
     height: int,
     region: Optional[str] = None,
     rotate: Optional[tuple[int, int, int]] = None,
-) -> np.ndarray:
+) -> list[np.ndarray]:
     array = np.zeros((length, width, height))
+    voxels = get_location_voxels(location, region)
 
-    for location in locations:
-        voxels = get_location_voxels(location, region)
+    if len(voxels) == 0:
+        return []
 
-        if len(voxels) == 0:
-            continue
-
-        array[tuple(np.transpose(voxels))] = location["id"]
+    array[tuple(np.transpose(voxels))] = 1
 
     if rotate is not None:
         array = np.moveaxis(array, [0, 1, 2], rotate)
         length, width, height = array.shape
 
-    borders = np.zeros((width, length))
+    contours: list[np.ndarray] = []
 
-    for i in range(length):
-        for j in range(width):
-            for k in range(height):
-                target = array[i][j][k]
+    for z in range(1, height):
+        array_slice = array[:, :, z]
 
-                if target != 0:
-                    neighbors = [
-                        1
-                        for ii in [-1, 0, 1]
-                        for jj in [-1, 0, 1]
-                        if array[i + ii][j + jj][k] == target
-                    ]
-                    borders[j][i] += 9 - sum(neighbors)
+        if np.sum(array_slice) == 0:
+            continue
 
-    normalize = borders.max()
-    borders = borders / normalize
+        contours = contours + measure.find_contours(array_slice)
 
-    return borders
-
-
-def join_projection_arrays(array_a: np.ndarray, array_b: np.ndarray) -> np.ndarray:
-    length, width = array_a.shape
-    array = np.zeros((length, width, 3))
-
-    array[:, :, 0] = array_a
-    array[:, :, 2] = array_a
-
-    array[:, :, 1] = array_b
-    array[:, :, 2] = np.maximum(array[:, :, 2], array_b)
-
-    return array
+    return contours
 
 
 def add_frame_timestamp(
@@ -159,7 +124,7 @@ def add_frame_scalebar(
 
     ax.add_patch(
         Rectangle(
-            (0.95 * length - scalebar, 0.92 * width),
+            (0.95 * length - scalebar, 0.94 * width),
             scalebar,
             0.01 * width,
             snap=True,
