@@ -1,3 +1,21 @@
+# [v0.12.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.12.0) - 2023-11-02
+
+> Compare with [v0.11.0](https://github.com/bagherilab/arcade-collection/compare/v0.11.0...v0.12.0)
+
+### Features
+
+- Update convert to simularium task for patch simulations by [@jessicasyu](https://github.com/jessicasyu) in [#63](https://github.com/bagherilab/arcade-collection/pull/63)
+- Update convert to projection task to use contours by [@jessicasyu](https://github.com/jessicasyu) in [#64](https://github.com/bagherilab/arcade-collection/pull/64)
+- Add parse growth file task by [@Isabelle-C](https://github.com/Isabelle-C) in [#14](https://github.com/bagherilab/arcade-collection/pull/14)
+
+### Documentation
+
+- Add convert tasks to module reference by [@jessicasyu](https://github.com/jessicasyu) in [#65](https://github.com/bagherilab/arcade-collection/pull/65)
+
+### Admin
+
+- Move convert tasks into convert package by [@jessicasyu](https://github.com/jessicasyu) in [#62](https://github.com/bagherilab/arcade-collection/pull/62)
+
 # [v0.11.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.11.0) - 2023-09-06
 
 > Compare with [v0.10.0](https://github.com/bagherilab/arcade-collection/compare/v0.10.0...v0.11.0)
