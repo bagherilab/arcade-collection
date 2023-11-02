@@ -12,6 +12,7 @@ Module reference
    :template: custom_summary.rst
    :recursive:
 
+   arcade_collection.convert
    arcade_collection.input
    arcade_collection.output
 
