@@ -71,7 +71,7 @@ def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
 
     The original data contains cell features in the form:
 
-    .. code-block:: json
+    .. code-block:: text
 
         {
             "time": time,
@@ -96,7 +96,7 @@ def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
 
     Parsed data is formatted into:
 
-    .. code-block:: json
+    .. code-block:: text
 
         [
             [time, seed, u, v, w, z, position, population, state, volume, cycle],
