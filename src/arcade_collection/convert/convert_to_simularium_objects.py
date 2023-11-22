@@ -59,4 +59,6 @@ def format_potts_for_objects(
                     name = f"{region}#{category}#{index}#{frame}"
                     data = data + [[name, int(frame), 1] + center + [[]]]
 
+            index_offset = index_offset + len(group_ids)
+
     return pd.DataFrame(data, columns=["name", "frame", "radius", "x", "y", "z", "points"])
