@@ -1,3 +1,11 @@
+# [v0.13.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.13.0) - 2023-11-30
+
+> Compare with [v0.12.0](https://github.com/bagherilab/arcade-collection/compare/v0.12.0...v0.13.0)
+
+### Features
+
+- Separate convert to simularium tasks for objects and shapes by [@jessicasyu](https://github.com/jessicasyu) in [#67](https://github.com/bagherilab/arcade-collection/pull/67)
+
 # [v0.12.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.12.0) - 2023-11-02
 
 > Compare with [v0.11.0](https://github.com/bagherilab/arcade-collection/compare/v0.11.0...v0.12.0)
