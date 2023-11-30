@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="parse_growth_file" href="arcade_collection.output.parse_growth_file.html" /><link rel="prev" title="merge_parsed_results" href="arcade_collection.output.merge_parsed_results.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="convert_to_simularium_shapes" href="arcade_collection.convert.convert_to_simularium_shapes.html" /><link rel="prev" title="convert_to_simularium" href="arcade_collection.convert.convert_to_simularium.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>parse_cells_file - ARCADE Collection 0.12.0</title>
+        <title>convert_to_simularium_objects - ARCADE Collection 0.12.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -157,13 +157,13 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Module reference</span></p>
 <ul class="current">
-<li class="toctree-l1 has-children"><a class="reference internal" href="arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="arcade_collection.convert.html">arcade_collection.convert</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_simularium.html">convert_to_simularium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_simularium_objects.html">convert_to_simularium_objects</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">convert_to_simularium_objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_simularium_shapes.html">convert_to_simularium_shapes</a></li>
 </ul>
 </li>
@@ -175,12 +175,12 @@
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.input.merge_region_samples.html">merge_region_samples</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="arcade_collection.output.html">arcade_collection.output</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of arcade_collection.output</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="arcade_collection.output.html">arcade_collection.output</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of arcade_collection.output</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">parse_cells_file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
 </ul>
@@ -228,16 +228,16 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-arcade_collection.output.parse_cells_file">
-<span id="parse-cells-file"></span><h1>parse_cells_file<a class="headerlink" href="#module-arcade_collection.output.parse_cells_file" title="Permalink to this heading">#</a></h1>
+          <section id="module-arcade_collection.convert.convert_to_simularium_objects">
+<span id="convert-to-simularium-objects"></span><h1>convert_to_simularium_objects<a class="headerlink" href="#module-arcade_collection.convert.convert_to_simularium_objects" title="Permalink to this heading">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="arcade_collection.output.parse_cells_file.parse_cells_file">
-<span class="sig-name descname"><span class="pre">parse_cells_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_cells_file.html#parse_cells_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_cells_file.parse_cells_file" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_objects.convert_to_simularium_objects">
+<span class="sig-name descname"><span class="pre">convert_to_simularium_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_objects.html#convert_to_simularium_objects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_objects.convert_to_simularium_objects" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="arcade_collection.output.parse_cells_file.parse_cell_timepoint">
-<span class="sig-name descname"><span class="pre">parse_cell_timepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timepoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_cells_file.html#parse_cell_timepoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_cells_file.parse_cell_timepoint" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_objects.format_potts_for_objects">
+<span class="sig-name descname"><span class="pre">format_potts_for_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_objects.html#format_potts_for_objects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_objects.format_potts_for_objects" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -247,23 +247,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="arcade_collection.output.parse_growth_file.html">
+          <a class="next-page" href="arcade_collection.convert.convert_to_simularium_shapes.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">parse_growth_file</div>
+                <div class="title">convert_to_simularium_shapes</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="arcade_collection.output.merge_parsed_results.html">
+          <a class="prev-page" href="arcade_collection.convert.convert_to_simularium.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">merge_parsed_results</div>
+                <div class="title">convert_to_simularium</div>
                 
               </div>
             </a>
@@ -297,9 +297,9 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">parse_cells_file</a><ul>
-<li><a class="reference internal" href="#arcade_collection.output.parse_cells_file.parse_cells_file"><code class="docutils literal notranslate"><span class="pre">parse_cells_file()</span></code></a></li>
-<li><a class="reference internal" href="#arcade_collection.output.parse_cells_file.parse_cell_timepoint"><code class="docutils literal notranslate"><span class="pre">parse_cell_timepoint()</span></code></a></li>
+<li><a class="reference internal" href="#">convert_to_simularium_objects</a><ul>
+<li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_objects.convert_to_simularium_objects"><code class="docutils literal notranslate"><span class="pre">convert_to_simularium_objects()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_objects.format_potts_for_objects"><code class="docutils literal notranslate"><span class="pre">format_potts_for_objects()</span></code></a></li>
 </ul>
 </li>
 </ul>

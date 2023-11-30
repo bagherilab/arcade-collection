@@ -36,4 +36,6 @@
    convert.convert_to_meshes
    convert.convert_to_projection
    convert.convert_to_simularium
+   convert.convert_to_simularium_objects
+   convert.convert_to_simularium_shapes
 

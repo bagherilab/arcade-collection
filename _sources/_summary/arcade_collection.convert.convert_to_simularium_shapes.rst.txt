@@ -1,0 +1,22 @@
+convert\_to\_simularium\_shapes
+===============================
+
+.. automodule:: arcade_collection.convert.convert_to_simularium_shapes
+   :members:
+   :undoc-members:
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

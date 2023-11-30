@@ -162,6 +162,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html">convert_to_simularium</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_objects.html">convert_to_simularium_objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html">convert_to_simularium_shapes</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.input.html">arcade_collection.input</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of arcade_collection.input</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -226,8 +228,10 @@
         <article role="main">
           <h1>Source code for arcade_collection.convert.convert_to_meshes</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">measure</span>
 
 <span class="kn">from</span> <span class="nn">arcade_collection.output.extract_tick_json</span> <span class="kn">import</span> <span class="n">extract_tick_json</span>
@@ -240,37 +244,120 @@
     <span class="n">frame_spec</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">regions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">box</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-    <span class="n">invert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">invert</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">group_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+
     <span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">frame_spec</span><span class="p">))</span>
     <span class="n">meshes</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">box</span>
 
+    <span class="k">if</span> <span class="n">group_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">make_mesh_groups</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">group_size</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
         <span class="n">locations</span> <span class="o">=</span> <span class="n">extract_tick_json</span><span class="p">(</span><span class="n">data_tar</span><span class="p">,</span> <span class="n">series_key</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;LOCATIONS&quot;</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">:</span>
-            <span class="n">location_id</span> <span class="o">=</span> <span class="n">location</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">:</span>
+            <span class="n">region_invert</span> <span class="o">=</span> <span class="n">invert</span><span class="p">[</span><span class="n">region</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">invert</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">invert</span>
 
-            <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">:</span>
-                <span class="n">voxels</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">get_location_voxels</span><span class="p">(</span>
-                        <span class="n">location</span><span class="p">,</span> <span class="n">region</span> <span class="k">if</span> <span class="n">region</span> <span class="o">!=</span> <span class="s2">&quot;DEFAULT&quot;</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">groups</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">:</span>
+                    <span class="n">location_id</span> <span class="o">=</span> <span class="n">location</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+                    <span class="n">mesh</span> <span class="o">=</span> <span class="n">make_individual_mesh</span><span class="p">(</span>
+                        <span class="n">location</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">region_invert</span>
                     <span class="p">)</span>
-                <span class="p">]</span>
 
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">voxels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">mesh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">continue</span>
 
-                <span class="n">center</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">voxels</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-                <span class="n">array</span> <span class="o">=</span> <span class="n">make_mesh_array</span><span class="p">(</span><span class="n">voxels</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
-                <span class="n">mesh</span> <span class="o">=</span> <span class="n">make_mesh_object</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">invert</span><span class="p">)</span>
+                    <span class="n">meshes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">frame</span><span class="p">,</span> <span class="n">location_id</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">mesh</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">[</span><span class="n">frame</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">group_locations</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">location</span> <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">locations</span> <span class="k">if</span> <span class="n">location</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">group</span>
+                    <span class="p">]</span>
+                    <span class="n">mesh</span> <span class="o">=</span> <span class="n">make_combined_mesh</span><span class="p">(</span>
+                        <span class="n">group_locations</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">region_invert</span>
+                    <span class="p">)</span>
 
-                <span class="n">meshes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">frame</span><span class="p">,</span> <span class="n">location_id</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">mesh</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">mesh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">meshes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">frame</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">mesh</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">meshes</span></div>
+
+
+<div class="viewcode-block" id="make_mesh_groups"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html#arcade_collection.convert.convert_to_meshes.make_mesh_groups">[docs]</a><span class="k">def</span> <span class="nf">make_mesh_groups</span><span class="p">(</span>
+    <span class="n">categories</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">group_size</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+    <span class="n">groups</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+        <span class="n">groups</span><span class="p">[</span><span class="n">frame</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">frame_categories</span> <span class="o">=</span> <span class="n">categories</span><span class="p">[</span><span class="n">categories</span><span class="p">[</span><span class="s2">&quot;FRAME&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">frame</span><span class="p">]</span>
+        <span class="n">index_offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">category_group</span> <span class="ow">in</span> <span class="n">frame_categories</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;CATEGORY&quot;</span><span class="p">):</span>
+            <span class="n">ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">category_group</span><span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">group_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">ids</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">group_size</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">),</span> <span class="n">group_size</span><span class="p">)]</span>
+            <span class="n">groups</span><span class="p">[</span><span class="n">frame</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">i</span> <span class="o">+</span> <span class="n">index_offset</span><span class="p">:</span> <span class="n">group</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">group_ids</span><span class="p">)})</span>
+
+            <span class="n">index_offset</span> <span class="o">=</span> <span class="n">index_offset</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_ids</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">groups</span></div>
+
+
+<div class="viewcode-block" id="make_individual_mesh"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html#arcade_collection.convert.convert_to_meshes.make_individual_mesh">[docs]</a><span class="k">def</span> <span class="nf">make_individual_mesh</span><span class="p">(</span>
+    <span class="n">location</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">region</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">invert</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">voxels</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">get_location_voxels</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">region</span> <span class="k">if</span> <span class="n">region</span> <span class="o">!=</span> <span class="s2">&quot;DEFAULT&quot;</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">voxels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">center</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">voxels</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">array</span> <span class="o">=</span> <span class="n">make_mesh_array</span><span class="p">(</span><span class="n">voxels</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+    <span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">normals</span> <span class="o">=</span> <span class="n">make_mesh_geometry</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">center</span><span class="p">)</span>
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">make_mesh_file</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">invert</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mesh</span></div>
+
+
+<div class="viewcode-block" id="make_combined_mesh"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html#arcade_collection.convert.convert_to_meshes.make_combined_mesh">[docs]</a><span class="k">def</span> <span class="nf">make_combined_mesh</span><span class="p">(</span>
+    <span class="n">locations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">region</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">invert</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">meshes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">:</span>
+        <span class="n">voxels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">get_location_voxels</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">region</span> <span class="k">if</span> <span class="n">region</span> <span class="o">!=</span> <span class="s2">&quot;DEFAULT&quot;</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">voxels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">center</span> <span class="o">=</span> <span class="p">[</span><span class="n">length</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">make_mesh_array</span><span class="p">(</span><span class="n">voxels</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+        <span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">normals</span> <span class="o">=</span> <span class="n">make_mesh_geometry</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+        <span class="n">mesh</span> <span class="o">=</span> <span class="n">make_mesh_file</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">invert</span><span class="p">)</span>
+
+        <span class="n">meshes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">verts</span><span class="p">)</span>
+
+    <span class="n">combined_mesh</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">meshes</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">combined_mesh</span> <span class="k">if</span> <span class="n">meshes</span> <span class="k">else</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="make_mesh_array"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html#arcade_collection.convert.convert_to_meshes.make_mesh_array">[docs]</a><span class="k">def</span> <span class="nf">make_mesh_array</span><span class="p">(</span>
@@ -303,13 +390,29 @@
     <span class="k">return</span> <span class="n">array</span></div>
 
 
-<div class="viewcode-block" id="make_mesh_object"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html#arcade_collection.convert.convert_to_meshes.make_mesh_object">[docs]</a><span class="k">def</span> <span class="nf">make_mesh_object</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">center</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">invert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="make_mesh_geometry"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html#arcade_collection.convert.convert_to_meshes.make_mesh_geometry">[docs]</a><span class="k">def</span> <span class="nf">make_mesh_geometry</span><span class="p">(</span>
+    <span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">center</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">marching_cubes</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">allow_degenerate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Center the vertices.</span>
+    <span class="n">verts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">verts</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">verts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">verts</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">verts</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">verts</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># Adjust face indices.</span>
+    <span class="n">faces</span> <span class="o">=</span> <span class="n">faces</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">offset</span>
+
+    <span class="k">return</span> <span class="n">verts</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">normals</span></div>
+
+
+<div class="viewcode-block" id="make_mesh_file"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html#arcade_collection.convert.convert_to_meshes.make_mesh_file">[docs]</a><span class="k">def</span> <span class="nf">make_mesh_file</span><span class="p">(</span>
+    <span class="n">verts</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">faces</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">normals</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">invert</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">mesh</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">faces</span> <span class="o">=</span> <span class="n">faces</span> <span class="o">+</span> <span class="mi">1</span>
 
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">verts</span><span class="p">:</span>
-        <span class="n">mesh</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;v </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">center</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">mesh</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;v </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">normals</span><span class="p">:</span>
         <span class="n">mesh</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;vn </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
