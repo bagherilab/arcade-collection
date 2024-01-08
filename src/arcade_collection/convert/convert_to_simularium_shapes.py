@@ -93,7 +93,7 @@ def format_patch_for_shapes(
                 name = f"POPULATION{population}#{cell_id}#{CELL_STATES[state]}"
                 radius = (volume ** (1.0 / 3)) / 1.5
 
-                x = (u + bounds - 1) * sqrt(3) + 1
+                x = (3 * (u + bounds) - 1) / sqrt(3)
                 y = (v - w) + 2 * bounds - 1
 
                 center = [
