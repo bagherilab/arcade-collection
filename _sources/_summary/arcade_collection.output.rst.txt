@@ -34,6 +34,7 @@
    output.convert_model_units
    output.extract_tick_json
    output.get_location_voxels
+   output.get_voxel_contours
    output.merge_parsed_results
    output.parse_cells_file
    output.parse_growth_file
