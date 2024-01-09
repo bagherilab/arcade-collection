@@ -1,3 +1,15 @@
+# [v0.14.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.14.0) - 2024-01-09
+
+> Compare with [v0.13.0](https://github.com/bagherilab/arcade-collection/compare/v0.13.0...v0.14.0)
+
+### Features
+
+- Add get voxel contours task by [@jessicasyu](https://github.com/jessicasyu) in [#70](https://github.com/bagherilab/arcade-collection/pull/70)
+
+### Bug fixes
+
+- Fix x position calculation in simularium shapes task by [@jessicasyu](https://github.com/jessicasyu) in [#69](https://github.com/bagherilab/arcade-collection/pull/69)
+
 # [v0.13.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.13.0) - 2023-11-30
 
 > Compare with [v0.12.0](https://github.com/bagherilab/arcade-collection/compare/v0.12.0...v0.13.0)
