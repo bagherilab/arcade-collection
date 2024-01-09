@@ -1,14 +1,10 @@
 import tarfile
-from typing import Optional
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.patches import Rectangle
-from skimage import measure
 
-from arcade_collection.output.extract_tick_json import extract_tick_json
-from arcade_collection.output.get_location_voxels import get_location_voxels
+from arcade_collection.output.get_voxel_contours import get_voxel_contours
 
 
 def convert_to_projection(
@@ -46,58 +42,32 @@ def convert_to_projection(
     ax_horz.set_facecolor("#000")
     ax_vert.set_facecolor("#000")
 
-    locations = extract_tick_json(data_tar, series_key, frame, "LOCATIONS")
+    indices = {
+        "top": list(range(1, height)),
+        "side1": list(range(1, width)),
+        "side2": list(range(1, length)),
+    }
+    contours = get_voxel_contours(series_key, data_tar, frame, regions, box, indices)
 
     for region in regions:
         color = colors[region]
 
-        for location in locations:
-            for contour in get_array_contours(location, length, width, height, region):
+        for region_top_contours in contours[region]["top"].values():
+            for contour in region_top_contours:
                 ax.plot(contour[:, 0], contour[:, 1], linewidth=0.5, color=color, alpha=0.5)
 
-            for contour in get_array_contours(location, length, width, height, region, (0, 2, 1)):
+        for region_side1_contours in contours[region]["side1"].values():
+            for contour in region_side1_contours:
                 ax_horz.plot(contour[:, 0], contour[:, 1], linewidth=0.5, color=color, alpha=0.5)
 
-            for contour in get_array_contours(location, length, width, height, region, (2, 1, 0)):
+        for region_side2_contours in contours[region]["side2"].values():
+            for contour in region_side2_contours:
                 ax_vert.plot(contour[:, 0], contour[:, 1], linewidth=0.5, color=color, alpha=0.5)
 
     add_frame_timestamp(ax, length, width, dt, frame, "#ffffff")
     add_frame_scalebar(ax, length, width, ds, scale, "#ffffff")
 
     return fig
-
-
-def get_array_contours(
-    location: dict,
-    length: int,
-    width: int,
-    height: int,
-    region: Optional[str] = None,
-    rotate: Optional[tuple[int, int, int]] = None,
-) -> list[np.ndarray]:
-    array = np.zeros((length, width, height))
-    voxels = get_location_voxels(location, region)
-
-    if len(voxels) == 0:
-        return []
-
-    array[tuple(np.transpose(voxels))] = 1
-
-    if rotate is not None:
-        array = np.moveaxis(array, [0, 1, 2], rotate)
-        length, width, height = array.shape
-
-    contours: list[np.ndarray] = []
-
-    for z in range(1, height):
-        array_slice = array[:, :, z]
-
-        if np.sum(array_slice) == 0:
-            continue
-
-        contours = contours + measure.find_contours(array_slice)
-
-    return contours
 
 
 def add_frame_timestamp(
