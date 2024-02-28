@@ -108,12 +108,8 @@ def estimate_temporal_resolution(key: str) -> float:
         Temporal resolution (hours/tick).
     """
 
-    match = re.findall(r"[_]?DT([0-9]+)[_]?", key)
-
-    if len(match) == 1:
-        return float(match[0]) / 60
-
-    return 1.0
+    matches = [re.fullmatch(r"DT([0-9]+)", k) for k in key.split("_")]
+    return next((float(match.group(1)) / 60 for match in matches if match is not None), 1.0)
 
 
 def estimate_spatial_resolution(key: str) -> float:
@@ -135,9 +131,5 @@ def estimate_spatial_resolution(key: str) -> float:
         Spatial resolution (micron/voxel).
     """
 
-    match = re.findall(r"[_]?DS([0-9]+)[_]?", key)
-
-    if len(match) == 1:
-        return float(match[0])
-
-    return 1.0
+    matches = [re.fullmatch(r"DS([0-9]+)", k) for k in key.split("_")]
+    return next((float(match.group(1)) for match in matches if match is not None), 1.0)
