@@ -94,11 +94,11 @@ def convert_temporal_units(data: pd.DataFrame, dt: float) -> None:
 
     The following temporal columns are converted:
 
-    =============  ===================  =============================
-    Target column  Source column(s)      Conversion
-    =============  ===================  =============================
-    ``time``       ``TICK``             ``dt * TICK``
-    =============  ===================  =============================
+    =============  ================  =============
+    Target column  Source column(s)  Conversion
+    =============  ================  =============
+    ``time``       ``TICK``          ``dt * TICK``
+    =============  ================  =============
 
     Parameters
     ----------
