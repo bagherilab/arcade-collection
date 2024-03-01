@@ -1,3 +1,15 @@
+# [v0.15.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.15.0) - 2024-03-01
+
+> Compare with [v0.14.0](https://github.com/bagherilab/arcade-collection/compare/v0.14.0...v0.15.0)
+
+### Features
+
+- Update convert model units to infer model resolution by [@jessicasyu](https://github.com/jessicasyu) in [#72](https://github.com/bagherilab/arcade-collection/pull/72)
+
+### Admin
+
+- Bump dependency versions by [@jessicasyu](https://github.com/jessicasyu) in [#73](https://github.com/bagherilab/arcade-collection/pull/73)
+
 # [v0.14.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.14.0) - 2024-01-09
 
 > Compare with [v0.13.0](https://github.com/bagherilab/arcade-collection/compare/v0.13.0...v0.14.0)
