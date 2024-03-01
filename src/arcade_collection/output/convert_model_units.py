@@ -26,9 +26,9 @@ def convert_model_units(
     ``time``       ``TICK``             ``dt * TICK``
     ``volume``     ``NUM_VOXELS``       ``ds * ds * ds * NUM_VOXELS``
     ``height``     ``MAX_Z`` ``MIN_Z``  ``ds * (MAX_Z - MIN_Z + 1)``
-    ``cx``         ``CX``               ``ds * CX``
-    ``cy``         ``CY``               ``ds * CY``
-    ``cz``         ``CZ``               ``ds * CZ``
+    ``cx``         ``CENTER_X``         ``ds * CENTER_X``
+    ``cy``         ``CENTER_Y``         ``ds * CENTER_Y``
+    ``cz``         ``CENTER_Z``         ``ds * CENTER_Z``
     =============  ===================  =============================
 
     For each region (other than ``DEFAULT``), the following columns are added to the data:
@@ -126,9 +126,9 @@ def convert_spatial_units(data: pd.DataFrame, ds: float, region: Optional[str] =
     =====================  =====================  =============================
     ``volume``             ``NUM_VOXELS``         ``ds * ds * ds * NUM_VOXELS``
     ``height``             ``MAX_Z`` ``MIN_Z``    ``ds * (MAX_Z - MIN_Z + 1)``
-    ``cx``                 ``CX``                 ``ds * CX``
-    ``cy``                 ``CY``                 ``ds * CY``
-    ``cz``                 ``CZ``                 ``ds * CZ``
+    ``cx``                 ``CENTER_X``           ``ds * CENTER_X``
+    ``cy``                 ``CENTER_Y``           ``ds * CENTER_Y``
+    ``cz``                 ``CENTER_Z``           ``ds * CENTER_Z``
     ``area``               ``area``               ``ds * ds * area``
     ``perimeter``          ``perimeter``          ``ds * perimeter``
     ``axis_major_length``  ``axis_major_length``  ``ds * axis_major_length``
@@ -156,14 +156,14 @@ def convert_spatial_units(data: pd.DataFrame, ds: float, region: Optional[str] =
     if f"MAX_Z{suffix}" in data.columns and f"MIN_Z{suffix}" in data.columns:
         data[f"height{suffix}"] = ds * (data[f"MAX_Z{suffix}"] - data[f"MIN_Z{suffix}"] + 1)
 
-    if "CX" in data.columns and region is None:
-        data["cx"] = ds * data["CX"]
+    if "CENTER_X" in data.columns and region is None:
+        data["cx"] = ds * data["CENTER_X"]
 
-    if "CY" in data.columns and region is None:
-        data["cy"] = ds * data["CY"]
+    if "CENTER_Y" in data.columns and region is None:
+        data["cy"] = ds * data["CENTER_Y"]
 
-    if "CZ" in data.columns and region is None:
-        data["cz"] = ds * data["CZ"]
+    if "CENTER_Z" in data.columns and region is None:
+        data["cz"] = ds * data["CENTER_Z"]
 
     property_conversions = [
         ("area", ds * ds),
