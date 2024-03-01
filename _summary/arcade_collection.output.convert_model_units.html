@@ -233,8 +233,245 @@
 <span id="convert-model-units"></span><h1>convert_model_units<a class="headerlink" href="#module-arcade_collection.output.convert_model_units" title="Permalink to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.output.convert_model_units.convert_model_units">
-<span class="sig-name descname"><span class="pre">convert_model_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/convert_model_units.html#convert_model_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.convert_model_units.convert_model_units" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">convert_model_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/convert_model_units.html#convert_model_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.convert_model_units.convert_model_units" title="Permalink to this definition">#</a></dt>
+<dd><p>Converts data from simulation units to true units.</p>
+<p>Simulations use spatial unit of voxels and temporal unit of ticks. Spatial
+resolution (microns/voxel) and temporal resolution (hours/tick) are used to
+convert data to true units. If spatial or temporal resolution is not given,
+they will be estimated from the <code class="docutils literal notranslate"><span class="pre">KEY</span></code> column of the data.</p>
+<p>The following columns are added to the data:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Target column</p></th>
+<th class="head"><p>Source column(s)</p></th>
+<th class="head"><p>Conversion</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TICK</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dt</span> <span class="pre">*</span> <span class="pre">TICK</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">volume</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NUM_VOXELS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">ds</span> <span class="pre">*</span> <span class="pre">ds</span> <span class="pre">*</span> <span class="pre">NUM_VOXELS</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">height</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MAX_Z</span></code> <code class="docutils literal notranslate"><span class="pre">MIN_Z</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">(MAX_Z</span> <span class="pre">-</span> <span class="pre">MIN_Z</span> <span class="pre">+</span> <span class="pre">1)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CENTER_X</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">CENTER_X</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cy</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CENTER_Y</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">CENTER_Y</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CENTER_Z</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">CENTER_Z</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For each region (other than <code class="docutils literal notranslate"><span class="pre">DEFAULT</span></code>), the following columns are added to the data:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Target column</p></th>
+<th class="head"><p>Source column(s)</p></th>
+<th class="head"><p>Conversion</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">volume.REGION</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NUM_VOXELS.REGION</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">ds</span> <span class="pre">*</span> <span class="pre">ds</span> <span class="pre">*</span> <span class="pre">NUM_VOXELS.REGION</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">height.REGION</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MAX_Z.REGION</span></code> <code class="docutils literal notranslate"><span class="pre">MIN_Z.REGION</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">(MAX_Z.REGION</span> <span class="pre">-</span> <span class="pre">MIN_Z.REGION</span> <span class="pre">+</span> <span class="pre">1)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following property columns are rescaled:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Target column</p></th>
+<th class="head"><p>Source column(s)</p></th>
+<th class="head"><p>Conversion</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">area</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">area</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">ds</span> <span class="pre">*</span> <span class="pre">area</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">perimeter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">perimeter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">perimeter</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">axis_major_length</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">axis_major_length</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">axis_major_length</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">axis_minor_length</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">axis_minor_length</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">axis_minor_length</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Simulation data.</p></li>
+<li><p><strong>ds</strong> – Spatial resolution in microns/voxel, use None to estimate from keys.</p></li>
+<li><p><strong>dt</strong> – Temporal resolution in hours/tick, use None to estimate from keys.</p></li>
+<li><p><strong>regions</strong> – List of regions.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arcade_collection.output.convert_model_units.convert_temporal_units">
+<span class="sig-name descname"><span class="pre">convert_temporal_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/convert_model_units.html#convert_temporal_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.convert_model_units.convert_temporal_units" title="Permalink to this definition">#</a></dt>
+<dd><p>Converts temporal data from simulation units to true units.</p>
+<p>Simulations use temporal unit of ticks. Temporal resolution (hours/tick) is
+used to convert data to true units.</p>
+<p>The following temporal columns are converted:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Target column</p></th>
+<th class="head"><p>Source column(s)</p></th>
+<th class="head"><p>Conversion</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TICK</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dt</span> <span class="pre">*</span> <span class="pre">TICK</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Simulation data.</p></li>
+<li><p><strong>dt</strong> – Temporal resolution in hours/tick.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arcade_collection.output.convert_model_units.convert_spatial_units">
+<span class="sig-name descname"><span class="pre">convert_spatial_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/convert_model_units.html#convert_spatial_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.convert_model_units.convert_spatial_units" title="Permalink to this definition">#</a></dt>
+<dd><p>Converts spatial data from simulation units to true units.</p>
+<p>Simulations use spatial unit of voxels. Spatial resolution (microns/voxel)
+is used to convert data to true units.</p>
+<p>The following spatial columns are converted:</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Target column</p></th>
+<th class="head"><p>Source column(s)</p></th>
+<th class="head"><p>Conversion</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">volume</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NUM_VOXELS</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">ds</span> <span class="pre">*</span> <span class="pre">ds</span> <span class="pre">*</span> <span class="pre">NUM_VOXELS</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">height</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MAX_Z</span></code> <code class="docutils literal notranslate"><span class="pre">MIN_Z</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">(MAX_Z</span> <span class="pre">-</span> <span class="pre">MIN_Z</span> <span class="pre">+</span> <span class="pre">1)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CENTER_X</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">CENTER_X</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cy</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CENTER_Y</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">CENTER_Y</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CENTER_Z</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">CENTER_Z</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">area</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">area</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">ds</span> <span class="pre">*</span> <span class="pre">area</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">perimeter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">perimeter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">perimeter</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">axis_major_length</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">axis_major_length</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">axis_major_length</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">axis_minor_length</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">axis_minor_length</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ds</span> <span class="pre">*</span> <span class="pre">axis_minor_length</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Note that the centroid columns (<code class="docutils literal notranslate"><span class="pre">cx</span></code>, <code class="docutils literal notranslate"><span class="pre">cy</span></code>, and <code class="docutils literal notranslate"><span class="pre">cz</span></code>) are only
+converted for the entire cell (<code class="docutils literal notranslate"><span class="pre">region</span> <span class="pre">==</span> <span class="pre">None</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Simulation data.</p></li>
+<li><p><strong>ds</strong> – Spatial resolution in microns/voxel.</p></li>
+<li><p><strong>region</strong> – Name of region.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arcade_collection.output.convert_model_units.estimate_temporal_resolution">
+<span class="sig-name descname"><span class="pre">estimate_temporal_resolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/convert_model_units.html#estimate_temporal_resolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.convert_model_units.estimate_temporal_resolution" title="Permalink to this definition">#</a></dt>
+<dd><p>Estimates temporal resolution based on condition key.</p>
+<p>If the key contains <code class="docutils literal notranslate"><span class="pre">DT##</span></code>, where <code class="docutils literal notranslate"><span class="pre">##</span></code> denotes the temporal resolution
+in minutes/tick, temporal resolution is estimated from <code class="docutils literal notranslate"><span class="pre">##</span></code>. Otherwise,
+the default temporal resolution is 1 hours/tick.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> – Condition key.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Temporal resolution (hours/tick).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arcade_collection.output.convert_model_units.estimate_spatial_resolution">
+<span class="sig-name descname"><span class="pre">estimate_spatial_resolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/convert_model_units.html#estimate_spatial_resolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.convert_model_units.estimate_spatial_resolution" title="Permalink to this definition">#</a></dt>
+<dd><p>Estimates spatial resolution based on condition key.</p>
+<p>If the key contains <code class="docutils literal notranslate"><span class="pre">DS##</span></code>, where <code class="docutils literal notranslate"><span class="pre">##</span></code> denotes the spatial resolution
+in micron/voxel, spatial resolution is estimated from <code class="docutils literal notranslate"><span class="pre">##</span></code>. Otherwise,
+the default spatial resolution is 1 micron/voxel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> – Condition key.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Spatial resolution (micron/voxel).</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -295,6 +532,10 @@
             <ul>
 <li><a class="reference internal" href="#">convert_model_units</a><ul>
 <li><a class="reference internal" href="#arcade_collection.output.convert_model_units.convert_model_units"><code class="docutils literal notranslate"><span class="pre">convert_model_units()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.output.convert_model_units.convert_temporal_units"><code class="docutils literal notranslate"><span class="pre">convert_temporal_units()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.output.convert_model_units.convert_spatial_units"><code class="docutils literal notranslate"><span class="pre">convert_spatial_units()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.output.convert_model_units.estimate_temporal_resolution"><code class="docutils literal notranslate"><span class="pre">estimate_temporal_resolution()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.output.convert_model_units.estimate_spatial_resolution"><code class="docutils literal notranslate"><span class="pre">estimate_spatial_resolution()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -228,30 +228,79 @@
         </div>
         <article role="main">
           <h1>Source code for arcade_collection.output.convert_model_units</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 
 <div class="viewcode-block" id="convert_model_units"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.convert_model_units">[docs]</a><span class="k">def</span> <span class="nf">convert_model_units</span><span class="p">(</span>
-    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">regions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">ds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="n">dt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="n">regions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">dt</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;TICK&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts data from simulation units to true units.</span>
 
-    <span class="k">if</span> <span class="s2">&quot;NUM_VOXELS&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;volume&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;NUM_VOXELS&quot;</span><span class="p">]</span>
+<span class="sd">    Simulations use spatial unit of voxels and temporal unit of ticks. Spatial</span>
+<span class="sd">    resolution (microns/voxel) and temporal resolution (hours/tick) are used to</span>
+<span class="sd">    convert data to true units. If spatial or temporal resolution is not given,</span>
+<span class="sd">    they will be estimated from the ``KEY`` column of the data.</span>
 
-    <span class="k">if</span> <span class="s2">&quot;MAX_Z&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="s2">&quot;MIN_Z&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;MAX_Z&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;MIN_Z&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="sd">    The following columns are added to the data:</span>
 
-    <span class="k">if</span> <span class="s2">&quot;CX&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;cx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;CX&quot;</span><span class="p">]</span>
+<span class="sd">    =============  ===================  =============================</span>
+<span class="sd">    Target column  Source column(s)      Conversion</span>
+<span class="sd">    =============  ===================  =============================</span>
+<span class="sd">    ``time``       ``TICK``             ``dt * TICK``</span>
+<span class="sd">    ``volume``     ``NUM_VOXELS``       ``ds * ds * ds * NUM_VOXELS``</span>
+<span class="sd">    ``height``     ``MAX_Z`` ``MIN_Z``  ``ds * (MAX_Z - MIN_Z + 1)``</span>
+<span class="sd">    ``cx``         ``CENTER_X``         ``ds * CENTER_X``</span>
+<span class="sd">    ``cy``         ``CENTER_Y``         ``ds * CENTER_Y``</span>
+<span class="sd">    ``cz``         ``CENTER_Z``         ``ds * CENTER_Z``</span>
+<span class="sd">    =============  ===================  =============================</span>
 
-    <span class="k">if</span> <span class="s2">&quot;CY&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;cy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;CY&quot;</span><span class="p">]</span>
+<span class="sd">    For each region (other than ``DEFAULT``), the following columns are added to the data:</span>
 
-    <span class="k">if</span> <span class="s2">&quot;CZ&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;cz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;CZ&quot;</span><span class="p">]</span>
+<span class="sd">    =================  =================================  ==========================================</span>
+<span class="sd">    Target column      Source column(s)                   Conversion</span>
+<span class="sd">    =================  =================================  ==========================================</span>
+<span class="sd">    ``volume.REGION``  ``NUM_VOXELS.REGION``              ``ds * ds * ds * NUM_VOXELS.REGION``</span>
+<span class="sd">    ``height.REGION``  ``MAX_Z.REGION`` ``MIN_Z.REGION``  ``ds * (MAX_Z.REGION - MIN_Z.REGION + 1)``</span>
+<span class="sd">    =================  =================================  ==========================================</span>
+
+<span class="sd">    The following property columns are rescaled:</span>
+
+<span class="sd">    =====================  =====================  ==========================</span>
+<span class="sd">    Target column          Source column(s)        Conversion</span>
+<span class="sd">    =====================  =====================  ==========================</span>
+<span class="sd">    ``area``               ``area``               ``ds * ds * area``</span>
+<span class="sd">    ``perimeter``          ``perimeter``          ``ds * perimeter``</span>
+<span class="sd">    ``axis_major_length``  ``axis_major_length``  ``ds * axis_major_length``</span>
+<span class="sd">    ``axis_minor_length``  ``axis_minor_length``  ``ds * axis_minor_length``</span>
+<span class="sd">    =====================  =====================  ==========================</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data</span>
+<span class="sd">        Simulation data.</span>
+<span class="sd">    ds</span>
+<span class="sd">        Spatial resolution in microns/voxel, use None to estimate from keys.</span>
+<span class="sd">    dt</span>
+<span class="sd">        Temporal resolution in hours/tick, use None to estimate from keys.</span>
+<span class="sd">    regions</span>
+<span class="sd">        List of regions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">dt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;KEY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">estimate_temporal_resolution</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;KEY&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">estimate_spatial_resolution</span><span class="p">)</span>
+
+    <span class="n">convert_temporal_units</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+    <span class="n">convert_spatial_units</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ds</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">regions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
@@ -263,8 +312,149 @@
         <span class="k">if</span> <span class="n">region</span> <span class="o">==</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span>
             <span class="k">continue</span>
 
-        <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;volume.</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;NUM_VOXELS.</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;height.</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;MAX_Z.</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;MIN_Z.</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span></div>
+        <span class="n">convert_spatial_units</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">region</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_temporal_units"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.convert_temporal_units">[docs]</a><span class="k">def</span> <span class="nf">convert_temporal_units</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts temporal data from simulation units to true units.</span>
+
+<span class="sd">    Simulations use temporal unit of ticks. Temporal resolution (hours/tick) is</span>
+<span class="sd">    used to convert data to true units.</span>
+
+<span class="sd">    The following temporal columns are converted:</span>
+
+<span class="sd">    =============  ================  =============</span>
+<span class="sd">    Target column  Source column(s)  Conversion</span>
+<span class="sd">    =============  ================  =============</span>
+<span class="sd">    ``time``       ``TICK``          ``dt * TICK``</span>
+<span class="sd">    =============  ================  =============</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data</span>
+<span class="sd">        Simulation data.</span>
+<span class="sd">    dt</span>
+<span class="sd">        Temporal resolution in hours/tick.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;TICK&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">dt</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;TICK&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_spatial_units"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.convert_spatial_units">[docs]</a><span class="k">def</span> <span class="nf">convert_spatial_units</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">region</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts spatial data from simulation units to true units.</span>
+
+<span class="sd">    Simulations use spatial unit of voxels. Spatial resolution (microns/voxel)</span>
+<span class="sd">    is used to convert data to true units.</span>
+
+<span class="sd">    The following spatial columns are converted:</span>
+
+<span class="sd">    =====================  =====================  =============================</span>
+<span class="sd">    Target column          Source column(s)        Conversion</span>
+<span class="sd">    =====================  =====================  =============================</span>
+<span class="sd">    ``volume``             ``NUM_VOXELS``         ``ds * ds * ds * NUM_VOXELS``</span>
+<span class="sd">    ``height``             ``MAX_Z`` ``MIN_Z``    ``ds * (MAX_Z - MIN_Z + 1)``</span>
+<span class="sd">    ``cx``                 ``CENTER_X``           ``ds * CENTER_X``</span>
+<span class="sd">    ``cy``                 ``CENTER_Y``           ``ds * CENTER_Y``</span>
+<span class="sd">    ``cz``                 ``CENTER_Z``           ``ds * CENTER_Z``</span>
+<span class="sd">    ``area``               ``area``               ``ds * ds * area``</span>
+<span class="sd">    ``perimeter``          ``perimeter``          ``ds * perimeter``</span>
+<span class="sd">    ``axis_major_length``  ``axis_major_length``  ``ds * axis_major_length``</span>
+<span class="sd">    ``axis_minor_length``  ``axis_minor_length``  ``ds * axis_minor_length``</span>
+<span class="sd">    =====================  =====================  =============================</span>
+
+<span class="sd">    Note that the centroid columns (``cx``, ``cy``, and ``cz``) are only</span>
+<span class="sd">    converted for the entire cell (``region == None``).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data</span>
+<span class="sd">        Simulation data.</span>
+<span class="sd">    ds</span>
+<span class="sd">        Spatial resolution in microns/voxel.</span>
+<span class="sd">    region</span>
+<span class="sd">        Name of region.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">region</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;.</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;NUM_VOXELS</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;volume</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;NUM_VOXELS</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;MAX_Z</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="sa">f</span><span class="s2">&quot;MIN_Z</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;height</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;MAX_Z</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;MIN_Z</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;CENTER_X&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">region</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;cx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;CENTER_X&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s2">&quot;CENTER_Y&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">region</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;cy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;CENTER_Y&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s2">&quot;CENTER_Z&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">region</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;cz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;CENTER_Z&quot;</span><span class="p">]</span>
+
+    <span class="n">property_conversions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;area&quot;</span><span class="p">,</span> <span class="n">ds</span> <span class="o">*</span> <span class="n">ds</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;perimeter&quot;</span><span class="p">,</span> <span class="n">ds</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;axis_major_length&quot;</span><span class="p">,</span> <span class="n">ds</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;axis_minor_length&quot;</span><span class="p">,</span> <span class="n">ds</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">conversion</span> <span class="ow">in</span> <span class="n">property_conversions</span><span class="p">:</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">*</span> <span class="n">conversion</span></div>
+
+
+<div class="viewcode-block" id="estimate_temporal_resolution"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.estimate_temporal_resolution">[docs]</a><span class="k">def</span> <span class="nf">estimate_temporal_resolution</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Estimates temporal resolution based on condition key.</span>
+
+<span class="sd">    If the key contains ``DT##``, where ``##`` denotes the temporal resolution</span>
+<span class="sd">    in minutes/tick, temporal resolution is estimated from ``##``. Otherwise,</span>
+<span class="sd">    the default temporal resolution is 1 hours/tick.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    key</span>
+<span class="sd">        Condition key.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Temporal resolution (hours/tick).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;DT([0-9]+)&quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="mi">60</span> <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span> <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="estimate_spatial_resolution"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.estimate_spatial_resolution">[docs]</a><span class="k">def</span> <span class="nf">estimate_spatial_resolution</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Estimates spatial resolution based on condition key.</span>
+
+<span class="sd">    If the key contains ``DS##``, where ``##`` denotes the spatial resolution</span>
+<span class="sd">    in micron/voxel, spatial resolution is estimated from ``##``. Otherwise,</span>
+<span class="sd">    the default spatial resolution is 1 micron/voxel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    key</span>
+<span class="sd">        Condition key.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Spatial resolution (micron/voxel).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;DS([0-9]+)&quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span> <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span></div>
 </pre></div>
         </article>
       </div>
