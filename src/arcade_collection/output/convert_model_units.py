@@ -1,27 +1,76 @@
+import re
 from typing import Optional, Union
 
 import pandas as pd
 
 
 def convert_model_units(
-    data: pd.DataFrame, ds: float, dt: float, regions: Optional[Union[list[str], str]] = None
+    data: pd.DataFrame,
+    ds: Optional[float],
+    dt: Optional[float],
+    regions: Optional[Union[list[str], str]] = None,
 ) -> None:
-    data["time"] = round(dt * data["TICK"], 2)
+    """
+    Converts data from simulation units to true units.
 
-    if "NUM_VOXELS" in data.columns:
-        data["volume"] = ds * ds * ds * data["NUM_VOXELS"]
+    Simulations use spatial unit of voxels and temporal unit of ticks. Spatial
+    resolution (microns/voxel) and temporal resolution (hours/tick) are used to
+    convert data to true units. If spatial or temporal resolution is not given,
+    they will be estimated from the ``KEY`` column of the data.
 
-    if "MAX_Z" in data.columns and "MIN_Z" in data.columns:
-        data["height"] = ds * (data["MAX_Z"] - data["MIN_Z"] + 1)
+    The following columns are added to the data:
 
-    if "CX" in data.columns:
-        data["cx"] = ds * data["CX"]
+    =============  ===================  =============================
+    Target column  Source column(s)      Conversion
+    =============  ===================  =============================
+    ``time``       ``TICK``             ``dt * TICK``
+    ``volume``     ``NUM_VOXELS``       ``ds * ds * ds * NUM_VOXELS``
+    ``height``     ``MAX_Z`` ``MIN_Z``  ``ds * (MAX_Z - MIN_Z + 1)``
+    ``cx``         ``CENTER_X``         ``ds * CENTER_X``
+    ``cy``         ``CENTER_Y``         ``ds * CENTER_Y``
+    ``cz``         ``CENTER_Z``         ``ds * CENTER_Z``
+    =============  ===================  =============================
 
-    if "CY" in data.columns:
-        data["cy"] = ds * data["CY"]
+    For each region (other than ``DEFAULT``), the following columns are added to the data:
 
-    if "CZ" in data.columns:
-        data["cz"] = ds * data["CZ"]
+    =================  =================================  ==========================================
+    Target column      Source column(s)                   Conversion
+    =================  =================================  ==========================================
+    ``volume.REGION``  ``NUM_VOXELS.REGION``              ``ds * ds * ds * NUM_VOXELS.REGION``
+    ``height.REGION``  ``MAX_Z.REGION`` ``MIN_Z.REGION``  ``ds * (MAX_Z.REGION - MIN_Z.REGION + 1)``
+    =================  =================================  ==========================================
+
+    The following property columns are rescaled:
+
+    =====================  =====================  ==========================
+    Target column          Source column(s)        Conversion
+    =====================  =====================  ==========================
+    ``area``               ``area``               ``ds * ds * area``
+    ``perimeter``          ``perimeter``          ``ds * perimeter``
+    ``axis_major_length``  ``axis_major_length``  ``ds * axis_major_length``
+    ``axis_minor_length``  ``axis_minor_length``  ``ds * axis_minor_length``
+    =====================  =====================  ==========================
+
+    Parameters
+    ----------
+    data
+        Simulation data.
+    ds
+        Spatial resolution in microns/voxel, use None to estimate from keys.
+    dt
+        Temporal resolution in hours/tick, use None to estimate from keys.
+    regions
+        List of regions.
+    """
+
+    if dt is None:
+        dt = data["KEY"].apply(estimate_temporal_resolution)
+
+    if ds is None:
+        ds = data["KEY"].apply(estimate_spatial_resolution)
+
+    convert_temporal_units(data, dt)
+    convert_spatial_units(data, ds)
 
     if regions is None:
         return
@@ -33,5 +82,146 @@ def convert_model_units(
         if region == "DEFAULT":
             continue
 
-        data[f"volume.{region}"] = ds * ds * ds * data[f"NUM_VOXELS.{region}"]
-        data[f"height.{region}"] = ds * (data[f"MAX_Z.{region}"] - data[f"MIN_Z.{region}"])
+        convert_spatial_units(data, ds, region)
+
+
+def convert_temporal_units(data: pd.DataFrame, dt: float) -> None:
+    """
+    Converts temporal data from simulation units to true units.
+
+    Simulations use temporal unit of ticks. Temporal resolution (hours/tick) is
+    used to convert data to true units.
+
+    The following temporal columns are converted:
+
+    =============  ================  =============
+    Target column  Source column(s)  Conversion
+    =============  ================  =============
+    ``time``       ``TICK``          ``dt * TICK``
+    =============  ================  =============
+
+    Parameters
+    ----------
+    data
+        Simulation data.
+    dt
+        Temporal resolution in hours/tick.
+    """
+
+    if "TICK" in data.columns:
+        data["time"] = round(dt * data["TICK"], 2)
+
+
+def convert_spatial_units(data: pd.DataFrame, ds: float, region: Optional[str] = None) -> None:
+    """
+    Converts spatial data from simulation units to true units.
+
+    Simulations use spatial unit of voxels. Spatial resolution (microns/voxel)
+    is used to convert data to true units.
+
+    The following spatial columns are converted:
+
+    =====================  =====================  =============================
+    Target column          Source column(s)        Conversion
+    =====================  =====================  =============================
+    ``volume``             ``NUM_VOXELS``         ``ds * ds * ds * NUM_VOXELS``
+    ``height``             ``MAX_Z`` ``MIN_Z``    ``ds * (MAX_Z - MIN_Z + 1)``
+    ``cx``                 ``CENTER_X``           ``ds * CENTER_X``
+    ``cy``                 ``CENTER_Y``           ``ds * CENTER_Y``
+    ``cz``                 ``CENTER_Z``           ``ds * CENTER_Z``
+    ``area``               ``area``               ``ds * ds * area``
+    ``perimeter``          ``perimeter``          ``ds * perimeter``
+    ``axis_major_length``  ``axis_major_length``  ``ds * axis_major_length``
+    ``axis_minor_length``  ``axis_minor_length``  ``ds * axis_minor_length``
+    =====================  =====================  =============================
+
+    Note that the centroid columns (``cx``, ``cy``, and ``cz``) are only
+    converted for the entire cell (``region == None``).
+
+    Parameters
+    ----------
+    data
+        Simulation data.
+    ds
+        Spatial resolution in microns/voxel.
+    region
+        Name of region.
+    """
+
+    suffix = "" if region is None else f".{region}"
+
+    if f"NUM_VOXELS{suffix}" in data.columns:
+        data[f"volume{suffix}"] = ds * ds * ds * data[f"NUM_VOXELS{suffix}"]
+
+    if f"MAX_Z{suffix}" in data.columns and f"MIN_Z{suffix}" in data.columns:
+        data[f"height{suffix}"] = ds * (data[f"MAX_Z{suffix}"] - data[f"MIN_Z{suffix}"] + 1)
+
+    if "CENTER_X" in data.columns and region is None:
+        data["cx"] = ds * data["CENTER_X"]
+
+    if "CENTER_Y" in data.columns and region is None:
+        data["cy"] = ds * data["CENTER_Y"]
+
+    if "CENTER_Z" in data.columns and region is None:
+        data["cz"] = ds * data["CENTER_Z"]
+
+    property_conversions = [
+        ("area", ds * ds),
+        ("perimeter", ds),
+        ("axis_major_length", ds),
+        ("axis_minor_length", ds),
+    ]
+
+    for name, conversion in property_conversions:
+        column = f"{name}{suffix}"
+
+        if column not in data.columns:
+            continue
+
+        data[column] = data[column] * conversion
+
+
+def estimate_temporal_resolution(key: str) -> float:
+    """
+    Estimates temporal resolution based on condition key.
+
+    If the key contains ``DT##``, where ``##`` denotes the temporal resolution
+    in minutes/tick, temporal resolution is estimated from ``##``. Otherwise,
+    the default temporal resolution is 1 hours/tick.
+
+    Parameters
+    ----------
+    key
+        Condition key.
+
+    Returns
+    -------
+    :
+        Temporal resolution (hours/tick).
+    """
+
+    matches = [re.fullmatch(r"DT([0-9]+)", k) for k in key.split("_")]
+    return next((float(match.group(1)) / 60 for match in matches if match is not None), 1.0)
+
+
+def estimate_spatial_resolution(key: str) -> float:
+    """
+    Estimates spatial resolution based on condition key.
+
+    If the key contains ``DS##``, where ``##`` denotes the spatial resolution
+    in micron/voxel, spatial resolution is estimated from ``##``. Otherwise,
+    the default spatial resolution is 1 micron/voxel.
+
+    Parameters
+    ----------
+    key
+        Condition key.
+
+    Returns
+    -------
+    :
+        Spatial resolution (micron/voxel).
+    """
+
+    matches = [re.fullmatch(r"DS([0-9]+)", k) for k in key.split("_")]
+    return next((float(match.group(1)) for match in matches if match is not None), 1.0)
