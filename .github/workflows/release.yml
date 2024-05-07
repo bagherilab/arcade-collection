@@ -12,10 +12,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    permissions:
+      pull-requests: read
+
     steps:
 
     - name: Get current PR
-      uses: 8BitJonny/gh-get-current-pr@2.2.0
+      uses: 8BitJonny/gh-get-current-pr@3.0.0
       id: current_pr
 
   release:
