@@ -13,10 +13,10 @@ jobs:
     steps:
 
     - name: Checkout the repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -26,15 +26,15 @@ jobs:
         virtualenvs-create: true
         virtualenvs-in-project: true
 
-    - name: Load cached venv
-      id: cached-poetry-dependencies
-      uses: actions/cache@v3
+    - name: Cache environment
+      id: cached-dependencies
+      uses: actions/cache@v4
       with:
         path: .venv
-        key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
     - name: Install dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      if: steps.cached-dependencies.outputs.cache-hit != 'true'
       run: |
         poetry install --no-interaction --no-root
 
@@ -83,7 +83,7 @@ jobs:
         clean: false
 
   result:
-    if: ${{ always() }}
+    if: ${{ always() && github.ref == 'refs/heads/main' }}
 
     runs-on: ubuntu-latest
 
@@ -92,7 +92,7 @@ jobs:
     steps:
 
     - name: Checkout the repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Get build result
       run: |
