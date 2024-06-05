@@ -83,7 +83,7 @@ jobs:
         clean: false
 
   result:
-    if: ${{ always() }}
+    if: ${{ always() && github.ref == 'refs/heads/main' }}
 
     runs-on: ubuntu-latest
 
