@@ -51,3 +51,7 @@ class TestExtractVoxelContours(unittest.TestCase):
         self.assertEqual(1, estimate_spatial_resolution(f"{ds_key}_B_C"))
         self.assertEqual(1, estimate_spatial_resolution(f"A_{ds_key}_C"))
         self.assertEqual(1, estimate_spatial_resolution(f"A_B_{ds_key}"))
+
+
+if __name__ == "__main__":
+    unittest.main()

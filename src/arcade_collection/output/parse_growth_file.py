@@ -121,7 +121,7 @@ def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
     parsed_data = []
     time = timepoint["time"]
 
-    for (location, cells) in timepoint["cells"]:
+    for location, cells in timepoint["cells"]:
         u, v, w, z = location
 
         for cell in cells:
