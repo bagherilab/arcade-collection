@@ -109,7 +109,7 @@ def format_patch_for_shapes(
                 graph_tar, series_key, frame, "GRAPH", field="graph"
             )
 
-            for (from_node, to_node, edge) in graph_timepoint:
+            for from_node, to_node, edge in graph_timepoint:
                 edge_type, radius, _, _, _, _, flow = edge
 
                 name = f"VASCULATURE##{'UNDEFINED' if isnan(flow) else EDGE_TYPES[edge_type + 2]}"

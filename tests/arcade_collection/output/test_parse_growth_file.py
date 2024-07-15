@@ -123,3 +123,7 @@ class TestParseGrowthFile(unittest.TestCase):
 
         expected_df = pd.DataFrame(expected_dict)
         self.assertTrue(expected_df.equals(returned_df))
+
+
+if __name__ == "__main__":
+    unittest.main()
