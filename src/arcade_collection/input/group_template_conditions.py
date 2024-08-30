@@ -2,6 +2,22 @@ from itertools import groupby
 
 
 def group_template_conditions(conditions: list[dict], max_seeds: int) -> list[dict]:
+    """
+    Create conditions groups obeying specified max seeds for each group.
+
+    Parameters
+    ----------
+    conditions
+        List of conditions, containing a unique "key" and "seed".
+    max_seeds
+        Maximum number of total seeds in each group.
+
+    Returns
+    -------
+    :
+        List of condition groups.
+    """
+
     grouped_conditions = group_seed_ranges(conditions, max_seeds)
     condition_sets = group_condition_sets(grouped_conditions, max_seeds)
     template_conditions = [{"conditions": condition_set} for condition_set in condition_sets]
@@ -9,6 +25,22 @@ def group_template_conditions(conditions: list[dict], max_seeds: int) -> list[di
 
 
 def group_seed_ranges(conditions: list[dict], max_seeds: int) -> list[dict]:
+    """
+    Group conditions by continuous seed ranges.
+
+    Parameters
+    ----------
+    conditions
+        List of conditions, containing a unique "key" and "seed".
+    max_seeds
+        Maximum number of seeds in a single range.
+
+    Returns
+    -------
+    :
+        List of conditions updated with "start_seed" and "end_seed" ranges.
+    """
+
     conditions.sort(key=lambda x: (x["key"], x["seed"]))
     grouped_conditions = []
 
@@ -33,6 +65,22 @@ def group_seed_ranges(conditions: list[dict], max_seeds: int) -> list[dict]:
 
 
 def find_seed_ranges(seeds: list[int], max_seeds: int) -> list[tuple[int, int]]:
+    """
+    Find continuous seed ranges, with range no larger than specified max seeds.
+
+    Parameters
+    ----------
+    seeds
+        List of seeds.
+    max_seeds
+        Maximum number of seeds in a single range.
+
+    Returns
+    -------
+    :
+        List of seeds grouped into ranges.
+    """
+
     seeds.sort()
     ranges = []
 
@@ -52,6 +100,23 @@ def find_seed_ranges(seeds: list[int], max_seeds: int) -> list[tuple[int, int]]:
 
 
 def group_condition_sets(conditions: list[dict], max_seeds: int) -> list[list[dict]]:
+    """
+    Group conditions, with total seeds no larger than specified max seeds.
+
+    Parameters
+    ----------
+    conditions
+        List of conditions, containing a unique "key" with "start_seed" and
+        "end_seed" ranges.
+    max_seeds
+        Maximum number of seeds in a single group.
+
+    Returns
+    -------
+    :
+        List of groups of conditions.
+    """
+
     seed_count = 0
     condition_set = []
     condition_sets = []
