@@ -7,14 +7,62 @@ import pandas as pd
 def merge_region_samples(
     samples: dict[str, pd.DataFrame], margins: tuple[int, int, int]
 ) -> pd.DataFrame:
+    """
+    Merge different region samples into single valid samples dataframe.
+
+    The input samples are formatted as:
+
+    .. code-block:: python
+
+        {
+            "DEFAULT": (dataframe with columns = id, x, y, z),
+            "<REGION>": (dataframe with columns = id, x, y, z),
+            "<REGION>": (dataframe with columns = id, x, y, z),
+            ...
+        }
+
+    The DEFAULT region is used as the superset of (x, y, z) samples; any sample
+    found only in a non-DEFAULT region are ignored. For a given id, there must
+    be at least one sample in each region.
+
+    The output samples are formatted as:
+
+    .. code-block:: markdown
+
+        ┍━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┑
+        │  id  │    x     │    y     │    z     │  region  │
+        ┝━━━━━━┿━━━━━━━━━━┿━━━━━━━━━━┿━━━━━━━━━━┿━━━━━━━━━━┥
+        │ <id> │ <x + dx> │ <y + dy> │ <z + dz> │ DEFAULT  │
+        │ <id> │ <x + dx> │ <y + dy> │ <z + dz> │ <REGION> │
+        │ ...  │   ...    │   ...    │   ...    │   ...    │
+        │ <id> │ <x + dx> │ <y + dy> │ <z + dz> │ <REGION> │
+        ┕━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┙
+
+    Samples that are found in the DEFAULT region, but not in any non-DEFAULT
+    region are marked as DEFAULT. Otherwise, the sample is marked with the
+    corresponding region. Region samples should be mutually exclusive.
+
+    Parameters
+    ----------
+    samples
+        Map of region names to region samples.
+    margins
+        Margin in the x, y, and z directions applied to sample locations.
+
+    Returns
+    -------
+    :
+        Dataframe of merged samples with applied margins.
+    """
+
     default_samples = samples["DEFAULT"]
-    all_samples = tranform_sample_coordinates(default_samples, margins)
+    all_samples = transform_sample_coordinates(default_samples, margins)
 
     regions = [key for key in samples.keys() if key != "DEFAULT"]
     all_region_samples = []
 
     for region in regions:
-        region_samples = tranform_sample_coordinates(samples[region], margins, default_samples)
+        region_samples = transform_sample_coordinates(samples[region], margins, default_samples)
         region_samples["region"] = region
         all_region_samples.append(region_samples)
 
@@ -29,7 +77,7 @@ def merge_region_samples(
     return valid_samples
 
 
-def tranform_sample_coordinates(
+def transform_sample_coordinates(
     samples: pd.DataFrame,
     margins: tuple[int, int, int],
     reference: Optional[pd.DataFrame] = None,
@@ -51,6 +99,7 @@ def tranform_sample_coordinates(
     :
         Transformed sample cell ids and coordinates.
     """
+
     if reference is None:
         reference = samples
 
@@ -84,6 +133,7 @@ def filter_valid_samples(samples: pd.DataFrame) -> pd.DataFrame:
     :
         Valid sample cell ids and coordinates.
     """
+
     if "region" in samples.columns:
         num_regions = len(samples.region.unique())
         samples = samples.groupby("id").filter(lambda x: len(x.region.unique()) == num_regions)

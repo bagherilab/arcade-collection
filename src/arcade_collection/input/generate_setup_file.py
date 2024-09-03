@@ -4,14 +4,42 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
+DEFAULT_POPULATION_ID = "X"
+"""Default population ID used in setup file."""
+
 
 def generate_setup_file(
-    samples: pd.DataFrame, margins: tuple[int, int, int], potts_terms: list[str]
+    samples: pd.DataFrame, margins: tuple[int, int, int], terms: list[str]
 ) -> str:
+    """
+    Create ARCADE setup file from samples, margins, and CPM Hamiltonian terms.
+
+    Initial number of cells is determined by number of unique ids in samples.
+    Regions are included if samples contains valid regions.
+
+    Parameters
+    ----------
+    samples
+        Sample cell ids and coordinates.
+    margins
+        Margin size in x, y, and z directions.
+    terms
+        List of Potts Hamiltonian terms for setup file.
+
+    Returns
+    -------
+    :
+        Contents of ARCADE setup file.
+    """
+
     init = len(samples["id"].unique())
     bounds = calculate_sample_bounds(samples, margins)
-    regions = samples["regions"].unique() if "regions" in samples else None
-    setup = make_setup_file(init, bounds, potts_terms, regions)
+    regions = (
+        samples["region"].unique()
+        if "region" in samples.columns and not samples["region"].isnull().all()
+        else None
+    )
+    setup = make_setup_file(init, bounds, terms, regions)
     return setup
 
 
@@ -33,6 +61,7 @@ def calculate_sample_bounds(
     :
         Bounds in x, y, and z directions.
     """
+
     mins = (min(samples.x), min(samples.y), min(samples.z))
     maxs = (max(samples.x), max(samples.y), max(samples.z))
 
@@ -64,8 +93,10 @@ def make_setup_file(
 
     Returns
     -------
+    :
         Contents of ARCADE setup file.
     """
+
     root = ET.fromstring("<set></set>")
     series = ET.SubElement(
         root,
