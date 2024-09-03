@@ -4,6 +4,20 @@ import pandas as pd
 
 
 def convert_to_locations_file(samples: pd.DataFrame) -> list[dict]:
+    """
+    Convert all samples to location objects.
+
+    Parameters
+    ----------
+    samples
+        Sample cell ids and coordinates.
+
+    Returns
+    -------
+    :
+        List of location objects formatted for ARCADE.
+    """
+
     locations: list[dict] = []
     samples_by_id = samples.groupby("id")
 
@@ -15,23 +29,24 @@ def convert_to_locations_file(samples: pd.DataFrame) -> list[dict]:
 
 def convert_to_location(cell_id: int, samples: pd.DataFrame) -> dict:
     """
-    Convert samples to ARCADE .LOCATIONS json format.
+    Convert samples to location object.
 
     Parameters
     ----------
     cell_id
         Unique cell id.
     samples
-        Sample cell ids and coordinates.
+        Sample coordinates for a single object.
 
     Returns
     -------
     :
-        Dictionary in ARCADE .LOCATIONS json format.
+        Location object formatted for ARCADE.
     """
+
     center = get_center_voxel(samples)
 
-    if "region" in samples.columns:
+    if "region" in samples.columns and not samples["region"].isnull().all():
         voxels = [
             {"region": region, "voxels": get_location_voxels(samples, region)}
             for region in samples["region"].unique()
@@ -44,6 +59,7 @@ def convert_to_location(cell_id: int, samples: pd.DataFrame) -> dict:
         "center": center,
         "location": voxels,
     }
+
     return location
 
 
@@ -61,6 +77,7 @@ def get_center_voxel(samples: pd.DataFrame) -> tuple[int, int, int]:
     :
         Center voxel.
     """
+
     center_x = int(samples["x"].mean())
     center_y = int(samples["y"].mean())
     center_z = int(samples["z"].mean())
@@ -86,6 +103,7 @@ def get_location_voxels(
     :
         List of voxel coordinates.
     """
+
     if region is not None:
         region_samples = samples[samples["region"] == region]
         voxels_x = region_samples["x"]
