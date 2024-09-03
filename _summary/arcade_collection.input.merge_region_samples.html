@@ -234,11 +234,49 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.merge_region_samples.merge_region_samples">
 <span class="sig-name descname"><span class="pre">merge_region_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/merge_region_samples.html#merge_region_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.merge_region_samples.merge_region_samples" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Merge different region samples into single valid samples dataframe.</p>
+<p>The input samples are formatted as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">dataframe</span> <span class="k">with</span> <span class="n">columns</span> <span class="o">=</span> <span class="nb">id</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span>
+    <span class="s2">&quot;&lt;REGION&gt;&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">dataframe</span> <span class="k">with</span> <span class="n">columns</span> <span class="o">=</span> <span class="nb">id</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span>
+    <span class="s2">&quot;&lt;REGION&gt;&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">dataframe</span> <span class="k">with</span> <span class="n">columns</span> <span class="o">=</span> <span class="nb">id</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The DEFAULT region is used as the superset of (x, y, z) samples; any sample
+found only in a non-DEFAULT region are ignored. For a given id, there must
+be at least one sample in each region.</p>
+<p>The output samples are formatted as:</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>┍━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┑
+│  id  │    x     │    y     │    z     │  region  │
+┝━━━━━━┿━━━━━━━━━━┿━━━━━━━━━━┿━━━━━━━━━━┿━━━━━━━━━━┥
+│ &lt;id&gt; │ &lt;x + dx&gt; │ &lt;y + dy&gt; │ &lt;z + dz&gt; │ DEFAULT  │
+│ &lt;id&gt; │ &lt;x + dx&gt; │ &lt;y + dy&gt; │ &lt;z + dz&gt; │ &lt;REGION&gt; │
+│ ...  │   ...    │   ...    │   ...    │   ...    │
+│ &lt;id&gt; │ &lt;x + dx&gt; │ &lt;y + dy&gt; │ &lt;z + dz&gt; │ &lt;REGION&gt; │
+┕━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┙
+</pre></div>
+</div>
+<p>Samples that are found in the DEFAULT region, but not in any non-DEFAULT
+region are marked as DEFAULT. Otherwise, the sample is marked with the
+corresponding region. Region samples should be mutually exclusive.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samples</strong> – Map of region names to region samples.</p></li>
+<li><p><strong>margins</strong> – Margin in the x, y, and z directions applied to sample locations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dataframe of merged samples with applied margins.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="arcade_collection.input.merge_region_samples.tranform_sample_coordinates">
-<span class="sig-name descname"><span class="pre">tranform_sample_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/merge_region_samples.html#tranform_sample_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.merge_region_samples.tranform_sample_coordinates" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="arcade_collection.input.merge_region_samples.transform_sample_coordinates">
+<span class="sig-name descname"><span class="pre">transform_sample_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/merge_region_samples.html#transform_sample_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.merge_region_samples.transform_sample_coordinates" title="Permalink to this definition">#</a></dt>
 <dd><p>Transforms samples into centered coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -331,7 +369,7 @@
             <ul>
 <li><a class="reference internal" href="#">merge_region_samples</a><ul>
 <li><a class="reference internal" href="#arcade_collection.input.merge_region_samples.merge_region_samples"><code class="docutils literal notranslate"><span class="pre">merge_region_samples()</span></code></a></li>
-<li><a class="reference internal" href="#arcade_collection.input.merge_region_samples.tranform_sample_coordinates"><code class="docutils literal notranslate"><span class="pre">tranform_sample_coordinates()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.input.merge_region_samples.transform_sample_coordinates"><code class="docutils literal notranslate"><span class="pre">transform_sample_coordinates()</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.input.merge_region_samples.filter_valid_samples"><code class="docutils literal notranslate"><span class="pre">filter_valid_samples()</span></code></a></li>
 </ul>
 </li>

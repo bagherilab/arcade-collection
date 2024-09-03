@@ -234,22 +234,71 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.group_template_conditions.group_template_conditions">
 <span class="sig-name descname"><span class="pre">group_template_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_seeds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/group_template_conditions.html#group_template_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.group_template_conditions.group_template_conditions" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Create conditions groups obeying specified max seeds for each group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conditions</strong> – List of conditions, containing a unique “key” and “seed”.</p></li>
+<li><p><strong>max_seeds</strong> – Maximum number of total seeds in each group.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of condition groups.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.group_template_conditions.group_seed_ranges">
 <span class="sig-name descname"><span class="pre">group_seed_ranges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_seeds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/group_template_conditions.html#group_seed_ranges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.group_template_conditions.group_seed_ranges" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Group conditions by continuous seed ranges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conditions</strong> – List of conditions, containing a unique “key” and “seed”.</p></li>
+<li><p><strong>max_seeds</strong> – Maximum number of seeds in a single range.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of conditions updated with “start_seed” and “end_seed” ranges.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.group_template_conditions.find_seed_ranges">
 <span class="sig-name descname"><span class="pre">find_seed_ranges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seeds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_seeds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/group_template_conditions.html#find_seed_ranges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.group_template_conditions.find_seed_ranges" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Find continuous seed ranges, with range no larger than specified max seeds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seeds</strong> – List of seeds.</p></li>
+<li><p><strong>max_seeds</strong> – Maximum number of seeds in a single range.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of seeds grouped into ranges.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.group_template_conditions.group_condition_sets">
 <span class="sig-name descname"><span class="pre">group_condition_sets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_seeds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/group_template_conditions.html#group_condition_sets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.group_template_conditions.group_condition_sets" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Group conditions, with total seeds no larger than specified max seeds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conditions</strong> – List of conditions, containing a unique “key” with “start_seed” and
+“end_seed” ranges.</p></li>
+<li><p><strong>max_seeds</strong> – Maximum number of seeds in a single group.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of groups of conditions.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 

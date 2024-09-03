@@ -237,14 +237,62 @@
 <div class="viewcode-block" id="merge_region_samples"><a class="viewcode-back" href="../../../_summary/arcade_collection.input.merge_region_samples.html#arcade_collection.input.merge_region_samples.merge_region_samples">[docs]</a><span class="k">def</span> <span class="nf">merge_region_samples</span><span class="p">(</span>
     <span class="n">samples</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">margins</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Merge different region samples into single valid samples dataframe.</span>
+
+<span class="sd">    The input samples are formatted as:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        {</span>
+<span class="sd">            &quot;DEFAULT&quot;: (dataframe with columns = id, x, y, z),</span>
+<span class="sd">            &quot;&lt;REGION&gt;&quot;: (dataframe with columns = id, x, y, z),</span>
+<span class="sd">            &quot;&lt;REGION&gt;&quot;: (dataframe with columns = id, x, y, z),</span>
+<span class="sd">            ...</span>
+<span class="sd">        }</span>
+
+<span class="sd">    The DEFAULT region is used as the superset of (x, y, z) samples; any sample</span>
+<span class="sd">    found only in a non-DEFAULT region are ignored. For a given id, there must</span>
+<span class="sd">    be at least one sample in each region.</span>
+
+<span class="sd">    The output samples are formatted as:</span>
+
+<span class="sd">    .. code-block:: markdown</span>
+
+<span class="sd">        ┍━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┯━━━━━━━━━━┑</span>
+<span class="sd">        │  id  │    x     │    y     │    z     │  region  │</span>
+<span class="sd">        ┝━━━━━━┿━━━━━━━━━━┿━━━━━━━━━━┿━━━━━━━━━━┿━━━━━━━━━━┥</span>
+<span class="sd">        │ &lt;id&gt; │ &lt;x + dx&gt; │ &lt;y + dy&gt; │ &lt;z + dz&gt; │ DEFAULT  │</span>
+<span class="sd">        │ &lt;id&gt; │ &lt;x + dx&gt; │ &lt;y + dy&gt; │ &lt;z + dz&gt; │ &lt;REGION&gt; │</span>
+<span class="sd">        │ ...  │   ...    │   ...    │   ...    │   ...    │</span>
+<span class="sd">        │ &lt;id&gt; │ &lt;x + dx&gt; │ &lt;y + dy&gt; │ &lt;z + dz&gt; │ &lt;REGION&gt; │</span>
+<span class="sd">        ┕━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┷━━━━━━━━━━┙</span>
+
+<span class="sd">    Samples that are found in the DEFAULT region, but not in any non-DEFAULT</span>
+<span class="sd">    region are marked as DEFAULT. Otherwise, the sample is marked with the</span>
+<span class="sd">    corresponding region. Region samples should be mutually exclusive.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    samples</span>
+<span class="sd">        Map of region names to region samples.</span>
+<span class="sd">    margins</span>
+<span class="sd">        Margin in the x, y, and z directions applied to sample locations.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Dataframe of merged samples with applied margins.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">default_samples</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">]</span>
-    <span class="n">all_samples</span> <span class="o">=</span> <span class="n">tranform_sample_coordinates</span><span class="p">(</span><span class="n">default_samples</span><span class="p">,</span> <span class="n">margins</span><span class="p">)</span>
+    <span class="n">all_samples</span> <span class="o">=</span> <span class="n">transform_sample_coordinates</span><span class="p">(</span><span class="n">default_samples</span><span class="p">,</span> <span class="n">margins</span><span class="p">)</span>
 
     <span class="n">regions</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">]</span>
     <span class="n">all_region_samples</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">:</span>
-        <span class="n">region_samples</span> <span class="o">=</span> <span class="n">tranform_sample_coordinates</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">region</span><span class="p">],</span> <span class="n">margins</span><span class="p">,</span> <span class="n">default_samples</span><span class="p">)</span>
+        <span class="n">region_samples</span> <span class="o">=</span> <span class="n">transform_sample_coordinates</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">region</span><span class="p">],</span> <span class="n">margins</span><span class="p">,</span> <span class="n">default_samples</span><span class="p">)</span>
         <span class="n">region_samples</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">region</span>
         <span class="n">all_region_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">region_samples</span><span class="p">)</span>
 
@@ -259,7 +307,7 @@
     <span class="k">return</span> <span class="n">valid_samples</span></div>
 
 
-<div class="viewcode-block" id="tranform_sample_coordinates"><a class="viewcode-back" href="../../../_summary/arcade_collection.input.merge_region_samples.html#arcade_collection.input.merge_region_samples.tranform_sample_coordinates">[docs]</a><span class="k">def</span> <span class="nf">tranform_sample_coordinates</span><span class="p">(</span>
+<div class="viewcode-block" id="transform_sample_coordinates"><a class="viewcode-back" href="../../../_summary/arcade_collection.input.merge_region_samples.html#arcade_collection.input.merge_region_samples.transform_sample_coordinates">[docs]</a><span class="k">def</span> <span class="nf">transform_sample_coordinates</span><span class="p">(</span>
     <span class="n">samples</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">margins</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">reference</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -281,6 +329,7 @@
 <span class="sd">    :</span>
 <span class="sd">        Transformed sample cell ids and coordinates.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="n">reference</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">reference</span> <span class="o">=</span> <span class="n">samples</span>
 
@@ -314,6 +363,7 @@
 <span class="sd">    :</span>
 <span class="sd">        Valid sample cell ids and coordinates.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="s2">&quot;region&quot;</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="n">num_regions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
         <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">==</span> <span class="n">num_regions</span><span class="p">)</span>

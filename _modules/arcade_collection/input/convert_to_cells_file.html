@@ -240,6 +240,44 @@
     <span class="n">critical_height_distributions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
     <span class="n">state_thresholds</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert all samples to cell objects.</span>
+
+<span class="sd">    For each cell id in samples, current volume and height are rescaled to</span>
+<span class="sd">    critical volume and critical height based on distribution means and standard</span>
+<span class="sd">    deviations. If reference volume and/or height exist for the cell id, those</span>
+<span class="sd">    values are used as the current values to be rescaled. Otherwise, current</span>
+<span class="sd">    volume is calculated from the number of voxel samples and current height is</span>
+<span class="sd">    calculated from the range of voxel coordinates along the z axis.</span>
+
+<span class="sd">    Initial cell state and cell state phase for each cell are estimated based on</span>
+<span class="sd">    state thresholds, the current cell volume, and the critical cell volume.</span>
+
+<span class="sd">    Cell object ids are reindexed starting with cell id 1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    samples</span>
+<span class="sd">        Sample cell ids and coordinates.</span>
+<span class="sd">    reference</span>
+<span class="sd">        Reference values for volumes and heights.</span>
+<span class="sd">    volume_distributions</span>
+<span class="sd">        Map of volume means and standard deviations.</span>
+<span class="sd">    height_distributions</span>
+<span class="sd">        Map of height means and standard deviations.</span>
+<span class="sd">    critical_volume_distributions</span>
+<span class="sd">        Map of critical volume means and standard deviations.</span>
+<span class="sd">    critical_height_distributions</span>
+<span class="sd">        Map of critical height means and standard deviations.</span>
+<span class="sd">    state_thresholds</span>
+<span class="sd">        Critical volume fractions defining threshold between states.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        List of cell objects formatted for ARCADE.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">cells</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">samples_by_id</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
 
@@ -272,30 +310,43 @@
     <span class="n">state_thresholds</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert samples to ARCADE .CELLS json format.</span>
+<span class="sd">    Convert samples to cell object.</span>
+
+<span class="sd">    Current volume and height are rescaled to critical volume and critical</span>
+<span class="sd">    height based on distribution means and standard deviations. If reference</span>
+<span class="sd">    volume and/or height are provided (under the &quot;DEFAULT&quot; key), those values</span>
+<span class="sd">    are used as the current values to be rescaled. Otherwise, current volume is</span>
+<span class="sd">    calculated from the number of voxel samples and current height is calculated</span>
+<span class="sd">    from the range of voxel coordinates along the z axis.</span>
+
+<span class="sd">    Initial cell state and cell state phase are estimated based on state</span>
+<span class="sd">    thresholds, the current cell volume, and the critical cell volume.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    cell_id</span>
 <span class="sd">        Unique cell id.</span>
 <span class="sd">    samples</span>
-<span class="sd">        Sample cell ids and coordinates.</span>
+<span class="sd">        Sample coordinates for a single object.</span>
 <span class="sd">    reference</span>
-<span class="sd">        Reference data for conversion.</span>
-<span class="sd">    volume_distribution</span>
-<span class="sd">        Average and standard deviation of volume distributions.</span>
-<span class="sd">    height_distribution</span>
-<span class="sd">        Average and standard deviation of height distributions.</span>
-<span class="sd">    critical_volume_distribution</span>
-<span class="sd">        Average and standard deviation of critical volume distributions.</span>
-<span class="sd">    critical_height_distribution</span>
-<span class="sd">        Average and standard deviation of critical height distributions.</span>
+<span class="sd">        Reference data for cell.</span>
+<span class="sd">    volume_distributions</span>
+<span class="sd">        Map of volume means and standard deviations.</span>
+<span class="sd">    height_distributions</span>
+<span class="sd">        Map of height means and standard deviations.</span>
+<span class="sd">    critical_volume_distributions</span>
+<span class="sd">        Map of critical volume means and standard deviations.</span>
+<span class="sd">    critical_height_distributions</span>
+<span class="sd">        Map of critical height means and standard deviations.</span>
+<span class="sd">    state_thresholds</span>
+<span class="sd">        Critical volume fractions defining threshold between states.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    :</span>
-<span class="sd">        Dictionary in ARCADE .CELLS json format.</span>
+<span class="sd">        Cell object formatted for ARCADE.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">volume</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
     <span class="n">height</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">samples</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 
@@ -325,7 +376,7 @@
         <span class="s2">&quot;criticals&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">critical_volume</span><span class="p">,</span> <span class="n">critical_height</span><span class="p">],</span>
     <span class="p">}</span>
 
-    <span class="k">if</span> <span class="s2">&quot;region&quot;</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;region&quot;</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
         <span class="n">regions</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">convert_to_cell_region</span><span class="p">(</span>
                 <span class="n">region</span><span class="p">,</span>
@@ -352,6 +403,39 @@
     <span class="n">critical_volume_distributions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
     <span class="n">critical_height_distributions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert region samples to cell region object.</span>
+
+<span class="sd">    Current region volume and height are rescaled to critical volume and</span>
+<span class="sd">    critical height based on distribution means and standard deviations. If</span>
+<span class="sd">    reference region volume and/or height are provided, those values are used as</span>
+<span class="sd">    the current values to be rescaled. Otherwise, current region volume is</span>
+<span class="sd">    calculated from the number of voxel samples and current region height is</span>
+<span class="sd">    calculated from the range of voxel coordinates along the z axis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    region</span>
+<span class="sd">        Region name.</span>
+<span class="sd">    region_samples</span>
+<span class="sd">        Sample coordinates for region of a single object.</span>
+<span class="sd">    reference</span>
+<span class="sd">        Reference data for cell region.</span>
+<span class="sd">    volume_distributions</span>
+<span class="sd">        Map of volume means and standard deviations.</span>
+<span class="sd">    height_distributions</span>
+<span class="sd">        Map of height means and standard deviations.</span>
+<span class="sd">    critical_volume_distributions</span>
+<span class="sd">        Map of critical volume means and standard deviations.</span>
+<span class="sd">    critical_height_distributions</span>
+<span class="sd">        Map of critical height means and standard deviations.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Cell region object formatted for ARCADE.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">region_volume</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">region_samples</span><span class="p">)</span>
     <span class="n">region_height</span> <span class="o">=</span> <span class="n">region_samples</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">region_samples</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 
@@ -382,12 +466,14 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Estimates cell state based on cell volume.</span>
 
-<span class="sd">    The threshold fractions dictionary defines the monotonic thresholds</span>
-<span class="sd">    between different cell states.</span>
-<span class="sd">    For a given volume v, critical volume V, and states X1, X2, ..., XN with</span>
-<span class="sd">    corresponding, monotonic threshold fractions f1, f2, ..., fN, a cell is</span>
-<span class="sd">    assigned state Xi such that [f(i - 1) * V] &lt;= v &lt; [fi * V].</span>
+<span class="sd">    The threshold fractions dictionary defines the monotonic thresholds between</span>
+<span class="sd">    different cell states. For a given volume v, critical volume V, and states</span>
+<span class="sd">    X1, X2, ..., XN with corresponding, monotonic threshold fractions f1, f2,</span>
+<span class="sd">    ..., fN, a cell is assigned state Xi such that [f(i - 1) * V] &lt;= v &lt; [fi *</span>
+<span class="sd">    V].</span>
+
 <span class="sd">    Cells with v &lt; f1 * V are assigned state X1.</span>
+
 <span class="sd">    Cells with v &gt; fN * V are assigned state XN.</span>
 
 <span class="sd">    Parameters</span>
@@ -404,6 +490,7 @@
 <span class="sd">    :</span>
 <span class="sd">        Cell state.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">thresholds</span> <span class="o">=</span> <span class="p">[</span><span class="n">fraction</span> <span class="o">*</span> <span class="n">critical_volume</span> <span class="k">for</span> <span class="n">fraction</span> <span class="ow">in</span> <span class="n">threshold_fractions</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
     <span class="n">states</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">threshold_fractions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
@@ -433,6 +520,7 @@
 <span class="sd">    :</span>
 <span class="sd">        Estimated critical value.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">source_avg</span><span class="p">,</span> <span class="n">source_std</span> <span class="o">=</span> <span class="n">source_distribution</span>
     <span class="n">target_avg</span><span class="p">,</span> <span class="n">target_std</span> <span class="o">=</span> <span class="n">target_distribution</span>
     <span class="n">z_scored_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">source_avg</span><span class="p">)</span> <span class="o">/</span> <span class="n">source_std</span>
@@ -456,6 +544,7 @@
 <span class="sd">    :</span>
 <span class="sd">        Reference data for given cell id.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">cell_reference</span> <span class="o">=</span> <span class="n">reference</span><span class="p">[</span><span class="n">reference</span><span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">cell_id</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
     <span class="n">cell_reference</span> <span class="o">=</span> <span class="n">cell_reference</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">cell_reference</span><span class="o">.</span><span class="n">empty</span> <span class="k">else</span> <span class="p">{}</span>
     <span class="k">return</span> <span class="n">cell_reference</span></div>

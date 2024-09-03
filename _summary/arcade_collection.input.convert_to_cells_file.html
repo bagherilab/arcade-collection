@@ -234,26 +234,61 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.convert_to_cells_file.convert_to_cells_file">
 <span class="sig-name descname"><span class="pre">convert_to_cells_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">volume_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critical_volume_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critical_height_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_thresholds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/convert_to_cells_file.html#convert_to_cells_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.convert_to_cells_file.convert_to_cells_file" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Convert all samples to cell objects.</p>
+<p>For each cell id in samples, current volume and height are rescaled to
+critical volume and critical height based on distribution means and standard
+deviations. If reference volume and/or height exist for the cell id, those
+values are used as the current values to be rescaled. Otherwise, current
+volume is calculated from the number of voxel samples and current height is
+calculated from the range of voxel coordinates along the z axis.</p>
+<p>Initial cell state and cell state phase for each cell are estimated based on
+state thresholds, the current cell volume, and the critical cell volume.</p>
+<p>Cell object ids are reindexed starting with cell id 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samples</strong> – Sample cell ids and coordinates.</p></li>
+<li><p><strong>reference</strong> – Reference values for volumes and heights.</p></li>
+<li><p><strong>volume_distributions</strong> – Map of volume means and standard deviations.</p></li>
+<li><p><strong>height_distributions</strong> – Map of height means and standard deviations.</p></li>
+<li><p><strong>critical_volume_distributions</strong> – Map of critical volume means and standard deviations.</p></li>
+<li><p><strong>critical_height_distributions</strong> – Map of critical height means and standard deviations.</p></li>
+<li><p><strong>state_thresholds</strong> – Critical volume fractions defining threshold between states.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of cell objects formatted for ARCADE.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.convert_to_cells_file.convert_to_cell">
 <span class="sig-name descname"><span class="pre">convert_to_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">volume_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critical_volume_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critical_height_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_thresholds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/convert_to_cells_file.html#convert_to_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.convert_to_cells_file.convert_to_cell" title="Permalink to this definition">#</a></dt>
-<dd><p>Convert samples to ARCADE .CELLS json format.</p>
+<dd><p>Convert samples to cell object.</p>
+<p>Current volume and height are rescaled to critical volume and critical
+height based on distribution means and standard deviations. If reference
+volume and/or height are provided (under the “DEFAULT” key), those values
+are used as the current values to be rescaled. Otherwise, current volume is
+calculated from the number of voxel samples and current height is calculated
+from the range of voxel coordinates along the z axis.</p>
+<p>Initial cell state and cell state phase are estimated based on state
+thresholds, the current cell volume, and the critical cell volume.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cell_id</strong> – Unique cell id.</p></li>
-<li><p><strong>samples</strong> – Sample cell ids and coordinates.</p></li>
-<li><p><strong>reference</strong> – Reference data for conversion.</p></li>
-<li><p><strong>volume_distribution</strong> – Average and standard deviation of volume distributions.</p></li>
-<li><p><strong>height_distribution</strong> – Average and standard deviation of height distributions.</p></li>
-<li><p><strong>critical_volume_distribution</strong> – Average and standard deviation of critical volume distributions.</p></li>
-<li><p><strong>critical_height_distribution</strong> – Average and standard deviation of critical height distributions.</p></li>
+<li><p><strong>samples</strong> – Sample coordinates for a single object.</p></li>
+<li><p><strong>reference</strong> – Reference data for cell.</p></li>
+<li><p><strong>volume_distributions</strong> – Map of volume means and standard deviations.</p></li>
+<li><p><strong>height_distributions</strong> – Map of height means and standard deviations.</p></li>
+<li><p><strong>critical_volume_distributions</strong> – Map of critical volume means and standard deviations.</p></li>
+<li><p><strong>critical_height_distributions</strong> – Map of critical height means and standard deviations.</p></li>
+<li><p><strong>state_thresholds</strong> – Critical volume fractions defining threshold between states.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dictionary in ARCADE .CELLS json format.</p>
+<dd class="field-even"><p>Cell object formatted for ARCADE.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -261,19 +296,42 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.convert_to_cells_file.convert_to_cell_region">
 <span class="sig-name descname"><span class="pre">convert_to_cell_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">volume_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critical_volume_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critical_height_distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/convert_to_cells_file.html#convert_to_cell_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.convert_to_cells_file.convert_to_cell_region" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Convert region samples to cell region object.</p>
+<p>Current region volume and height are rescaled to critical volume and
+critical height based on distribution means and standard deviations. If
+reference region volume and/or height are provided, those values are used as
+the current values to be rescaled. Otherwise, current region volume is
+calculated from the number of voxel samples and current region height is
+calculated from the range of voxel coordinates along the z axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> – Region name.</p></li>
+<li><p><strong>region_samples</strong> – Sample coordinates for region of a single object.</p></li>
+<li><p><strong>reference</strong> – Reference data for cell region.</p></li>
+<li><p><strong>volume_distributions</strong> – Map of volume means and standard deviations.</p></li>
+<li><p><strong>height_distributions</strong> – Map of height means and standard deviations.</p></li>
+<li><p><strong>critical_volume_distributions</strong> – Map of critical volume means and standard deviations.</p></li>
+<li><p><strong>critical_height_distributions</strong> – Map of critical height means and standard deviations.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cell region object formatted for ARCADE.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.input.convert_to_cells_file.get_cell_state">
 <span class="sig-name descname"><span class="pre">get_cell_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critical_volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_fractions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/arcade_collection/input/convert_to_cells_file.html#get_cell_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.input.convert_to_cells_file.get_cell_state" title="Permalink to this definition">#</a></dt>
 <dd><p>Estimates cell state based on cell volume.</p>
-<p>The threshold fractions dictionary defines the monotonic thresholds
-between different cell states.
-For a given volume v, critical volume V, and states X1, X2, …, XN with
-corresponding, monotonic threshold fractions f1, f2, …, fN, a cell is
-assigned state Xi such that [f(i - 1) * V] &lt;= v &lt; [fi * V].
-Cells with v &lt; f1 * V are assigned state X1.
-Cells with v &gt; fN * V are assigned state XN.</p>
+<p>The threshold fractions dictionary defines the monotonic thresholds between
+different cell states. For a given volume v, critical volume V, and states
+X1, X2, …, XN with corresponding, monotonic threshold fractions f1, f2,
+…, fN, a cell is assigned state Xi such that [f(i - 1) * V] &lt;= v &lt; [fi *
+V].</p>
+<p>Cells with v &lt; f1 * V are assigned state X1.</p>
+<p>Cells with v &gt; fN * V are assigned state XN.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

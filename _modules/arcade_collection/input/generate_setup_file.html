@@ -234,14 +234,42 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
+<span class="n">DEFAULT_POPULATION_ID</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span>
+<span class="sd">&quot;&quot;&quot;Default population ID used in setup file.&quot;&quot;&quot;</span>
+
 
 <div class="viewcode-block" id="generate_setup_file"><a class="viewcode-back" href="../../../_summary/arcade_collection.input.generate_setup_file.html#arcade_collection.input.generate_setup_file.generate_setup_file">[docs]</a><span class="k">def</span> <span class="nf">generate_setup_file</span><span class="p">(</span>
-    <span class="n">samples</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">margins</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">potts_terms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">samples</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">margins</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">terms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create ARCADE setup file from samples, margins, and CPM Hamiltonian terms.</span>
+
+<span class="sd">    Initial number of cells is determined by number of unique ids in samples.</span>
+<span class="sd">    Regions are included if samples contains valid regions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    samples</span>
+<span class="sd">        Sample cell ids and coordinates.</span>
+<span class="sd">    margins</span>
+<span class="sd">        Margin size in x, y, and z directions.</span>
+<span class="sd">    terms</span>
+<span class="sd">        List of Potts Hamiltonian terms for setup file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Contents of ARCADE setup file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">init</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
     <span class="n">bounds</span> <span class="o">=</span> <span class="n">calculate_sample_bounds</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">margins</span><span class="p">)</span>
-    <span class="n">regions</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;regions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;regions&quot;</span> <span class="ow">in</span> <span class="n">samples</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="n">setup</span> <span class="o">=</span> <span class="n">make_setup_file</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">potts_terms</span><span class="p">,</span> <span class="n">regions</span><span class="p">)</span>
+    <span class="n">regions</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;region&quot;</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">setup</span> <span class="o">=</span> <span class="n">make_setup_file</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">terms</span><span class="p">,</span> <span class="n">regions</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">setup</span></div>
 
 
@@ -263,6 +291,7 @@
 <span class="sd">    :</span>
 <span class="sd">        Bounds in x, y, and z directions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">mins</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
     <span class="n">maxs</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
 
@@ -294,8 +323,10 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
+<span class="sd">    :</span>
 <span class="sd">        Contents of ARCADE setup file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="s2">&quot;&lt;set&gt;&lt;/set&gt;&quot;</span><span class="p">)</span>
     <span class="n">series</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
         <span class="n">root</span><span class="p">,</span>

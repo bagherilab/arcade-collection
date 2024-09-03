@@ -234,6 +234,20 @@
 
 
 <div class="viewcode-block" id="convert_to_locations_file"><a class="viewcode-back" href="../../../_summary/arcade_collection.input.convert_to_locations_file.html#arcade_collection.input.convert_to_locations_file.convert_to_locations_file">[docs]</a><span class="k">def</span> <span class="nf">convert_to_locations_file</span><span class="p">(</span><span class="n">samples</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert all samples to location objects.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    samples</span>
+<span class="sd">        Sample cell ids and coordinates.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        List of location objects formatted for ARCADE.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">locations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">samples_by_id</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
 
@@ -245,23 +259,24 @@
 
 <div class="viewcode-block" id="convert_to_location"><a class="viewcode-back" href="../../../_summary/arcade_collection.input.convert_to_locations_file.html#arcade_collection.input.convert_to_locations_file.convert_to_location">[docs]</a><span class="k">def</span> <span class="nf">convert_to_location</span><span class="p">(</span><span class="n">cell_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert samples to ARCADE .LOCATIONS json format.</span>
+<span class="sd">    Convert samples to location object.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    cell_id</span>
 <span class="sd">        Unique cell id.</span>
 <span class="sd">    samples</span>
-<span class="sd">        Sample cell ids and coordinates.</span>
+<span class="sd">        Sample coordinates for a single object.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    :</span>
-<span class="sd">        Dictionary in ARCADE .LOCATIONS json format.</span>
+<span class="sd">        Location object formatted for ARCADE.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">center</span> <span class="o">=</span> <span class="n">get_center_voxel</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="s2">&quot;region&quot;</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;region&quot;</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
         <span class="n">voxels</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">{</span><span class="s2">&quot;region&quot;</span><span class="p">:</span> <span class="n">region</span><span class="p">,</span> <span class="s2">&quot;voxels&quot;</span><span class="p">:</span> <span class="n">get_location_voxels</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">region</span><span class="p">)}</span>
             <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
@@ -274,6 +289,7 @@
         <span class="s2">&quot;center&quot;</span><span class="p">:</span> <span class="n">center</span><span class="p">,</span>
         <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">voxels</span><span class="p">,</span>
     <span class="p">}</span>
+
     <span class="k">return</span> <span class="n">location</span></div>
 
 
@@ -291,6 +307,7 @@
 <span class="sd">    :</span>
 <span class="sd">        Center voxel.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">center_x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
     <span class="n">center_y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
     <span class="n">center_z</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
@@ -316,6 +333,7 @@
 <span class="sd">    :</span>
 <span class="sd">        List of voxel coordinates.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="n">region</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">region_samples</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="n">samples</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">region</span><span class="p">]</span>
         <span class="n">voxels_x</span> <span class="o">=</span> <span class="n">region_samples</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
