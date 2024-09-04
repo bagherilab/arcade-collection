@@ -1,3 +1,4 @@
+import json
 import tarfile
 import unittest
 from unittest import mock
@@ -5,41 +6,95 @@ from unittest import mock
 import numpy as np
 import pandas as pd
 
-from arcade_collection.output.parse_growth_file import parse_growth_file
+from arcade_collection.output.parse_growth_file import (
+    CELL_STATES,
+    parse_growth_file,
+    parse_growth_timepoint,
+)
 
 
 class TestParseGrowthFile(unittest.TestCase):
-    def test_parse_growth_timepoint(self):
-        tar_object = mock.Mock(spec=tarfile.TarFile)
-        tar_object.name = "tar_object_name.tar.xz"
+    def test_parse_growth_file(self):
+        tar_mock = mock.Mock(spec=tarfile.TarFile)
+        first_member_mock = mock.Mock(spec=tarfile.ExFileObject)
+        second_member_mock = mock.Mock(spec=tarfile.ExFileObject)
 
-        first_tar_member = mock.Mock(spec=tarfile.TarInfo)
-        first_tar_member.name = "first_member.json"
+        first_member_mock.name = "first_member.json"
+        second_member_mock.name = "second_member.json"
 
-        second_tar_member = mock.Mock(spec=tarfile.TarInfo)
-        second_tar_member.name = "second_member.json"
-
-        tar_object.getmembers.return_value = [first_tar_member, second_tar_member]
-
-        first_json = mock.MagicMock()
-        first_json.read.return_value = '{"seed": 0, "timepoints": [{"time": 0.0,"cells": [[[-33,0,33,0],[[0,1,2,0,2322.26,[]]]],[[0,0,10,0],[[1,0,2,0,2300.50,[]]]]]},{"time": 0.5,"cells": [[[-33,0,31,0],[[0,1,2,0,2522.26,[]]]],[[0,0,5,0],[[1,0,3,0,4391.91,[]]]]]},{"time": 1.0,"cells": [[[-19,0,30,0],[[0,1,1,0,2582.22,[]]]],[[0,0,7,0],[[1,0,4,0,5047.58,[800.0,512.3]]]],[[3,3,-6,0],[[0,1,2,0,2453.83,[640.0]],[1,0,3,1,2517.54,[]]]]]}]}'.encode(
-            "utf-8"
-        )
-
-        second_json = mock.MagicMock()
-        second_json.read.return_value = '{"seed": 1, "timepoints": [{"time": 10.0,"cells": [[[-13,0,33,0],[[0,1,2,0,2372.26,[]]]],[[0,0,10,0],[[1,0,2,0,2390.50,[]]]]]},{"time": 10.5,"cells": [[[-33,0,1,0],[[0,1,2,0,2022.26,[]]]],[[0,0,8,0],[[1,0,3,0,4390.91,[]]]]]},{"time": 11.0,"cells": [[[-19,0,3,0],[[0,1,1,0,2582.22,[]]]],[[1,0,1,0],[[1,0,4,0,5040.58,[800.0,512.3]]]],[[3,0,-6,0],[[0,2,2,0,2053.83,[640.0]],[1,0,6,1,2517.54,[]]]]]}]}'.encode(
-            "utf-8"
-        )
-
-        mock_contents = {
-            first_tar_member: first_json,
-            second_tar_member: second_json,
+        contents = {
+            first_member_mock.name: first_member_mock,
+            second_member_mock.name: second_member_mock,
         }
-        tar_object.extractfile.side_effect = lambda fname, *args, **kwargs: mock_contents[fname]
 
-        returned_df = parse_growth_file(tar_object)
+        tar_mock.getmembers.return_value = contents.values()
+        tar_mock.extractfile.side_effect = lambda member: contents.get(member.name, None)
 
-        expected_dict = {
+        first_member_contents = {
+            "seed": 0,
+            "timepoints": [
+                {
+                    "time": 0.0,
+                    "cells": [
+                        [[-33, 0, 33, 0], [[0, 1, 2, 0, 2322.26, []]]],
+                        [[0, 0, 10, 0], [[1, 0, 2, 0, 2300.50, []]]],
+                    ],
+                },
+                {
+                    "time": 0.5,
+                    "cells": [
+                        [[-33, 0, 31, 0], [[0, 1, 2, 0, 2522.26, []]]],
+                        [[0, 0, 5, 0], [[1, 0, 3, 0, 4391.91, []]]],
+                    ],
+                },
+                {
+                    "time": 1.0,
+                    "cells": [
+                        [[-19, 0, 30, 0], [[0, 1, 1, 0, 2582.22, []]]],
+                        [[0, 0, 7, 0], [[1, 0, 4, 0, 5047.58, [800.0, 512.3]]]],
+                        [
+                            [3, 3, -6, 0],
+                            [[0, 1, 2, 0, 2453.83, [640.0]], [1, 0, 3, 1, 2517.54, []]],
+                        ],
+                    ],
+                },
+            ],
+        }
+        second_member_contents = {
+            "seed": 1,
+            "timepoints": [
+                {
+                    "time": 10.0,
+                    "cells": [
+                        [[-13, 0, 33, 0], [[0, 1, 2, 0, 2372.26, []]]],
+                        [[0, 0, 10, 0], [[1, 0, 2, 0, 2390.50, []]]],
+                    ],
+                },
+                {
+                    "time": 10.5,
+                    "cells": [
+                        [[-33, 0, 1, 0], [[0, 1, 2, 0, 2022.26, []]]],
+                        [[0, 0, 8, 0], [[1, 0, 3, 0, 4390.91, []]]],
+                    ],
+                },
+                {
+                    "time": 11.0,
+                    "cells": [
+                        [[-19, 0, 3, 0], [[0, 1, 1, 0, 2582.22, []]]],
+                        [[1, 0, 1, 0], [[1, 0, 4, 0, 5040.58, [800.0, 512.3]]]],
+                        [
+                            [3, 0, -6, 0],
+                            [[0, 2, 2, 0, 2053.83, [640.0]], [1, 0, 6, 1, 2517.54, []]],
+                        ],
+                    ],
+                },
+            ],
+        }
+
+        first_member_mock.read.return_value = json.dumps(first_member_contents).encode("utf-8")
+        second_member_mock.read.return_value = json.dumps(second_member_contents).encode("utf-8")
+
+        expected_data = {
             "TICK": [
                 0.0,
                 0.0,
@@ -121,8 +176,41 @@ class TestParseGrowthFile(unittest.TestCase):
             ],
         }
 
-        expected_df = pd.DataFrame(expected_dict)
-        self.assertTrue(expected_df.equals(returned_df))
+        data = parse_growth_file(tar_mock)
+
+        self.assertTrue(pd.DataFrame(expected_data).equals(data))
+
+    def test_parse_growth_timepoint(self):
+        time = 15.0
+        seed = 3
+        data = {
+            "time": time,
+            "cells": [
+                [
+                    [10, 20, 30, 40],
+                    [
+                        [0, 4, 1, 7, 100, []],
+                        [0, 5, 2, 8, 200, [40, 50, 60, 70]],
+                    ],
+                ],
+                [
+                    [50, 60, 70, 80],
+                    [
+                        [0, 6, 3, 9, 300, []],
+                    ],
+                ],
+            ],
+        }
+
+        expected = [
+            [time, seed, 10, 20, 30, 40, 7, 4, CELL_STATES[1], 100, None],
+            [time, seed, 10, 20, 30, 40, 8, 5, CELL_STATES[2], 200, 55],
+            [time, seed, 50, 60, 70, 80, 9, 6, CELL_STATES[3], 300, None],
+        ]
+
+        parsed = parse_growth_timepoint(data, seed)
+
+        self.assertCountEqual(expected, parsed)
 
 
 if __name__ == "__main__":
