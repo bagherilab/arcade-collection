@@ -159,6 +159,7 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -179,8 +180,6 @@
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
@@ -231,63 +230,78 @@
         <article role="main">
           <section id="module-arcade_collection.output.parse_growth_file">
 <span id="parse-growth-file"></span><h1>parse_growth_file<a class="headerlink" href="#module-arcade_collection.output.parse_growth_file" title="Permalink to this heading">#</a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="arcade_collection.output.parse_growth_file.GROWTH_COLUMNS">
+<span class="sig-name descname"><span class="pre">GROWTH_COLUMNS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['TICK',</span> <span class="pre">'SEED',</span> <span class="pre">'U',</span> <span class="pre">'V',</span> <span class="pre">'W',</span> <span class="pre">'Z',</span> <span class="pre">'POSITION',</span> <span class="pre">'POPULATION',</span> <span class="pre">'STATE',</span> <span class="pre">'VOLUME',</span> <span class="pre">'CYCLE']</span></em><a class="headerlink" href="#arcade_collection.output.parse_growth_file.GROWTH_COLUMNS" title="Permalink to this definition">#</a></dt>
+<dd><p>Column names for growth data parsed into tidy data format.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="arcade_collection.output.parse_growth_file.CELL_STATES">
+<span class="sig-name descname"><span class="pre">CELL_STATES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['NEUTRAL',</span> <span class="pre">'APOPTOTIC',</span> <span class="pre">'QUIESCENT',</span> <span class="pre">'MIGRATORY',</span> <span class="pre">'PROLIFERATIVE',</span> <span class="pre">'SENESCENT',</span> <span class="pre">'NECROTIC']</span></em><a class="headerlink" href="#arcade_collection.output.parse_growth_file.CELL_STATES" title="Permalink to this definition">#</a></dt>
+<dd><p>Cell state names.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.output.parse_growth_file.parse_growth_file">
 <span class="sig-name descname"><span class="pre">parse_growth_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TarFile</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_growth_file.html#parse_growth_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_growth_file.parse_growth_file" title="Permalink to this definition">#</a></dt>
-<dd><p>Parses a tumor growth simulation tar file.</p>
+<dd><p>Parse simulation growth data into tidy data format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tar</strong> – Tar file of simulations for different seeds.</p>
+<dd class="field-odd"><p><strong>tar</strong> – Tar archive containing growth data.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Parsed simulation data for all seeds and timepoints.</p>
+<dd class="field-even"><p>Parsed growth data.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.output.parse_growth_file.parse_growth_timepoint">
-<span class="sig-name descname"><span class="pre">parse_growth_timepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timepoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_growth_file.html#parse_growth_timepoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_growth_file.parse_growth_timepoint" title="Permalink to this definition">#</a></dt>
-<dd><p>Parses a simulation timepoint into a list of features per cell.</p>
-<p>The original data contains cell features in the form:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{
-    &quot;time&quot;: time,
-    &quot;cells&quot;: [
-        [
-            [u, v, w, z],
-            [
-                [
-                    type,
-                    population,
-                    state,
-                    position,
-                    volume,
-                    [cell, cycle, lengths, ...]
-                ],
-                ...
-            ]
-        ],
-        ...
-    ]
-}
+<span class="sig-name descname"><span class="pre">parse_growth_timepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_growth_file.html#parse_growth_timepoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_growth_file.parse_growth_timepoint" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse growth data for a single simulation timepoint.</p>
+<p>Original data is formatted as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span>
+    <span class="s2">&quot;cells&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>
+            <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="nb">type</span><span class="p">,</span>
+                    <span class="n">population</span><span class="p">,</span>
+                    <span class="n">state</span><span class="p">,</span>
+                    <span class="n">position</span><span class="p">,</span>
+                    <span class="n">volume</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">cell</span><span class="p">,</span> <span class="n">cycle</span><span class="p">,</span> <span class="n">lengths</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+                <span class="p">],</span>
+                <span class="o">...</span>
+            <span class="p">]</span>
+        <span class="p">],</span>
+        <span class="o">...</span>
+    <span class="p">]</span>
+<span class="p">}</span>
 </pre></div>
 </div>
-<p>Parsed data is formatted into:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[
-    [time, seed, u, v, w, z, position, population, state, volume, cycle],
-    [time, seed, u, v, w, z, position, population, state, volume, cycle],
-    ...
-]
+<p>Parsed data is formatted as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">[</span><span class="n">time</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">cell_cycle</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">time</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">cell_cycle</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">]</span>
 </pre></div>
 </div>
-<p>Cell cycle length is <cite>None</cite> if the cell has not yet divided. Otherwise, cell
-cycle is the average of all cell cycle lengths.</p>
+<p>Cell cycle length is <code class="docutils literal notranslate"><span class="pre">None</span></code> if the cell has not yet divided. Otherwise,
+cell cycle is the average of all cell cycle lengths.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>timepoint</strong> – Data for a timepoint.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Original simulation data.</p></li>
+<li><p><strong>seed</strong> – Random seed.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Parsed data of the timepoint.</p>
+<dd class="field-even"><p>Parsed simulation data.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -350,6 +364,8 @@ cycle is the average of all cell cycle lengths.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">parse_growth_file</a><ul>
+<li><a class="reference internal" href="#arcade_collection.output.parse_growth_file.GROWTH_COLUMNS"><code class="docutils literal notranslate"><span class="pre">GROWTH_COLUMNS</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.output.parse_growth_file.CELL_STATES"><code class="docutils literal notranslate"><span class="pre">CELL_STATES</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.output.parse_growth_file.parse_growth_file"><code class="docutils literal notranslate"><span class="pre">parse_growth_file()</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.output.parse_growth_file.parse_growth_timepoint"><code class="docutils literal notranslate"><span class="pre">parse_growth_timepoint()</span></code></a></li>
 </ul>

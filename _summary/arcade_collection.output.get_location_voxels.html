@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="get_voxel_contours" href="arcade_collection.output.get_voxel_contours.html" /><link rel="prev" title="extract_tick_json" href="arcade_collection.output.extract_tick_json.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="parse_cells_file" href="arcade_collection.output.parse_cells_file.html" /><link rel="prev" title="extract_tick_json" href="arcade_collection.output.extract_tick_json.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
         <title>get_location_voxels - ARCADE Collection 0.15.0</title>
@@ -159,6 +159,7 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -179,8 +180,6 @@
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
@@ -234,7 +233,22 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.output.get_location_voxels.get_location_voxels">
 <span class="sig-name descname"><span class="pre">get_location_voxels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/get_location_voxels.html#get_location_voxels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.get_location_voxels.get_location_voxels" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Get list of voxels from location for specified region.</p>
+<p>If region is not given, all voxels in the location are returned, even if
+those voxels are divided into separate regions. If region is given, only
+voxels in that region are returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>location</strong> – Location object.</p></li>
+<li><p><strong>region</strong> – Location region.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of x, y, z voxels.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -243,12 +257,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="arcade_collection.output.get_voxel_contours.html">
+          <a class="next-page" href="arcade_collection.output.parse_cells_file.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">get_voxel_contours</div>
+                <div class="title">parse_cells_file</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

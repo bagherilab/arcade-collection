@@ -158,6 +158,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -178,8 +179,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
@@ -228,20 +227,23 @@
         </div>
         <article role="main">
           <h1>Source code for arcade_collection.output.convert_model_units</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 
 <div class="viewcode-block" id="convert_model_units"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.convert_model_units">[docs]</a><span class="k">def</span> <span class="nf">convert_model_units</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-    <span class="n">ds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-    <span class="n">dt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-    <span class="n">regions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">regions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Converts data from simulation units to true units.</span>
+<span class="sd">    Convert data from simulation units to true units.</span>
 
 <span class="sd">    Simulations use spatial unit of voxels and temporal unit of ticks. Spatial</span>
 <span class="sd">    resolution (microns/voxel) and temporal resolution (hours/tick) are used to</span>
@@ -317,7 +319,7 @@
 
 <div class="viewcode-block" id="convert_temporal_units"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.convert_temporal_units">[docs]</a><span class="k">def</span> <span class="nf">convert_temporal_units</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Converts temporal data from simulation units to true units.</span>
+<span class="sd">    Convert temporal data from simulation units to true units.</span>
 
 <span class="sd">    Simulations use temporal unit of ticks. Temporal resolution (hours/tick) is</span>
 <span class="sd">    used to convert data to true units.</span>
@@ -342,9 +344,9 @@
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">dt</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;TICK&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="convert_spatial_units"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.convert_spatial_units">[docs]</a><span class="k">def</span> <span class="nf">convert_spatial_units</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">region</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="convert_spatial_units"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.convert_spatial_units">[docs]</a><span class="k">def</span> <span class="nf">convert_spatial_units</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">region</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Converts spatial data from simulation units to true units.</span>
+<span class="sd">    Convert spatial data from simulation units to true units.</span>
 
 <span class="sd">    Simulations use spatial unit of voxels. Spatial resolution (microns/voxel)</span>
 <span class="sd">    is used to convert data to true units.</span>
@@ -413,7 +415,7 @@
 
 <div class="viewcode-block" id="estimate_temporal_resolution"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.estimate_temporal_resolution">[docs]</a><span class="k">def</span> <span class="nf">estimate_temporal_resolution</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Estimates temporal resolution based on condition key.</span>
+<span class="sd">    Estimate temporal resolution based on condition key.</span>
 
 <span class="sd">    If the key contains ``DT##``, where ``##`` denotes the temporal resolution</span>
 <span class="sd">    in minutes/tick, temporal resolution is estimated from ``##``. Otherwise,</span>
@@ -436,7 +438,7 @@
 
 <div class="viewcode-block" id="estimate_spatial_resolution"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.estimate_spatial_resolution">[docs]</a><span class="k">def</span> <span class="nf">estimate_spatial_resolution</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Estimates spatial resolution based on condition key.</span>
+<span class="sd">    Estimate spatial resolution based on condition key.</span>
 
 <span class="sd">    If the key contains ``DS##``, where ``##`` denotes the spatial resolution</span>
 <span class="sd">    in micron/voxel, spatial resolution is estimated from ``##``. Otherwise,</span>

@@ -158,6 +158,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -178,8 +179,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
@@ -228,11 +227,15 @@
         </div>
         <article role="main">
           <h1>Source code for arcade_collection.input.generate_setup_file</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="n">DEFAULT_POPULATION_ID</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span>
 <span class="sd">&quot;&quot;&quot;Default population ID used in setup file.&quot;&quot;&quot;</span>
@@ -266,11 +269,10 @@
     <span class="n">bounds</span> <span class="o">=</span> <span class="n">calculate_sample_bounds</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">margins</span><span class="p">)</span>
     <span class="n">regions</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-        <span class="k">if</span> <span class="s2">&quot;region&quot;</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;region&quot;</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="k">else</span> <span class="kc">None</span>
     <span class="p">)</span>
-    <span class="n">setup</span> <span class="o">=</span> <span class="n">make_setup_file</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">terms</span><span class="p">,</span> <span class="n">regions</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">setup</span></div>
+    <span class="k">return</span> <span class="n">make_setup_file</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">terms</span><span class="p">,</span> <span class="n">regions</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="calculate_sample_bounds"><a class="viewcode-back" href="../../../_summary/arcade_collection.input.generate_setup_file.html#arcade_collection.input.generate_setup_file.calculate_sample_bounds">[docs]</a><span class="k">def</span> <span class="nf">calculate_sample_bounds</span><span class="p">(</span>
@@ -296,16 +298,15 @@
     <span class="n">maxs</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
 
     <span class="n">bound_x</span><span class="p">,</span> <span class="n">bound_y</span><span class="p">,</span> <span class="n">bound_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">maxs</span><span class="p">,</span> <span class="n">mins</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">margins</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span>
-    <span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">bound_x</span><span class="p">,</span> <span class="n">bound_y</span><span class="p">,</span> <span class="n">bound_z</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">bounds</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="n">bound_x</span><span class="p">,</span> <span class="n">bound_y</span><span class="p">,</span> <span class="n">bound_z</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="make_setup_file"><a class="viewcode-back" href="../../../_summary/arcade_collection.input.generate_setup_file.html#arcade_collection.input.generate_setup_file.make_setup_file">[docs]</a><span class="k">def</span> <span class="nf">make_setup_file</span><span class="p">(</span>
     <span class="n">init</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">bounds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">terms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">regions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">regions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create ARCADE setup file.</span>
@@ -327,7 +328,7 @@
 <span class="sd">        Contents of ARCADE setup file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="s2">&quot;&lt;set&gt;&lt;/set&gt;&quot;</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="s2">&quot;&lt;set&gt;&lt;/set&gt;&quot;</span><span class="p">)</span>  <span class="c1"># noqa: S314</span>
     <span class="n">series</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span>
         <span class="n">root</span><span class="p">,</span>
         <span class="s2">&quot;series&quot;</span><span class="p">,</span>

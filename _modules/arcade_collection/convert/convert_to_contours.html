@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>arcade_collection.output.merge_parsed_results - ARCADE Collection 0.15.0</title>
+        <title>arcade_collection.convert.convert_to_contours - ARCADE Collection 0.15.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -158,6 +158,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -178,8 +179,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
@@ -227,17 +226,61 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for arcade_collection.output.merge_parsed_results</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+          <h1>Source code for arcade_collection.convert.convert_to_contours</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">tarfile</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">measure</span>
+
+<span class="kn">from</span> <span class="nn">arcade_collection.output.extract_tick_json</span> <span class="kn">import</span> <span class="n">extract_tick_json</span>
+<span class="kn">from</span> <span class="nn">arcade_collection.output.get_location_voxels</span> <span class="kn">import</span> <span class="n">get_location_voxels</span>
+
+<span class="n">ROTATIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="s2">&quot;side1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="s2">&quot;side2&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="p">}</span>
 
 
-<div class="viewcode-block" id="merge_parsed_results"><a class="viewcode-back" href="../../../_summary/arcade_collection.output.merge_parsed_results.html#arcade_collection.output.merge_parsed_results.merge_parsed_results">[docs]</a><span class="k">def</span> <span class="nf">merge_parsed_results</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;TICK&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="convert_to_contours"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_contours.html#arcade_collection.convert.convert_to_contours.convert_to_contours">[docs]</a><span class="k">def</span> <span class="nf">convert_to_contours</span><span class="p">(</span>
+    <span class="n">series_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">data_tar</span><span class="p">:</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">,</span>
+    <span class="n">frame</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">regions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">box</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">indices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]]:</span>
+    <span class="n">locations</span> <span class="o">=</span> <span class="n">extract_tick_json</span><span class="p">(</span><span class="n">data_tar</span><span class="p">,</span> <span class="n">series_key</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;LOCATIONS&quot;</span><span class="p">)</span>
 
-    <span class="n">merged_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">contours</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">region</span><span class="p">:</span> <span class="p">{</span><span class="n">view</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">indices</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span> <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span>
+    <span class="p">}</span>
 
-    <span class="k">return</span> <span class="n">merged_results</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span></div>
+    <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
+            <span class="n">voxels</span> <span class="o">=</span> <span class="n">get_location_voxels</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">region</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">voxels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">array</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">voxels</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">indices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">array_rotated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ROTATIONS</span><span class="p">[</span><span class="n">view</span><span class="p">])</span>
+
+                <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[</span><span class="n">view</span><span class="p">]:</span>
+                    <span class="n">array_slice</span> <span class="o">=</span> <span class="n">array_rotated</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">index</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">array_slice</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="k">if</span> <span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">contours</span><span class="p">[</span><span class="n">region</span><span class="p">][</span><span class="n">view</span><span class="p">]:</span>
+                        <span class="n">contours</span><span class="p">[</span><span class="n">region</span><span class="p">][</span><span class="n">view</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+                    <span class="n">contours</span><span class="p">[</span><span class="n">region</span><span class="p">][</span><span class="n">view</span><span class="p">][</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">measure</span><span class="o">.</span><span class="n">find_contours</span><span class="p">(</span><span class="n">array_slice</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">contours</span></div>
 </pre></div>
         </article>
       </div>

@@ -157,6 +157,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -177,8 +178,6 @@
 <li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="_summary/arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
@@ -229,7 +228,7 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a></div>
 </section>
 <section id="A" class="genindex-section">
   <h2>A</h2>
@@ -251,6 +250,13 @@
 
         <ul>
           <li><a href="_summary/arcade_collection.convert.convert_to_colorizer.html#module-arcade_collection.convert.convert_to_colorizer">module</a>
+</li>
+        </ul></li>
+        <li>
+    arcade_collection.convert.convert_to_contours
+
+        <ul>
+          <li><a href="_summary/arcade_collection.convert.convert_to_contours.html#module-arcade_collection.convert.convert_to_contours">module</a>
 </li>
         </ul></li>
         <li>
@@ -309,6 +315,8 @@
           <li><a href="_summary/arcade_collection.input.convert_to_cells_file.html#module-arcade_collection.input.convert_to_cells_file">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     arcade_collection.input.convert_to_locations_file
 
@@ -316,8 +324,6 @@
           <li><a href="_summary/arcade_collection.input.convert_to_locations_file.html#module-arcade_collection.input.convert_to_locations_file">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     arcade_collection.input.generate_setup_file
 
@@ -368,20 +374,6 @@
 </li>
         </ul></li>
         <li>
-    arcade_collection.output.get_voxel_contours
-
-        <ul>
-          <li><a href="_summary/arcade_collection.output.get_voxel_contours.html#module-arcade_collection.output.get_voxel_contours">module</a>
-</li>
-        </ul></li>
-        <li>
-    arcade_collection.output.merge_parsed_results
-
-        <ul>
-          <li><a href="_summary/arcade_collection.output.merge_parsed_results.html#module-arcade_collection.output.merge_parsed_results">module</a>
-</li>
-        </ul></li>
-        <li>
     arcade_collection.output.parse_cells_file
 
         <ul>
@@ -412,6 +404,10 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="_summary/arcade_collection.input.generate_setup_file.html#arcade_collection.input.generate_setup_file.calculate_sample_bounds">calculate_sample_bounds() (in module arcade_collection.input.generate_setup_file)</a>
 </li>
+        <li><a href="_summary/arcade_collection.output.parse_growth_file.html#arcade_collection.output.parse_growth_file.CELL_STATES">CELL_STATES (in module arcade_collection.output.parse_growth_file)</a>
+</li>
+        <li><a href="_summary/arcade_collection.output.parse_cells_file.html#arcade_collection.output.parse_cells_file.CELLS_COLUMNS">CELLS_COLUMNS (in module arcade_collection.output.parse_cells_file)</a>
+</li>
         <li><a href="_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.convert_model_units">convert_model_units() (in module arcade_collection.output.convert_model_units)</a>
 </li>
         <li><a href="_summary/arcade_collection.output.convert_model_units.html#arcade_collection.output.convert_model_units.convert_spatial_units">convert_spatial_units() (in module arcade_collection.output.convert_model_units)</a>
@@ -428,6 +424,8 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="_summary/arcade_collection.convert.convert_to_contours.html#arcade_collection.convert.convert_to_contours.convert_to_contours">convert_to_contours() (in module arcade_collection.convert.convert_to_contours)</a>
+</li>
         <li><a href="_summary/arcade_collection.convert.convert_to_images.html#arcade_collection.convert.convert_to_images.convert_to_images">convert_to_images() (in module arcade_collection.convert.convert_to_images)</a>
 </li>
         <li><a href="_summary/arcade_collection.input.convert_to_locations_file.html#arcade_collection.input.convert_to_locations_file.convert_to_location">convert_to_location() (in module arcade_collection.input.convert_to_locations_file)</a>
@@ -538,13 +536,23 @@
 </li>
         <li><a href="_summary/arcade_collection.convert.convert_to_colorizer.html#arcade_collection.convert.convert_to_colorizer.get_tracks_from_data">get_tracks_from_data() (in module arcade_collection.convert.convert_to_colorizer)</a>
 </li>
-        <li><a href="_summary/arcade_collection.output.get_voxel_contours.html#arcade_collection.output.get_voxel_contours.get_voxel_contours">get_voxel_contours() (in module arcade_collection.output.get_voxel_contours)</a>
-</li>
         <li><a href="_summary/arcade_collection.input.group_template_conditions.html#arcade_collection.input.group_template_conditions.group_condition_sets">group_condition_sets() (in module arcade_collection.input.group_template_conditions)</a>
 </li>
         <li><a href="_summary/arcade_collection.input.group_template_conditions.html#arcade_collection.input.group_template_conditions.group_seed_ranges">group_seed_ranges() (in module arcade_collection.input.group_template_conditions)</a>
 </li>
         <li><a href="_summary/arcade_collection.input.group_template_conditions.html#arcade_collection.input.group_template_conditions.group_template_conditions">group_template_conditions() (in module arcade_collection.input.group_template_conditions)</a>
+</li>
+        <li><a href="_summary/arcade_collection.output.parse_growth_file.html#arcade_collection.output.parse_growth_file.GROWTH_COLUMNS">GROWTH_COLUMNS (in module arcade_collection.output.parse_growth_file)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="_summary/arcade_collection.output.parse_locations_file.html#arcade_collection.output.parse_locations_file.LOCATIONS_COLUMNS">LOCATIONS_COLUMNS (in module arcade_collection.output.parse_locations_file)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -568,8 +576,6 @@
 </li>
         <li><a href="_summary/arcade_collection.input.generate_setup_file.html#arcade_collection.input.generate_setup_file.make_setup_file">make_setup_file() (in module arcade_collection.input.generate_setup_file)</a>
 </li>
-        <li><a href="_summary/arcade_collection.output.merge_parsed_results.html#arcade_collection.output.merge_parsed_results.merge_parsed_results">merge_parsed_results() (in module arcade_collection.output.merge_parsed_results)</a>
-</li>
         <li><a href="_summary/arcade_collection.input.merge_region_samples.html#arcade_collection.input.merge_region_samples.merge_region_samples">merge_region_samples() (in module arcade_collection.input.merge_region_samples)</a>
 </li>
         <li>
@@ -579,6 +585,8 @@
           <li><a href="_summary/arcade_collection.convert.html#module-arcade_collection.convert">arcade_collection.convert</a>
 </li>
           <li><a href="_summary/arcade_collection.convert.convert_to_colorizer.html#module-arcade_collection.convert.convert_to_colorizer">arcade_collection.convert.convert_to_colorizer</a>
+</li>
+          <li><a href="_summary/arcade_collection.convert.convert_to_contours.html#module-arcade_collection.convert.convert_to_contours">arcade_collection.convert.convert_to_contours</a>
 </li>
           <li><a href="_summary/arcade_collection.convert.convert_to_images.html#module-arcade_collection.convert.convert_to_images">arcade_collection.convert.convert_to_images</a>
 </li>
@@ -612,10 +620,6 @@
 </li>
           <li><a href="_summary/arcade_collection.output.get_location_voxels.html#module-arcade_collection.output.get_location_voxels">arcade_collection.output.get_location_voxels</a>
 </li>
-          <li><a href="_summary/arcade_collection.output.get_voxel_contours.html#module-arcade_collection.output.get_voxel_contours">arcade_collection.output.get_voxel_contours</a>
-</li>
-          <li><a href="_summary/arcade_collection.output.merge_parsed_results.html#module-arcade_collection.output.merge_parsed_results">arcade_collection.output.merge_parsed_results</a>
-</li>
           <li><a href="_summary/arcade_collection.output.parse_cells_file.html#module-arcade_collection.output.parse_cells_file">arcade_collection.output.parse_cells_file</a>
 </li>
           <li><a href="_summary/arcade_collection.output.parse_growth_file.html#module-arcade_collection.output.parse_growth_file">arcade_collection.output.parse_growth_file</a>
@@ -631,7 +635,7 @@
   <h2>P</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="_summary/arcade_collection.output.parse_cells_file.html#arcade_collection.output.parse_cells_file.parse_cell_timepoint">parse_cell_timepoint() (in module arcade_collection.output.parse_cells_file)</a>
+        <li><a href="_summary/arcade_collection.output.parse_cells_file.html#arcade_collection.output.parse_cells_file.parse_cell_tick">parse_cell_tick() (in module arcade_collection.output.parse_cells_file)</a>
 </li>
         <li><a href="_summary/arcade_collection.output.parse_cells_file.html#arcade_collection.output.parse_cells_file.parse_cells_file">parse_cells_file() (in module arcade_collection.output.parse_cells_file)</a>
 </li>
@@ -641,7 +645,7 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="_summary/arcade_collection.output.parse_growth_file.html#arcade_collection.output.parse_growth_file.parse_growth_timepoint">parse_growth_timepoint() (in module arcade_collection.output.parse_growth_file)</a>
 </li>
-        <li><a href="_summary/arcade_collection.output.parse_locations_file.html#arcade_collection.output.parse_locations_file.parse_location_timepoint">parse_location_timepoint() (in module arcade_collection.output.parse_locations_file)</a>
+        <li><a href="_summary/arcade_collection.output.parse_locations_file.html#arcade_collection.output.parse_locations_file.parse_location_tick">parse_location_tick() (in module arcade_collection.output.parse_locations_file)</a>
 </li>
         <li><a href="_summary/arcade_collection.output.parse_locations_file.html#arcade_collection.output.parse_locations_file.parse_locations_file">parse_locations_file() (in module arcade_collection.output.parse_locations_file)</a>
 </li>

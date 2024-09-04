@@ -159,6 +159,7 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -179,8 +180,6 @@
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
@@ -233,8 +232,39 @@
 <span id="extract-tick-json"></span><h1>extract_tick_json<a class="headerlink" href="#module-arcade_collection.output.extract_tick_json" title="Permalink to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.output.extract_tick_json.extract_tick_json">
-<span class="sig-name descname"><span class="pre">extract_tick_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tick</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/extract_tick_json.html#extract_tick_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.extract_tick_json.extract_tick_json" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">extract_tick_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tarfile.TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tick</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/extract_tick_json.html#extract_tick_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.extract_tick_json.extract_tick_json" title="Permalink to this definition">#</a></dt>
+<dd><p>Extract json for specified tick from tar archive.</p>
+<p>For v3 simulations, each tick is saved as a separate json file in the
+archive. The file names are formatted as <code class="docutils literal notranslate"><span class="pre">&lt;key&gt;_&lt;tick&gt;.json</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&lt;key&gt;_&lt;tick&gt;.&lt;extension&gt;.json</span></code> where tick is padded to six digits. Use an
+integer tick to extract the desired tick from the archive.</p>
+<p>For v2 simulations, all ticks are saved to the same file in the archive. The
+file name is given as <code class="docutils literal notranslate"><span class="pre">&lt;key&gt;.json</span></code> or <code class="docutils literal notranslate"><span class="pre">&lt;key&gt;.&lt;extension&gt;.json</span></code>. Use a
+float tick and field to extract the desired tick from the archive.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;timepoints&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">time</span><span class="o">&gt;</span><span class="p">,</span> <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">field</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">...</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tar</strong> – Tar archive.</p></li>
+<li><p><strong>key</strong> – Simulation key.</p></li>
+<li><p><strong>tick</strong> – Tick to extract.</p></li>
+<li><p><strong>extension</strong> – Additional extension in file name.</p></li>
+<li><p><strong>field</strong> – Field in json to extract (only used with float ticks).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Archive contents for specified tick.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 

@@ -159,6 +159,7 @@
 <ul class="current">
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">arcade_collection.convert</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -179,8 +180,6 @@
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
@@ -238,22 +237,25 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_colorizer.html#module-arcade_collection.convert.convert_to_colorizer" title="arcade_collection.convert.convert_to_colorizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_colorizer</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_images.html#module-arcade_collection.convert.convert_to_images" title="arcade_collection.convert.convert_to_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_images</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_contours.html#module-arcade_collection.convert.convert_to_contours" title="arcade_collection.convert.convert_to_contours"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_contours</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html#module-arcade_collection.convert.convert_to_meshes" title="arcade_collection.convert.convert_to_meshes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_meshes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_images.html#module-arcade_collection.convert.convert_to_images" title="arcade_collection.convert.convert_to_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_images</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_projection.html#module-arcade_collection.convert.convert_to_projection" title="arcade_collection.convert.convert_to_projection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_projection</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html#module-arcade_collection.convert.convert_to_meshes" title="arcade_collection.convert.convert_to_meshes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_meshes</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_simularium.html#module-arcade_collection.convert.convert_to_simularium" title="arcade_collection.convert.convert_to_simularium"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_simularium</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_projection.html#module-arcade_collection.convert.convert_to_projection" title="arcade_collection.convert.convert_to_projection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_projection</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_simularium_objects.html#module-arcade_collection.convert.convert_to_simularium_objects" title="arcade_collection.convert.convert_to_simularium_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_simularium_objects</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_simularium.html#module-arcade_collection.convert.convert_to_simularium" title="arcade_collection.convert.convert_to_simularium"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_simularium</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_simularium_shapes.html#module-arcade_collection.convert.convert_to_simularium_shapes" title="arcade_collection.convert.convert_to_simularium_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_simularium_shapes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_simularium_objects.html#module-arcade_collection.convert.convert_to_simularium_objects" title="arcade_collection.convert.convert_to_simularium_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_simularium_objects</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="arcade_collection.convert.convert_to_simularium_shapes.html#module-arcade_collection.convert.convert_to_simularium_shapes" title="arcade_collection.convert.convert_to_simularium_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert.convert_to_simularium_shapes</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>

@@ -32,6 +32,7 @@
    :recursive:
 
    convert.convert_to_colorizer
+   convert.convert_to_contours
    convert.convert_to_images
    convert.convert_to_meshes
    convert.convert_to_projection

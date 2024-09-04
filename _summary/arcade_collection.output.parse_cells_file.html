@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="parse_growth_file" href="arcade_collection.output.parse_growth_file.html" /><link rel="prev" title="merge_parsed_results" href="arcade_collection.output.merge_parsed_results.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="parse_growth_file" href="arcade_collection.output.parse_growth_file.html" /><link rel="prev" title="get_location_voxels" href="arcade_collection.output.get_location_voxels.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
         <title>parse_cells_file - ARCADE Collection 0.15.0</title>
@@ -159,6 +159,7 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -179,8 +180,6 @@
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
@@ -231,15 +230,74 @@
         <article role="main">
           <section id="module-arcade_collection.output.parse_cells_file">
 <span id="parse-cells-file"></span><h1>parse_cells_file<a class="headerlink" href="#module-arcade_collection.output.parse_cells_file" title="Permalink to this heading">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="arcade_collection.output.parse_cells_file.parse_cells_file">
-<span class="sig-name descname"><span class="pre">parse_cells_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_cells_file.html#parse_cells_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_cells_file.parse_cells_file" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dl class="py data">
+<dt class="sig sig-object py" id="arcade_collection.output.parse_cells_file.CELLS_COLUMNS">
+<span class="sig-name descname"><span class="pre">CELLS_COLUMNS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ID',</span> <span class="pre">'TICK',</span> <span class="pre">'PARENT',</span> <span class="pre">'POPULATION',</span> <span class="pre">'AGE',</span> <span class="pre">'DIVISIONS',</span> <span class="pre">'STATE',</span> <span class="pre">'PHASE',</span> <span class="pre">'NUM_VOXELS']</span></em><a class="headerlink" href="#arcade_collection.output.parse_cells_file.CELLS_COLUMNS" title="Permalink to this definition">#</a></dt>
+<dd><p>Column names for cells data parsed into tidy data format.</p>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="arcade_collection.output.parse_cells_file.parse_cell_timepoint">
-<span class="sig-name descname"><span class="pre">parse_cell_timepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timepoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_cells_file.html#parse_cell_timepoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_cells_file.parse_cell_timepoint" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="arcade_collection.output.parse_cells_file.parse_cells_file">
+<span class="sig-name descname"><span class="pre">parse_cells_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tarfile.TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pd.DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_cells_file.html#parse_cells_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_cells_file.parse_cells_file" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse simulation cells data into tidy data format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tar</strong> – Tar archive containing locations data.</p></li>
+<li><p><strong>regions</strong> – List of regions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed cells data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arcade_collection.output.parse_cells_file.parse_cell_tick">
+<span class="sig-name descname"><span class="pre">parse_cell_tick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tick</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_cells_file.html#parse_cell_tick"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_cells_file.parse_cell_tick" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse cell data for a single simulation tick.</p>
+<p>Original data is formatted as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">cell_id</span><span class="p">,</span>
+    <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="n">parent_id</span><span class="p">,</span>
+    <span class="s2">&quot;pop&quot;</span><span class="p">:</span> <span class="n">population</span><span class="p">,</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="n">age</span><span class="p">,</span>
+    <span class="s2">&quot;divisions&quot;</span><span class="p">:</span> <span class="n">divisions</span><span class="p">,</span>
+    <span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">,</span>
+    <span class="s2">&quot;phase&quot;</span><span class="p">:</span> <span class="n">phase</span><span class="p">,</span>
+    <span class="s2">&quot;voxels&quot;</span><span class="p">:</span> <span class="n">voxels</span><span class="p">,</span>
+    <span class="s2">&quot;criticals&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">critical_volume</span><span class="p">,</span> <span class="n">critical_height</span><span class="p">],</span>
+    <span class="s2">&quot;regions&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;region&quot;</span><span class="p">:</span> <span class="n">region_name</span><span class="p">,</span>
+            <span class="s2">&quot;voxels&quot;</span><span class="p">:</span> <span class="n">region_voxels</span><span class="p">,</span>
+            <span class="s2">&quot;criticals&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">critical_region_volume</span><span class="p">,</span> <span class="n">critical_region_height</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Parsed data is formatted as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="n">cell_id</span><span class="p">,</span> <span class="n">tick</span><span class="p">,</span> <span class="n">parent_id</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">divisions</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">voxels</span> <span class="p">]</span>
+</pre></div>
+</div>
+<p>When regions are specified, each list also contains the number of voxels for
+the corresponding regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tick</strong> – Simulation tick.</p></li>
+<li><p><strong>cell</strong> – Original cell data.</p></li>
+<li><p><strong>regions</strong> – List of regions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed cell data.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -257,14 +315,14 @@
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="arcade_collection.output.merge_parsed_results.html">
+          <a class="prev-page" href="arcade_collection.output.get_location_voxels.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">merge_parsed_results</div>
+                <div class="title">get_location_voxels</div>
                 
               </div>
             </a>
@@ -299,8 +357,9 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">parse_cells_file</a><ul>
+<li><a class="reference internal" href="#arcade_collection.output.parse_cells_file.CELLS_COLUMNS"><code class="docutils literal notranslate"><span class="pre">CELLS_COLUMNS</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.output.parse_cells_file.parse_cells_file"><code class="docutils literal notranslate"><span class="pre">parse_cells_file()</span></code></a></li>
-<li><a class="reference internal" href="#arcade_collection.output.parse_cells_file.parse_cell_timepoint"><code class="docutils literal notranslate"><span class="pre">parse_cell_timepoint()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.output.parse_cells_file.parse_cell_tick"><code class="docutils literal notranslate"><span class="pre">parse_cell_tick()</span></code></a></li>
 </ul>
 </li>
 </ul>

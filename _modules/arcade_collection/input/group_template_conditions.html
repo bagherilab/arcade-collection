@@ -158,6 +158,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -178,8 +179,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.output.parse_locations_file.html">parse_locations_file</a></li>
@@ -250,8 +249,7 @@
 
     <span class="n">grouped_conditions</span> <span class="o">=</span> <span class="n">group_seed_ranges</span><span class="p">(</span><span class="n">conditions</span><span class="p">,</span> <span class="n">max_seeds</span><span class="p">)</span>
     <span class="n">condition_sets</span> <span class="o">=</span> <span class="n">group_condition_sets</span><span class="p">(</span><span class="n">grouped_conditions</span><span class="p">,</span> <span class="n">max_seeds</span><span class="p">)</span>
-    <span class="n">template_conditions</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;conditions&quot;</span><span class="p">:</span> <span class="n">condition_set</span><span class="p">}</span> <span class="k">for</span> <span class="n">condition_set</span> <span class="ow">in</span> <span class="n">condition_sets</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">template_conditions</span></div>
+    <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;conditions&quot;</span><span class="p">:</span> <span class="n">condition_set</span><span class="p">}</span> <span class="k">for</span> <span class="n">condition_set</span> <span class="ow">in</span> <span class="n">condition_sets</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="group_seed_ranges"><a class="viewcode-back" href="../../../_summary/arcade_collection.input.group_template_conditions.html#arcade_collection.input.group_template_conditions.group_seed_ranges">[docs]</a><span class="k">def</span> <span class="nf">group_seed_ranges</span><span class="p">(</span><span class="n">conditions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">max_seeds</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>

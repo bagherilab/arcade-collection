@@ -159,6 +159,7 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_projection.html">convert_to_projection</a></li>
@@ -179,8 +180,6 @@
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.convert_model_units.html">convert_model_units</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.extract_tick_json.html">extract_tick_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_location_voxels.html">get_location_voxels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.get_voxel_contours.html">get_voxel_contours</a></li>
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.merge_parsed_results.html">merge_parsed_results</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_cells_file.html">parse_cells_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.output.parse_growth_file.html">parse_growth_file</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">parse_locations_file</a></li>
@@ -231,15 +230,78 @@
         <article role="main">
           <section id="module-arcade_collection.output.parse_locations_file">
 <span id="parse-locations-file"></span><h1>parse_locations_file<a class="headerlink" href="#module-arcade_collection.output.parse_locations_file" title="Permalink to this heading">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="arcade_collection.output.parse_locations_file.parse_locations_file">
-<span class="sig-name descname"><span class="pre">parse_locations_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_locations_file.html#parse_locations_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_locations_file.parse_locations_file" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dl class="py data">
+<dt class="sig sig-object py" id="arcade_collection.output.parse_locations_file.LOCATIONS_COLUMNS">
+<span class="sig-name descname"><span class="pre">LOCATIONS_COLUMNS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ID',</span> <span class="pre">'TICK',</span> <span class="pre">'CENTER_X',</span> <span class="pre">'CENTER_Y',</span> <span class="pre">'CENTER_Z',</span> <span class="pre">'MIN_X',</span> <span class="pre">'MIN_Y',</span> <span class="pre">'MIN_Z',</span> <span class="pre">'MAX_X',</span> <span class="pre">'MAX_Y',</span> <span class="pre">'MAX_Z']</span></em><a class="headerlink" href="#arcade_collection.output.parse_locations_file.LOCATIONS_COLUMNS" title="Permalink to this definition">#</a></dt>
+<dd><p>Column names for locations data parsed into tidy data format.</p>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="arcade_collection.output.parse_locations_file.parse_location_timepoint">
-<span class="sig-name descname"><span class="pre">parse_location_timepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timepoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_locations_file.html#parse_location_timepoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_locations_file.parse_location_timepoint" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="arcade_collection.output.parse_locations_file.parse_locations_file">
+<span class="sig-name descname"><span class="pre">parse_locations_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tarfile.TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pd.DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_locations_file.html#parse_locations_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_locations_file.parse_locations_file" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse simulation locations data into tidy data format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tar</strong> – Tar archive containing locations data.</p></li>
+<li><p><strong>regions</strong> – List of regions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed locations data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arcade_collection.output.parse_locations_file.parse_location_tick">
+<span class="sig-name descname"><span class="pre">parse_location_tick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tick</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/arcade_collection/output/parse_locations_file.html#parse_location_tick"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.output.parse_locations_file.parse_location_tick" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse location data for a single simulation tick.</p>
+<p>Original data is formatted as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">cell_id</span><span class="p">,</span>
+    <span class="s2">&quot;center&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span><span class="p">,</span> <span class="n">center_z</span><span class="p">],</span>
+    <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;region&quot;</span><span class="p">:</span> <span class="n">region</span><span class="p">,</span>
+            <span class="s2">&quot;voxels&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>
+                <span class="o">...</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;region&quot;</span><span class="p">:</span> <span class="n">region</span><span class="p">,</span>
+            <span class="s2">&quot;voxels&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span>
+                <span class="o">...</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Parsed data is formatted as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="n">cell_id</span><span class="p">,</span> <span class="n">tick</span><span class="p">,</span> <span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span><span class="p">,</span> <span class="n">center_z</span><span class="p">,</span> <span class="n">min_x</span><span class="p">,</span> <span class="n">min_y</span><span class="p">,</span> <span class="n">min_z</span><span class="p">,</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span><span class="p">,</span> <span class="n">max_z</span> <span class="p">]</span>
+</pre></div>
+</div>
+<p>When regions are specified, each list also contains centers, minimums, and
+maximums for the corresponding regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tick</strong> – Simulation tick.</p></li>
+<li><p><strong>location</strong> – Original location data.</p></li>
+<li><p><strong>regions</strong> – List of regions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed location data.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -299,8 +361,9 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">parse_locations_file</a><ul>
+<li><a class="reference internal" href="#arcade_collection.output.parse_locations_file.LOCATIONS_COLUMNS"><code class="docutils literal notranslate"><span class="pre">LOCATIONS_COLUMNS</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.output.parse_locations_file.parse_locations_file"><code class="docutils literal notranslate"><span class="pre">parse_locations_file()</span></code></a></li>
-<li><a class="reference internal" href="#arcade_collection.output.parse_locations_file.parse_location_timepoint"><code class="docutils literal notranslate"><span class="pre">parse_location_timepoint()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.output.parse_locations_file.parse_location_tick"><code class="docutils literal notranslate"><span class="pre">parse_location_tick()</span></code></a></li>
 </ul>
 </li>
 </ul>
