@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 import json
-import tarfile
-from typing import Union
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 
-CELLS_COLUMNS = [
+if TYPE_CHECKING:
+    import tarfile
+
+
+LOCATIONS_COLUMNS = [
     "ID",
     "TICK",
     "CENTER_X",
@@ -18,43 +23,112 @@ CELLS_COLUMNS = [
     "MAX_Y",
     "MAX_Z",
 ]
+"""Column names for locations data parsed into tidy data format."""
 
 
 def parse_locations_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFrame:
-    all_locations: list[list[Union[str, int]]] = []
+    """
+    Parse simulation locations data into tidy data format.
+
+    Parameters
+    ----------
+    tar
+        Tar archive containing locations data.
+    regions
+        List of regions.
+
+    Returns
+    -------
+    :
+        Parsed locations data.
+    """
+
+    all_locations: list[list[str | int]] = []
 
     for member in tar.getmembers():
-        timepoint = int(member.name.replace(".LOCATIONS.json", "").split("_")[-1])
+        tick = int(member.name.replace(".LOCATIONS.json", "").split("_")[-1])
 
         extracted_member = tar.extractfile(member)
-        assert extracted_member is not None
         locations_json = json.loads(extracted_member.read().decode("utf-8"))
 
-        locations = [parse_location_timepoint(timepoint, cell, regions) for cell in locations_json]
+        locations = [parse_location_tick(tick, cell, regions) for cell in locations_json]
         all_locations = all_locations + locations
 
-    columns = CELLS_COLUMNS + [
-        f"{column}.{region}" for region in regions for column in CELLS_COLUMNS[2:]
+    columns = LOCATIONS_COLUMNS + [
+        f"{column}.{region}" for region in regions for column in LOCATIONS_COLUMNS[2:]
     ]
-    locations_df = pd.DataFrame(all_locations, columns=columns)
-
-    return locations_df
+    return pd.DataFrame(all_locations, columns=columns)
 
 
-def parse_location_timepoint(timepoint: int, loc: dict, regions: list[str]) -> list:
-    if "center" in loc:
-        voxels = np.array([voxel for region in loc["location"] for voxel in region["voxels"]])
+def parse_location_tick(tick: int, locations: dict, regions: list[str]) -> list:
+    """
+    Parse location data for a single simulation tick.
+
+    Original data is formatted as:
+
+    .. code-block:: python
+
+        {
+            "id": cell_id,
+            "center": [center_x, center_y, center_z],
+            "location": [
+                {
+                    "region": region,
+                    "voxels": [
+                        [x, y, z],
+                        [x, y, z],
+                        ...
+                    ]
+                },
+                {
+                    "region": region,
+                    "voxels": [
+                        [x, y, z],
+                        [x, y, z],
+                        ...
+                    ]
+                },
+                ...
+            ]
+        }
+
+    Parsed data is formatted as:
+
+    .. code-block:: python
+
+        [ cell_id, tick, center_x, center_y, center_z, min_x, min_y, min_z, max_x, max_y, max_z ]
+
+    When regions are specified, each list also contains centers, minimums, and
+    maximums for the corresponding regions.
+
+    Parameters
+    ----------
+    tick
+        Simulation tick.
+    loc
+        Original location data.
+    regions
+        List of regions.
+
+    Returns
+    -------
+    :
+        Parsed location data.
+    """
+
+    if "center" in locations:
+        voxels = np.array([voxel for region in locations["location"] for voxel in region["voxels"]])
         mins = np.min(voxels, axis=0)
         maxs = np.max(voxels, axis=0)
-        parsed = [loc["id"], timepoint, *loc["center"], *mins, *maxs]
+        parsed = [locations["id"], tick, *locations["center"], *mins, *maxs]
     else:
-        parsed = [loc["id"], timepoint, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+        parsed = [locations["id"], tick, -1, -1, -1, -1, -1, -1, -1, -1, -1]
 
     for reg in regions:
         region_voxels = np.array(
             [
                 voxel
-                for region in loc["location"]
+                for region in locations["location"]
                 for voxel in region["voxels"]
                 if region["region"] == reg
             ]
@@ -64,7 +138,7 @@ def parse_location_timepoint(timepoint: int, loc: dict, regions: list[str]) -> l
             parsed = parsed + [-1, -1, -1, -1, -1, -1, -1, -1, -1]
             continue
 
-        center = [round(value) for value in region_voxels.mean(axis=0)]
+        center = [int(value + 0.5) for value in region_voxels.mean(axis=0)]
         mins = np.min(region_voxels, axis=0)
         maxs = np.max(region_voxels, axis=0)
         parsed = parsed + [*center, *mins, *maxs]
