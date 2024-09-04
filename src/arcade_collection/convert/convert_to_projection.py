@@ -4,7 +4,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
-from arcade_collection.output.get_voxel_contours import get_voxel_contours
+from arcade_collection.convert.convert_to_contours import convert_to_contours
 
 
 def convert_to_projection(
@@ -47,7 +47,7 @@ def convert_to_projection(
         "side1": list(range(1, width)),
         "side2": list(range(1, length)),
     }
-    contours = get_voxel_contours(series_key, data_tar, frame, regions, box, indices)
+    contours = convert_to_contours(series_key, data_tar, frame, regions, box, indices)
 
     for region in regions:
         color = colors[region]

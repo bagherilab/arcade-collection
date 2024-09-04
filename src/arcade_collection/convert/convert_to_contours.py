@@ -13,7 +13,7 @@ ROTATIONS = {
 }
 
 
-def get_voxel_contours(
+def convert_to_contours(
     series_key: str,
     data_tar: tarfile.TarFile,
     frame: int,
