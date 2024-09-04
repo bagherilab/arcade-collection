@@ -1,6 +1,9 @@
-from typing import Optional
+from __future__ import annotations
 
-import pandas as pd
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 def convert_to_locations_file(samples: pd.DataFrame) -> list[dict]:
@@ -46,7 +49,7 @@ def convert_to_location(cell_id: int, samples: pd.DataFrame) -> dict:
 
     center = get_center_voxel(samples)
 
-    if "region" in samples.columns and not samples["region"].isnull().all():
+    if "region" in samples.columns and not samples["region"].isna().all():
         voxels = [
             {"region": region, "voxels": get_location_voxels(samples, region)}
             for region in samples["region"].unique()
@@ -54,18 +57,16 @@ def convert_to_location(cell_id: int, samples: pd.DataFrame) -> dict:
     else:
         voxels = [{"region": "UNDEFINED", "voxels": get_location_voxels(samples)}]
 
-    location = {
+    return {
         "id": cell_id,
         "center": center,
         "location": voxels,
     }
 
-    return location
-
 
 def get_center_voxel(samples: pd.DataFrame) -> tuple[int, int, int]:
     """
-    Gets coordinates of center voxel of samples.
+    Get coordinates of center voxel of samples.
 
     Parameters
     ----------
@@ -81,12 +82,11 @@ def get_center_voxel(samples: pd.DataFrame) -> tuple[int, int, int]:
     center_x = int(samples["x"].mean())
     center_y = int(samples["y"].mean())
     center_z = int(samples["z"].mean())
-    center = (center_x, center_y, center_z)
-    return center
+    return (center_x, center_y, center_z)
 
 
 def get_location_voxels(
-    samples: pd.DataFrame, region: Optional[str] = None
+    samples: pd.DataFrame, region: str | None = None
 ) -> list[tuple[int, int, int]]:
     """
     Get list of voxel coordinates from samples dataframe.

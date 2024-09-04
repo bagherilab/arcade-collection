@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 import xml.etree.ElementTree as ET
-from typing import Optional
+from typing import TYPE_CHECKING
 
 import numpy as np
-import pandas as pd
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 DEFAULT_POPULATION_ID = "X"
 """Default population ID used in setup file."""
@@ -36,11 +40,10 @@ def generate_setup_file(
     bounds = calculate_sample_bounds(samples, margins)
     regions = (
         samples["region"].unique()
-        if "region" in samples.columns and not samples["region"].isnull().all()
+        if "region" in samples.columns and not samples["region"].isna().all()
         else None
     )
-    setup = make_setup_file(init, bounds, terms, regions)
-    return setup
+    return make_setup_file(init, bounds, terms, regions)
 
 
 def calculate_sample_bounds(
@@ -66,16 +69,15 @@ def calculate_sample_bounds(
     maxs = (max(samples.x), max(samples.y), max(samples.z))
 
     bound_x, bound_y, bound_z = np.subtract(maxs, mins) + np.multiply(2, margins) + 3
-    bounds = (bound_x, bound_y, bound_z)
 
-    return bounds
+    return (bound_x, bound_y, bound_z)
 
 
 def make_setup_file(
     init: int,
     bounds: tuple[int, int, int],
     terms: list[str],
-    regions: Optional[list[str]] = None,
+    regions: list[str] | None = None,
 ) -> str:
     """
     Create ARCADE setup file.

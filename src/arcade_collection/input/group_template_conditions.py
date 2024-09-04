@@ -20,8 +20,7 @@ def group_template_conditions(conditions: list[dict], max_seeds: int) -> list[di
 
     grouped_conditions = group_seed_ranges(conditions, max_seeds)
     condition_sets = group_condition_sets(grouped_conditions, max_seeds)
-    template_conditions = [{"conditions": condition_set} for condition_set in condition_sets]
-    return template_conditions
+    return [{"conditions": condition_set} for condition_set in condition_sets]
 
 
 def group_seed_ranges(conditions: list[dict], max_seeds: int) -> list[dict]:
