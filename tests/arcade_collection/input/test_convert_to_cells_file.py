@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import unittest
 
 import numpy as np
@@ -16,7 +18,7 @@ EPSILON = 1e-10
 DEFAULT_REGION_NAME = "DEFAULT"
 
 
-def make_samples(cell_id, volume, height, region):
+def make_samples(cell_id: int, volume: int, height: int, region: str | None):
     return pd.DataFrame(
         {
             "id": [cell_id] * volume,

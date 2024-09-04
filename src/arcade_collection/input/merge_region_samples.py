@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 import numpy as np
 import pandas as pd
@@ -58,7 +58,7 @@ def merge_region_samples(
     default_samples = samples["DEFAULT"]
     all_samples = transform_sample_coordinates(default_samples, margins)
 
-    regions = [key for key in samples.keys() if key != "DEFAULT"]
+    regions = [key for key in samples if key != "DEFAULT"]
     all_region_samples = []
 
     for region in regions:
@@ -70,20 +70,18 @@ def merge_region_samples(
         all_samples = all_samples.merge(
             pd.concat(all_region_samples), on=["id", "x", "y", "z"], how="left"
         )
-        all_samples["region"].fillna("DEFAULT", inplace=True)
+        all_samples["region"] = all_samples["region"].fillna("DEFAULT")
 
-    valid_samples = filter_valid_samples(all_samples)
-
-    return valid_samples
+    return filter_valid_samples(all_samples)
 
 
 def transform_sample_coordinates(
     samples: pd.DataFrame,
     margins: tuple[int, int, int],
-    reference: Optional[pd.DataFrame] = None,
+    reference: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """
-    Transforms samples into centered coordinates.
+    Transform samples into centered coordinates.
 
     Parameters
     ----------
@@ -106,7 +104,7 @@ def transform_sample_coordinates(
     minimums = (min(reference.x), min(reference.y), min(reference.z))
     offsets = np.subtract(margins, minimums) + 1
 
-    coordinates = samples[["x", "y", "z"]].values + offsets
+    coordinates = samples[["x", "y", "z"]].to_numpy() + offsets
     coordinates = coordinates.astype("int64")
 
     transformed_samples = pd.DataFrame(coordinates, columns=["x", "y", "z"])
@@ -117,7 +115,7 @@ def transform_sample_coordinates(
 
 def filter_valid_samples(samples: pd.DataFrame) -> pd.DataFrame:
     """
-    Filters samples for valid cell ids.
+    Filter samples for valid cell ids.
 
     Filter conditions include:
 

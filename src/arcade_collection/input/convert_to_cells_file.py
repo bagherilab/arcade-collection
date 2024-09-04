@@ -121,13 +121,13 @@ def convert_to_cell(
     height = samples.z.max() - samples.z.min()
 
     critical_volume = convert_value_distribution(
-        (reference["volume"] if "volume" in reference else volume),
+        reference.get("volume", volume),
         volume_distributions["DEFAULT"],
         critical_volume_distributions["DEFAULT"],
     )
 
     critical_height = convert_value_distribution(
-        (reference["height"] if "height" in reference else height),
+        reference.get("height", height),
         height_distributions["DEFAULT"],
         critical_height_distributions["DEFAULT"],
     )
@@ -146,7 +146,7 @@ def convert_to_cell(
         "criticals": [critical_volume, critical_height],
     }
 
-    if "region" in samples.columns and not samples["region"].isnull().all():
+    if "region" in samples.columns and not samples["region"].isna().all():
         regions = [
             convert_to_cell_region(
                 region,
@@ -210,13 +210,13 @@ def convert_to_cell_region(
     region_height = region_samples.z.max() - region_samples.z.min()
 
     region_critical_volume = convert_value_distribution(
-        (reference[f"volume.{region}"] if f"volume.{region}" in reference else region_volume),
+        reference.get(f"volume.{region}", region_volume),
         volume_distributions[region],
         critical_volume_distributions[region],
     )
 
     region_critical_height = convert_value_distribution(
-        (reference[f"height.{region}"] if f"height.{region}" in reference else region_height),
+        reference.get(f"height.{region}", region_height),
         height_distributions[region],
         critical_height_distributions[region],
     )
@@ -234,7 +234,7 @@ def get_cell_state(
     threshold_fractions: dict[str, float],
 ) -> str:
     """
-    Estimates cell state based on cell volume.
+    Estimate cell state based on cell volume.
 
     The threshold fractions dictionary defines the monotonic thresholds between
     different cell states. For a given volume v, critical volume V, and states
@@ -274,7 +274,7 @@ def convert_value_distribution(
     target_distribution: tuple[float, float],
 ) -> float:
     """
-    Estimates target value based on source value and source and target distributions.
+    Estimate target value based on source value and source and target distributions.
 
     Parameters
     ----------
@@ -294,13 +294,12 @@ def convert_value_distribution(
     source_avg, source_std = source_distribution
     target_avg, target_std = target_distribution
     z_scored_value = (value - source_avg) / source_std
-    converted_value = z_scored_value * target_std + target_avg
-    return converted_value
+    return z_scored_value * target_std + target_avg
 
 
 def filter_cell_reference(cell_id: int, reference: pd.DataFrame) -> dict:
     """
-    Filters reference data for given cell id.
+    Filter reference data for given cell id.
 
     Parameters
     ----------
@@ -316,5 +315,4 @@ def filter_cell_reference(cell_id: int, reference: pd.DataFrame) -> dict:
     """
 
     cell_reference = reference[reference["ID"] == cell_id].squeeze()
-    cell_reference = cell_reference.to_dict() if not cell_reference.empty else {}
-    return cell_reference
+    return cell_reference.to_dict() if not cell_reference.empty else {}

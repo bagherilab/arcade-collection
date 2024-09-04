@@ -1,17 +1,20 @@
-import re
-from typing import Optional, Union
+from __future__ import annotations
 
-import pandas as pd
+import re
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 def convert_model_units(
     data: pd.DataFrame,
-    ds: Optional[float],
-    dt: Optional[float],
-    regions: Optional[Union[list[str], str]] = None,
+    ds: float | None,
+    dt: float | None,
+    regions: list[str] | str | None = None,
 ) -> None:
     """
-    Converts data from simulation units to true units.
+    Convert data from simulation units to true units.
 
     Simulations use spatial unit of voxels and temporal unit of ticks. Spatial
     resolution (microns/voxel) and temporal resolution (hours/tick) are used to
@@ -87,7 +90,7 @@ def convert_model_units(
 
 def convert_temporal_units(data: pd.DataFrame, dt: float) -> None:
     """
-    Converts temporal data from simulation units to true units.
+    Convert temporal data from simulation units to true units.
 
     Simulations use temporal unit of ticks. Temporal resolution (hours/tick) is
     used to convert data to true units.
@@ -112,9 +115,9 @@ def convert_temporal_units(data: pd.DataFrame, dt: float) -> None:
         data["time"] = round(dt * data["TICK"], 2)
 
 
-def convert_spatial_units(data: pd.DataFrame, ds: float, region: Optional[str] = None) -> None:
+def convert_spatial_units(data: pd.DataFrame, ds: float, region: str | None = None) -> None:
     """
-    Converts spatial data from simulation units to true units.
+    Convert spatial data from simulation units to true units.
 
     Simulations use spatial unit of voxels. Spatial resolution (microns/voxel)
     is used to convert data to true units.
@@ -183,7 +186,7 @@ def convert_spatial_units(data: pd.DataFrame, ds: float, region: Optional[str] =
 
 def estimate_temporal_resolution(key: str) -> float:
     """
-    Estimates temporal resolution based on condition key.
+    Estimate temporal resolution based on condition key.
 
     If the key contains ``DT##``, where ``##`` denotes the temporal resolution
     in minutes/tick, temporal resolution is estimated from ``##``. Otherwise,
@@ -206,7 +209,7 @@ def estimate_temporal_resolution(key: str) -> float:
 
 def estimate_spatial_resolution(key: str) -> float:
     """
-    Estimates spatial resolution based on condition key.
+    Estimate spatial resolution based on condition key.
 
     If the key contains ``DS##``, where ``##`` denotes the spatial resolution
     in micron/voxel, spatial resolution is estimated from ``##``. Otherwise,

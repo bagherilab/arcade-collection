@@ -17,6 +17,7 @@ GROWTH_COLUMNS = [
     "VOLUME",
     "CYCLE",
 ]
+"""Column names for growth data parsed into tidy data format."""
 
 CELL_STATES = [
     "NEUTRAL",
@@ -27,28 +28,32 @@ CELL_STATES = [
     "SENESCENT",
     "NECROTIC",
 ]
+"""Cell state names."""
 
 
 def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
     """
-    Parses a tumor growth simulation tar file.
+    Parse simulation growth data into tidy data format.
 
     Parameters
     ----------
-    tar :
-        Tar file of simulations for different seeds.
+    tar
+        Tar archive containing growth data.
 
     Returns
     -------
     :
-        Parsed simulation data for all seeds and timepoints.
+        Parsed growth data.
     """
 
     all_timepoints = []
 
     for member in tar.getmembers():
         extracted_member = tar.extractfile(member)
-        assert extracted_member is not None
+
+        if extracted_member is None:
+            continue
+
         extracted_json = json.loads(extracted_member.read().decode("utf-8"))
 
         seed = extracted_json["seed"]
@@ -60,18 +65,16 @@ def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
             ]
         )
 
-    timepoints_df = pd.DataFrame(all_timepoints, columns=GROWTH_COLUMNS)
-
-    return timepoints_df
+    return pd.DataFrame(all_timepoints, columns=GROWTH_COLUMNS)
 
 
-def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
+def parse_growth_timepoint(data: dict, seed: int) -> list:
     """
-    Parses a simulation timepoint into a list of features per cell.
+    Parse growth data for a single simulation timepoint.
 
-    The original data contains cell features in the form:
+    Original data is formatted as:
 
-    .. code-block:: text
+    .. code-block:: python
 
         {
             "time": time,
@@ -94,51 +97,44 @@ def parse_growth_timepoint(timepoint: dict, seed: int) -> list:
             ]
         }
 
-    Parsed data is formatted into:
+    Parsed data is formatted as:
 
-    .. code-block:: text
+    .. code-block:: python
 
         [
-            [time, seed, u, v, w, z, position, population, state, volume, cycle],
-            [time, seed, u, v, w, z, position, population, state, volume, cycle],
+            [time, seed, u, v, w, z, position, population, state, volume, cell_cycle],
+            [time, seed, u, v, w, z, position, population, state, volume, cell_cycle],
             ...
         ]
 
-    Cell cycle length is `None` if the cell has not yet divided. Otherwise, cell
-    cycle is the average of all cell cycle lengths.
+    Cell cycle length is ``None`` if the cell has not yet divided. Otherwise,
+    cell cycle is the average of all cell cycle lengths.
 
     Parameters
     ----------
-    timepoint :
-        Data for a timepoint.
+    data
+        Original simulation data.
+    seed
+        Random seed.
 
     Returns
     -------
     :
-        Parsed data of the timepoint.
+        Parsed simulation data.
     """
 
     parsed_data = []
-    time = timepoint["time"]
+    time = data["time"]
 
-    for location, cells in timepoint["cells"]:
-        u, v, w, z = location
-
+    for location, cells in data["cells"]:
         for cell in cells:
             _, population, state, position, volume, cycles = cell
-
-            if len(cycles) == 0:
-                cycle = None
-            else:
-                cycle = np.mean(cycles)
+            cycle = None if len(cycles) == 0 else np.mean(cycles)
 
             data_list = [
                 time,
                 seed,
-                u,
-                v,
-                w,
-                z,
+                *location,
                 position,
                 population,
                 CELL_STATES[state],

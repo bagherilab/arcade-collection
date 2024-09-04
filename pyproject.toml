@@ -20,7 +20,7 @@ matplotlib = "^3.7.2"
 [tool.poetry.group.dev.dependencies]
 black = "^24.3.0"
 isort = "^5.12.0"
-mypy = "^1.3.0"
+mypy = "^1.10.0"
 pylint = "^2.16.2"
 pytest = "^7.3.0"
 pytest-cov = "^4.0.0"
@@ -30,6 +30,7 @@ furo = "^2023.5.20"
 myst-parser = "^2.0.0"
 sphinx-copybutton = "^0.5.2"
 tox = "^4.5.1"
+ruff = "^0.6.3"
 
 [tool.isort]
 profile = "black"
@@ -42,7 +43,7 @@ build-backend = "poetry.core.masonry.api"
 disable = [
     "missing-module-docstring",
 ]
-good-names = ["i", "j", "k", "x", "y", "z", "ds", "dt", "ax"]
+good-names = ["i", "j", "k", "x", "y", "z", "u", "v", "w", "ds", "dt", "ax"]
 
 [tool.pylint.design]
 max-args = 10 # maximum number of arguments for function / method
@@ -59,10 +60,48 @@ namespace_packages = true
 module = [
     "matplotlib.*",
     "pandas.*",
+    "ruamel.*",
     "simulariumio.*",
     "skimage.*",
 ]
 ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812", # missing-trailing-comma
+    "D100",   # undocumented-public-module
+    "D105",   # undocumented-magic-method
+    "D107",   # undocumented-public-init
+    "D202",   # no-blank-line-after-function
+    "D203",   # one-blank-line-before-class
+    "D212",   # multi-line-summary-first-line
+    "D413",   # blank-line-after-last-section
+    "D416",   # section-name-ends-in-colon
+]
+
+[tool.ruff.lint.pylint]
+max-args = 10
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = [
+    "D",      # pydocstyle
+    "PT009",  # pytest-unittest-assertion
+    "PT027",  # pytest-unittest-raises-assertion
+    "INP001", # implicit-namespace-package
+    "ANN201", # missing-return-type-undocumented-public-function
+    "S311",   # suspicious-non-cryptographic-random-usage
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]
 
 [tool.tox]
 legacy_tox_ini = """
@@ -84,6 +123,7 @@ commands =
 [testenv:lint]
 commands =
     poetry run pylint --ignore-patterns=test.*?py src/ tests/ --fail-under=9.0
+    poetry run ruff check src/ tests/
 
 [testenv:typecheck]
 commands =
