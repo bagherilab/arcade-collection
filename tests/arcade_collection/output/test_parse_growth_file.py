@@ -27,8 +27,10 @@ class TestParseGrowthFile(unittest.TestCase):
             second_member_mock.name: second_member_mock,
         }
 
-        tar_mock.getmembers.return_value = contents.values()
-        tar_mock.extractfile.side_effect = lambda member: contents.get(member.name, None)
+        tar_mock.getmembers.return_value = [*list(contents.values()), None]
+        tar_mock.extractfile.side_effect = lambda member: (
+            None if member is None else contents[member.name]
+        )
 
         first_member_contents = {
             "seed": 0,

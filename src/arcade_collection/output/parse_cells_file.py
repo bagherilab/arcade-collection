@@ -42,9 +42,12 @@ def parse_cells_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFrame:
     all_cells: list[list[str | int]] = []
 
     for member in tar.getmembers():
-        tick = int(member.name.replace(".CELLS.json", "").split("_")[-1])
-
         extracted_member = tar.extractfile(member)
+
+        if extracted_member is None:
+            continue
+
+        tick = int(member.name.replace(".CELLS.json", "").split("_")[-1])
         cells_json = json.loads(extracted_member.read().decode("utf-8"))
 
         cells = [parse_cell_tick(tick, cell, regions) for cell in cells_json]

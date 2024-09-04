@@ -50,6 +50,10 @@ def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
 
     for member in tar.getmembers():
         extracted_member = tar.extractfile(member)
+
+        if extracted_member is None:
+            continue
+
         extracted_json = json.loads(extracted_member.read().decode("utf-8"))
 
         seed = extracted_json["seed"]

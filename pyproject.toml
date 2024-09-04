@@ -20,7 +20,7 @@ matplotlib = "^3.7.2"
 [tool.poetry.group.dev.dependencies]
 black = "^24.3.0"
 isort = "^5.12.0"
-mypy = "^1.3.0"
+mypy = "^1.10.0"
 pylint = "^2.16.2"
 pytest = "^7.3.0"
 pytest-cov = "^4.0.0"
@@ -60,6 +60,7 @@ namespace_packages = true
 module = [
     "matplotlib.*",
     "pandas.*",
+    "ruamel.*",
     "simulariumio.*",
     "skimage.*",
 ]

@@ -46,9 +46,12 @@ def parse_locations_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFra
     all_locations: list[list[str | int]] = []
 
     for member in tar.getmembers():
-        tick = int(member.name.replace(".LOCATIONS.json", "").split("_")[-1])
-
         extracted_member = tar.extractfile(member)
+
+        if extracted_member is None:
+            continue
+
+        tick = int(member.name.replace(".LOCATIONS.json", "").split("_")[-1])
         locations_json = json.loads(extracted_member.read().decode("utf-8"))
 
         locations = [parse_location_tick(tick, cell, regions) for cell in locations_json]

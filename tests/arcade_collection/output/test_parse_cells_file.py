@@ -22,8 +22,8 @@ class TestParseCellsFile(unittest.TestCase):
             second_member_mock.name: second_member_mock,
         }
 
-        tar_mock.getmembers.return_value = contents.values()
-        tar_mock.extractfile.side_effect = lambda member: contents.get(member.name, None)
+        tar_mock.getmembers.return_value = [*list(contents.values()), None]
+        tar_mock.extractfile.side_effect = lambda m: None if m is None else contents[m.name]
 
         first_member_contents = [
             {
@@ -97,8 +97,8 @@ class TestParseCellsFile(unittest.TestCase):
             second_member_mock.name: second_member_mock,
         }
 
-        tar_mock.getmembers.return_value = contents.values()
-        tar_mock.extractfile.side_effect = lambda member: contents.get(member.name, None)
+        tar_mock.getmembers.return_value = [*list(contents.values()), None]
+        tar_mock.extractfile.side_effect = lambda m: None if m is None else contents[m.name]
 
         first_member_contents = [
             {
