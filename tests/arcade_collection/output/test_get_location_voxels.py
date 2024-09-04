@@ -7,7 +7,8 @@ from arcade_collection.output.get_location_voxels import get_location_voxels
 
 class TestGetLocationVoxels(unittest.TestCase):
     def test_get_location_voxels_no_region_single_region(self):
-        voxels1 = np.random.randint(100, size=(100, 3)).tolist()
+        rng = np.random.default_rng()
+        voxels1 = rng.integers(100, size=(100, 3)).tolist()
 
         location = {"location": [{"region": "UNDEFINED", "voxels": voxels1}]}
 
@@ -18,8 +19,9 @@ class TestGetLocationVoxels(unittest.TestCase):
         self.assertCountEqual(expected_voxels, voxels)
 
     def test_get_location_voxels_no_region_multiple_regions(self):
-        voxels1 = np.random.randint(100, size=(100, 3)).tolist()
-        voxels2 = np.random.randint(100, size=(100, 3)).tolist()
+        rng = np.random.default_rng()
+        voxels1 = rng.integers(100, size=(100, 3)).tolist()
+        voxels2 = rng.integers(100, size=(100, 3)).tolist()
 
         location = {
             "location": [
@@ -35,8 +37,9 @@ class TestGetLocationVoxels(unittest.TestCase):
         self.assertCountEqual(expected_voxels, voxels)
 
     def test_get_location_voxels_with_region(self):
-        voxels1 = np.random.randint(100, size=(100, 3)).tolist()
-        voxels2 = np.random.randint(100, size=(100, 3)).tolist()
+        rng = np.random.default_rng()
+        voxels1 = rng.integers(100, size=(100, 3)).tolist()
+        voxels2 = rng.integers(100, size=(100, 3)).tolist()
 
         location = {
             "location": [

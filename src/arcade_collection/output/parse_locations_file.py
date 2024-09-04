@@ -60,7 +60,7 @@ def parse_locations_file(tar: tarfile.TarFile, regions: list[str]) -> pd.DataFra
     return pd.DataFrame(all_locations, columns=columns)
 
 
-def parse_location_tick(tick: int, locations: dict, regions: list[str]) -> list:
+def parse_location_tick(tick: int, location: dict, regions: list[str]) -> list:
     """
     Parse location data for a single simulation tick.
 
@@ -105,7 +105,7 @@ def parse_location_tick(tick: int, locations: dict, regions: list[str]) -> list:
     ----------
     tick
         Simulation tick.
-    loc
+    location
         Original location data.
     regions
         List of regions.
@@ -116,31 +116,31 @@ def parse_location_tick(tick: int, locations: dict, regions: list[str]) -> list:
         Parsed location data.
     """
 
-    if "center" in locations:
-        voxels = np.array([voxel for region in locations["location"] for voxel in region["voxels"]])
+    if "center" in location:
+        voxels = np.array([voxel for region in location["location"] for voxel in region["voxels"]])
         mins = np.min(voxels, axis=0)
         maxs = np.max(voxels, axis=0)
-        parsed = [locations["id"], tick, *locations["center"], *mins, *maxs]
+        parsed = [location["id"], tick, *location["center"], *mins, *maxs]
     else:
-        parsed = [locations["id"], tick, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+        parsed = [location["id"], tick, -1, -1, -1, -1, -1, -1, -1, -1, -1]
 
     for reg in regions:
         region_voxels = np.array(
             [
                 voxel
-                for region in locations["location"]
+                for region in location["location"]
                 for voxel in region["voxels"]
                 if region["region"] == reg
             ]
         )
 
         if len(region_voxels) == 0:
-            parsed = parsed + [-1, -1, -1, -1, -1, -1, -1, -1, -1]
+            parsed = [*parsed, -1, -1, -1, -1, -1, -1, -1, -1, -1]
             continue
 
         center = [int(value + 0.5) for value in region_voxels.mean(axis=0)]
         mins = np.min(region_voxels, axis=0)
         maxs = np.max(region_voxels, axis=0)
-        parsed = parsed + [*center, *mins, *maxs]
+        parsed = [*parsed, *center, *mins, *maxs]
 
     return parsed

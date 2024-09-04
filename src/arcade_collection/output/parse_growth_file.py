@@ -61,9 +61,7 @@ def parse_growth_file(tar: tarfile.TarFile) -> pd.DataFrame:
             ]
         )
 
-    timepoints_df = pd.DataFrame(all_timepoints, columns=GROWTH_COLUMNS)
-
-    return timepoints_df
+    return pd.DataFrame(all_timepoints, columns=GROWTH_COLUMNS)
 
 
 def parse_growth_timepoint(data: dict, seed: int) -> list:
@@ -110,8 +108,10 @@ def parse_growth_timepoint(data: dict, seed: int) -> list:
 
     Parameters
     ----------
-    timepoint
+    data
         Original simulation data.
+    seed
+        Random seed.
 
     Returns
     -------
@@ -123,23 +123,14 @@ def parse_growth_timepoint(data: dict, seed: int) -> list:
     time = data["time"]
 
     for location, cells in data["cells"]:
-        u, v, w, z = location
-
         for cell in cells:
             _, population, state, position, volume, cycles = cell
-
-            if len(cycles) == 0:
-                cycle = None
-            else:
-                cycle = np.mean(cycles)
+            cycle = None if len(cycles) == 0 else np.mean(cycles)
 
             data_list = [
                 time,
                 seed,
-                u,
-                v,
-                w,
-                z,
+                *location,
                 position,
                 population,
                 CELL_STATES[state],

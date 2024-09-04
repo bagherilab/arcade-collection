@@ -99,7 +99,7 @@ def make_setup_file(
         Contents of ARCADE setup file.
     """
 
-    root = ET.fromstring("<set></set>")
+    root = ET.fromstring("<set></set>")  # noqa: S314
     series = ET.SubElement(
         root,
         "series",

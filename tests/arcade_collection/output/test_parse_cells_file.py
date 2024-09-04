@@ -2,9 +2,10 @@ import json
 import tarfile
 import unittest
 from unittest import mock
+
 import pandas as pd
 
-from arcade_collection.output.parse_cells_file import parse_cells_file, parse_cell_tick
+from arcade_collection.output.parse_cells_file import parse_cell_tick, parse_cells_file
 
 
 class TestParseCellsFile(unittest.TestCase):
@@ -213,8 +214,8 @@ class TestParseCellsFile(unittest.TestCase):
         }
 
         expected = [1, tick, 2, 3, 4, 5, "STATE", "PHASE", 6]
-        expected = expected + [9]  # REGION_A
-        expected = expected + [12]  # REGION_B
+        expected = [*expected, 9]  # REGION_A
+        expected = [*expected, 12]  # REGION_B
 
         parsed = parse_cell_tick(tick, cell, regions)
 

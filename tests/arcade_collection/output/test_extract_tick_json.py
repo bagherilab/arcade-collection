@@ -11,7 +11,7 @@ class TestExtractTickJson(unittest.TestCase):
         tar_mock = mock.Mock(spec=tarfile.TarFile)
         tar_mock.extractfile.return_value = None
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(RuntimeError):
             extract_tick_json(tar_mock, "", 0)
 
     def test_extract_tick_json_integer_tick_without_extension(self):

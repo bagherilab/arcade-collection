@@ -1,7 +1,7 @@
-from typing import Optional
+from __future__ import annotations
 
 
-def get_location_voxels(location: dict, region: Optional[str] = None) -> list[tuple[int, int, int]]:
+def get_location_voxels(location: dict, region: str | None = None) -> list[tuple[int, int, int]]:
     """
     Get list of voxels from location for specified region.
 
@@ -22,11 +22,9 @@ def get_location_voxels(location: dict, region: Optional[str] = None) -> list[tu
         List of x, y, z voxels.
     """
 
-    voxels = [
+    return [
         (x, y, z)
         for loc in location["location"]
         for x, y, z in loc["voxels"]
         if not region or loc["region"] == region
     ]
-
-    return voxels

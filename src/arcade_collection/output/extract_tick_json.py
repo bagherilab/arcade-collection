@@ -1,16 +1,20 @@
+from __future__ import annotations
+
 import json
-import tarfile
-from typing import Optional, Union
+from typing import TYPE_CHECKING
 
 import numpy as np
+
+if TYPE_CHECKING:
+    import tarfile
 
 
 def extract_tick_json(
     tar: tarfile.TarFile,
     key: str,
-    tick: Union[int, float],
-    extension: Optional[str] = None,
-    field: Optional[str] = None,
+    tick: float,
+    extension: str | None = None,
+    field: str | None = None,
 ) -> list:
     """
     Extract json for specified tick from tar archive.
@@ -60,7 +64,10 @@ def extract_tick_json(
     else:
         member = tar.extractfile(f"{key}{formatted_tick}.{extension}.json")
 
-    assert member is not None
+    if member is None:
+        message = "File does not exist in archive."
+        raise RuntimeError(message)
+
     tick_json = json.loads(member.read().decode("utf-8"))
 
     if isinstance(tick, float):

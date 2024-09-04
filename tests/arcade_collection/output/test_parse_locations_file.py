@@ -2,9 +2,10 @@ import json
 import tarfile
 import unittest
 from unittest import mock
+
 import pandas as pd
 
-from arcade_collection.output.parse_locations_file import parse_locations_file, parse_location_tick
+from arcade_collection.output.parse_locations_file import parse_location_tick, parse_locations_file
 
 
 class TestParseLocationsFile(unittest.TestCase):
@@ -177,18 +178,18 @@ class TestParseLocationsFile(unittest.TestCase):
     def test_parse_location_tick_without_regions_empty_list(self):
         tick = 15
         regions = []
-        locations = {"id": 1, "location": [{"region": "UNDEFINED", "voxels": []}]}
+        location = {"id": 1, "location": [{"region": "UNDEFINED", "voxels": []}]}
 
         expected = [1, tick, -1, -1, -1, -1, -1, -1, -1, -1, -1]
 
-        parsed = parse_location_tick(tick, locations, regions)
+        parsed = parse_location_tick(tick, location, regions)
 
         self.assertListEqual(expected, parsed)
 
     def test_parse_location_tick_without_regions(self):
         tick = 15
         regions = []
-        locations = {
+        location = {
             "id": 1,
             "center": [2, 3, 4],
             "location": [
@@ -201,14 +202,14 @@ class TestParseLocationsFile(unittest.TestCase):
 
         expected = [1, tick, 2, 3, 4, 5, 6, 7, 14, 15, 16]
 
-        parsed = parse_location_tick(tick, locations, regions)
+        parsed = parse_location_tick(tick, location, regions)
 
         self.assertListEqual(expected, parsed)
 
     def test_parse_location_tick_with_regions_empty_list(self):
         tick = 15
         regions = ["REGION_A", "REGION_B"]
-        locations = {
+        location = {
             "id": 1,
             "center": [2, 3, 4],
             "location": [
@@ -218,17 +219,17 @@ class TestParseLocationsFile(unittest.TestCase):
         }
 
         expected = [1, tick, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        expected = expected + [7, 8, 9, 5, 6, 7, 8, 9, 10]  # REGION_A
-        expected = expected + [-1, -1, -1, -1, -1, -1, -1, -1, -1]  # REGION_B
+        expected = [*expected, 7, 8, 9, 5, 6, 7, 8, 9, 10]  # REGION_A
+        expected = [*expected, -1, -1, -1, -1, -1, -1, -1, -1, -1]  # REGION_B
 
-        parsed = parse_location_tick(tick, locations, regions)
+        parsed = parse_location_tick(tick, location, regions)
 
         self.assertListEqual(expected, parsed)
 
     def test_parse_location_tick_with_regions(self):
         tick = 15
         regions = ["REGION_A", "REGION_B"]
-        locations = {
+        location = {
             "id": 1,
             "center": [2, 3, 4],
             "location": [
@@ -238,10 +239,10 @@ class TestParseLocationsFile(unittest.TestCase):
         }
 
         expected = [1, tick, 2, 3, 4, 5, 6, 7, 14, 15, 16]
-        expected = expected + [7, 8, 9, 5, 6, 7, 8, 9, 10]  # REGION_A
-        expected = expected + [13, 14, 15, 11, 12, 13, 14, 15, 16]  # REGION_B
+        expected = [*expected, 7, 8, 9, 5, 6, 7, 8, 9, 10]  # REGION_A
+        expected = [*expected, 13, 14, 15, 11, 12, 13, 14, 15, 16]  # REGION_B
 
-        parsed = parse_location_tick(tick, locations, regions)
+        parsed = parse_location_tick(tick, location, regions)
 
         self.assertListEqual(expected, parsed)
 

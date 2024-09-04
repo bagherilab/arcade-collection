@@ -43,7 +43,7 @@ build-backend = "poetry.core.masonry.api"
 disable = [
     "missing-module-docstring",
 ]
-good-names = ["i", "j", "k", "x", "y", "z", "ds", "dt", "ax"]
+good-names = ["i", "j", "k", "x", "y", "z", "u", "v", "w", "ds", "dt", "ax"]
 
 [tool.pylint.design]
 max-args = 10 # maximum number of arguments for function / method
@@ -90,7 +90,16 @@ max-args = 10
 "tests/*.py" = [
     "D",      # pydocstyle
     "PT009",  # pytest-unittest-assertion
+    "PT027",  # pytest-unittest-raises-assertion
     "INP001", # implicit-namespace-package
+    "ANN201", # missing-return-type-undocumented-public-function
+    "S311",   # suspicious-non-cryptographic-random-usage
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
 ]
 
 [tool.tox]

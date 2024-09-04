@@ -14,18 +14,21 @@ from arcade_collection.output.convert_model_units import (
 
 
 class TestConvertModelUnits(unittest.TestCase):
+    def setUp(self):
+        self.rng = np.random.default_rng()
+
     def test_convert_model_units_no_estimate_no_regions(self):
         dt = 1.0 / 3
         ds = 1.0 / 7
         regions = None
-        ticks = np.random.randint(100, size=10)
-        voxels = np.random.randint(100, size=10)
-        center = np.random.randint(100, size=(10, 3))
-        z = np.random.randint(100, size=(10, 2))
+        ticks = self.rng.integers(100, size=10)
+        voxels = self.rng.integers(100, size=10)
+        center = self.rng.integers(100, size=(10, 3))
+        z = self.rng.integers(100, size=(10, 2))
 
         data = pd.DataFrame(
             {
-                "PLACEHOLDER": np.random.rand(10),
+                "PLACEHOLDER": self.rng.random(10),
                 "TICK": ticks,
                 "NUM_VOXELS": voxels,
                 "CENTER_X": center[:, 0],
@@ -52,20 +55,20 @@ class TestConvertModelUnits(unittest.TestCase):
         dt = None
         ds = None
         regions = None
-        ticks = np.random.randint(100, size=10)
-        voxels = np.random.randint(100, size=10)
-        center = np.random.randint(100, size=(10, 3))
-        z = np.random.randint(100, size=(10, 2))
+        ticks = self.rng.integers(100, size=10)
+        voxels = self.rng.integers(100, size=10)
+        center = self.rng.integers(100, size=(10, 3))
+        z = self.rng.integers(100, size=(10, 2))
 
-        all_dt = np.random.randint(1, 10, size=10)
-        all_ds = np.random.randint(1, 10, size=10)
+        all_dt = self.rng.integers(1, 10, size=10)
+        all_ds = self.rng.integers(1, 10, size=10)
         dt = all_dt / 60
         ds = all_ds.astype("float")
 
         data = pd.DataFrame(
             {
                 "KEY": [f"DT{dt:03d}_DS{ds:03d}" for dt, ds in zip(all_dt, all_ds)],
-                "PLACEHOLDER": np.random.rand(10),
+                "PLACEHOLDER": self.rng.random(10),
                 "TICK": ticks,
                 "NUM_VOXELS": voxels,
                 "CENTER_X": center[:, 0],
@@ -92,13 +95,13 @@ class TestConvertModelUnits(unittest.TestCase):
         dt = 1.0 / 3
         ds = 1.0 / 7
         regions = "REGION"
-        ticks = np.random.randint(100, size=10)
-        voxels = np.random.randint(100, size=10)
-        region_voxels = np.random.randint(100, size=10)
+        ticks = self.rng.integers(100, size=10)
+        voxels = self.rng.integers(100, size=10)
+        region_voxels = self.rng.integers(100, size=10)
 
         data = pd.DataFrame(
             {
-                "PLACEHOLDER": np.random.rand(10),
+                "PLACEHOLDER": self.rng.random(10),
                 "TICK": ticks,
                 "NUM_VOXELS": voxels,
                 f"NUM_VOXELS.{regions}": region_voxels,
@@ -118,13 +121,13 @@ class TestConvertModelUnits(unittest.TestCase):
         dt = 1.0 / 3
         ds = 1.0 / 7
         regions = ["DEFAULT", "REGION_A", "REGION_B"]
-        ticks = np.random.randint(100, size=10)
-        voxels = np.random.randint(100, size=10)
-        region_voxels = np.random.randint(100, size=(10, 2))
+        ticks = self.rng.integers(100, size=10)
+        voxels = self.rng.integers(100, size=10)
+        region_voxels = self.rng.integers(100, size=(10, 2))
 
         data = pd.DataFrame(
             {
-                "PLACEHOLDER": np.random.rand(10),
+                "PLACEHOLDER": self.rng.random(10),
                 "TICK": ticks,
                 "NUM_VOXELS": voxels,
                 f"NUM_VOXELS.{regions[1]}": region_voxels[:, 0],
@@ -147,7 +150,7 @@ class TestConvertModelUnits(unittest.TestCase):
 
         data = pd.DataFrame(
             {
-                "PLACEHOLDER": np.random.rand(10),
+                "PLACEHOLDER": self.rng.random(10),
             }
         )
 
@@ -159,11 +162,11 @@ class TestConvertModelUnits(unittest.TestCase):
 
     def test_convert_temporal_units_with_columns(self):
         dt = 1.0 / 3
-        ticks = np.random.randint(100, size=10)
+        ticks = self.rng.integers(100, size=10)
 
         data = pd.DataFrame(
             {
-                "PLACEHOLDER": np.random.rand(10),
+                "PLACEHOLDER": self.rng.random(10),
                 "TICK": ticks,
             }
         )
@@ -181,7 +184,7 @@ class TestConvertModelUnits(unittest.TestCase):
 
         data = pd.DataFrame(
             {
-                "PLACEHOLDER": np.random.rand(10),
+                "PLACEHOLDER": self.rng.random(10),
             }
         )
 
@@ -194,13 +197,13 @@ class TestConvertModelUnits(unittest.TestCase):
     def test_convert_spatial_units_with_columns_no_region_no_properties(self):
         ds = 1.0 / 3
         region = None
-        voxels = np.random.randint(100, size=10)
-        center = np.random.randint(100, size=(10, 3))
-        z = np.random.randint(100, size=(10, 2))
+        voxels = self.rng.integers(100, size=10)
+        center = self.rng.integers(100, size=(10, 3))
+        z = self.rng.integers(100, size=(10, 2))
 
         data = pd.DataFrame(
             {
-                "PLACEHOLDER": np.random.rand(10),
+                "PLACEHOLDER": self.rng.random(10),
                 "NUM_VOXELS": voxels,
                 "CENTER_X": center[:, 0],
                 "CENTER_Y": center[:, 1],
@@ -224,14 +227,14 @@ class TestConvertModelUnits(unittest.TestCase):
     def test_convert_spatial_units_with_columns_no_region_with_properties(self):
         ds = 1.0 / 3
         region = None
-        area = np.random.rand(10)
-        perimeter = np.random.rand(10)
-        axis_major_length = np.random.rand(10)
-        axis_minor_length = np.random.rand(10)
+        area = self.rng.random(10)
+        perimeter = self.rng.random(10)
+        axis_major_length = self.rng.random(10)
+        axis_minor_length = self.rng.random(10)
 
         data = pd.DataFrame(
             {
-                "PLACEHOLDER": np.random.rand(10),
+                "PLACEHOLDER": self.rng.random(10),
                 "area": area,
                 "perimeter": perimeter,
                 "axis_major_length": axis_major_length,
@@ -252,19 +255,19 @@ class TestConvertModelUnits(unittest.TestCase):
     def test_convert_spatial_units_with_columns_with_region_no_properties(self):
         ds = 1.0 / 3
         region = "REGION"
-        voxels = np.random.randint(100, size=10)
-        z = np.random.randint(100, size=(10, 2))
+        voxels = self.rng.integers(100, size=10)
+        z = self.rng.integers(100, size=(10, 2))
 
         data = pd.DataFrame(
             {
-                "PLACEHOLDER": np.random.rand(10),
-                "NUM_VOXELS": np.random.randint(100, size=10),
+                "PLACEHOLDER": self.rng.random(10),
+                "NUM_VOXELS": self.rng.integers(100, size=10),
                 f"NUM_VOXELS.{region}": voxels,
-                "CENTER_X": np.random.randint(100, size=10),
-                "CENTER_Y": np.random.randint(100, size=10),
-                "CENTER_Z": np.random.randint(100, size=10),
-                "MIN_Z": np.random.randint(100, size=10),
-                "MAX_Z": np.random.randint(100, size=10),
+                "CENTER_X": self.rng.integers(100, size=10),
+                "CENTER_Y": self.rng.integers(100, size=10),
+                "CENTER_Z": self.rng.integers(100, size=10),
+                "MIN_Z": self.rng.integers(100, size=10),
+                "MAX_Z": self.rng.integers(100, size=10),
                 f"MIN_Z.{region}": z[:, 0],
                 f"MAX_Z.{region}": z[:, 1],
             }
@@ -281,11 +284,11 @@ class TestConvertModelUnits(unittest.TestCase):
     def test_convert_spatial_units_with_columns_with_region_with_properties(self):
         ds = 1.0 / 3
         region = "REGION"
-        placeholder = np.random.rand(10)
-        area = np.random.rand(10)
-        perimeter = np.random.rand(10)
-        axis_major_length = np.random.rand(10)
-        axis_minor_length = np.random.rand(10)
+        placeholder = self.rng.random(10)
+        area = self.rng.random(10)
+        perimeter = self.rng.random(10)
+        axis_major_length = self.rng.random(10)
+        axis_minor_length = self.rng.random(10)
 
         data = pd.DataFrame(
             {
