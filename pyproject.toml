@@ -30,6 +30,7 @@ furo = "^2023.5.20"
 myst-parser = "^2.0.0"
 sphinx-copybutton = "^0.5.2"
 tox = "^4.5.1"
+ruff = "^0.6.3"
 
 [tool.isort]
 profile = "black"
@@ -64,6 +65,34 @@ module = [
 ]
 ignore_missing_imports = true
 
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812", # missing-trailing-comma
+    "D100",   # undocumented-public-module
+    "D105",   # undocumented-magic-method
+    "D107",   # undocumented-public-init
+    "D202",   # no-blank-line-after-function
+    "D203",   # one-blank-line-before-class
+    "D212",   # multi-line-summary-first-line
+    "D413",   # blank-line-after-last-section
+    "D416",   # section-name-ends-in-colon
+]
+
+[tool.ruff.lint.pylint]
+max-args = 10
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = [
+    "D",      # pydocstyle
+    "PT009",  # pytest-unittest-assertion
+    "INP001", # implicit-namespace-package
+]
+
 [tool.tox]
 legacy_tox_ini = """
 [tox]
@@ -84,6 +113,7 @@ commands =
 [testenv:lint]
 commands =
     poetry run pylint --ignore-patterns=test.*?py src/ tests/ --fail-under=9.0
+    poetry run ruff check src/ tests/
 
 [testenv:typecheck]
 commands =
