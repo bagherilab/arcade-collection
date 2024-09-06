@@ -107,7 +107,7 @@ exclude_lines = [
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py{39,310}, format, lint, typecheck
+envlist = py{39,310,311}, format, lint, typecheck
 skipsdist=True
 
 [testenv]
