@@ -40,10 +40,11 @@ def convert_to_simularium(
     dt: float,
     colors: dict[str, str],
     url: Optional[str] = None,
+    jitter: float = 1.0,
 ) -> str:
     meta_data = get_meta_data(series_key, simulation_type, length, width, height, ds, dz)
     agent_data = get_agent_data(data)
-    agent_data.display_data = get_display_data(data, colors, url)
+    agent_data.display_data = get_display_data(data, colors, url, jitter)
 
     for index, (frame, group) in enumerate(data.groupby("frame")):
         n_agents = len(group)
@@ -114,43 +115,102 @@ def get_agent_data(data: pd.DataFrame) -> AgentData:
 
 
 def get_display_data(
-    data: pd.DataFrame, colors: dict[str, str], url: Optional[str] = None
+    data: pd.DataFrame,
+    colors: dict[str, str],
+    url: str = "",
+    jitter: float = 1.0,
 ) -> DisplayData:
-    display_data = {}
+    """
+    Create map of DisplayData objects.
 
-    for name in data["name"].unique():
-        if name.count("#") == 3:
-            group, color_key, index, frame = name.split("#")
+    Method uses the "name" and "display_type" columns in data to generate the
+    DisplayData objects.
+
+    The "name" column should be a string in one of the following forms:
+
+    - ``(index)#(color_key)``
+    - ``(group)#(color_key)#(index)``
+    - ``(group)#(color_key)#(index)#(frame)``
+
+    where ``(index)`` becomes DisplayData object name and ``(color_key)`` is
+    passed to the color mapping to select the DisplayData color (optional color
+    jitter may be applied).
+
+    The "display_type" column should be a valid ``DISPLAY_TYPE``. For the
+    ``DISPLAY_TYPE.OBJ`` type, a URL prefix must be used and names should be in
+    the form ``(group)#(color_key)#(index)#(frame)``, which is used to generate
+    the full URL formatted as: ``(url)/(frame)_(group)_(index).MESH.obj``. Note
+    that ``(frame)`` is zero-padded to six digits and ``(index)`` is zero-padded
+    to three digits.
+
+    Parameters
+    ----------
+    data
+        Simulation trajectory data.
+    colors
+        Color mapping.
+    url
+        Url prefix for meshes.
+    jitter
+        Jitter applied to colors.
+
+    Returns
+    -------
+    :
+        Map of DisplayData objects.
+    """
+
+    display_data = {}
+    display_types = sorted(set(zip(data["name"], data["display_type"])))
+
+    for name, display_type in display_types:
+        if name.count("#") == 1:
+            index, color_key = name.split("#")
         elif name.count("#") == 2:
-            group, index, color_key = name.split("#")
+            _, color_key, index = name.split("#")
+        elif name.count("#") == 3:
+            group, color_key, index, frame = name.split("#")
+
+        if url != "":
+            full_url = f"{url}/{int(frame):06d}_{group}_{int(index):03d}.MESH.obj"
+        else:
+            full_url = ""
 
         random.seed(index)
-        jitter = (random.random() - 0.5) / 2
+        alpha = jitter * (random.random() - 0.5) / 2
 
-        if url is not None:
-            display_data[name] = DisplayData(
-                name=index,
-                display_type=DISPLAY_TYPE.OBJ,
-                url=f"{url}/{int(frame):06d}_{group}_{int(index):03d}.MESH.obj",
-                color=shade_color(colors[color_key], jitter),
-            )
-        elif index is None:
-            display_data[name] = DisplayData(
-                name=group,
-                display_type=DISPLAY_TYPE.FIBER,
-                color=colors[color_key],
-            )
-        else:
-            display_data[name] = DisplayData(
-                name=index,
-                display_type=DISPLAY_TYPE.SPHERE,
-                color=shade_color(colors[color_key], jitter),
-            )
+        display_data[name] = DisplayData(
+            name=index,
+            display_type=DISPLAY_TYPE[display_type],
+            color=shade_color(colors[color_key], alpha),
+            url=full_url,
+        )
 
     return display_data
 
 
 def shade_color(color: str, alpha: float) -> str:
+    """
+    Shade color by specified alpha.
+
+    Positive values of alpha will blend the given color with white (alpha = 1.0
+    returns pure white), while negative values of alpha will blend the given
+    color with black (alpha = -1.0 returns pure black). An alpha = 0.0 will
+    leave the color unchanged.
+
+    Parameters
+    ----------
+    color
+        Original color as hex string.
+    alpha
+        Shading value between -1 and +1.
+
+    Returns
+    -------
+    :
+        Shaded color as hex string.
+    """
+
     old_color = color.replace("#", "")
     old_red, old_green, old_blue = [int(old_color[i : i + 2], 16) for i in (0, 2, 4)]
     layer_color = 0 if alpha < 0 else 255
