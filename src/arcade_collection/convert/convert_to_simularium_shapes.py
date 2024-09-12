@@ -141,7 +141,7 @@ def format_patch_for_shapes(
         Data formatted for trajectory.
     """
 
-    data: list[list[int | str | float]] = []
+    data: list[list[int | str | float | list]] = []
 
     for frame in frames:
         if cells_tar is not None:
@@ -183,7 +183,7 @@ def format_patch_for_shapes(
                     to_node[2],
                 ]
 
-                data = [*data, [name, frame, radius, 0, 0, 0, *subpoints, "FIBER"]]
+                data = [*data, [name, frame, radius, 0, 0, 0, subpoints, "FIBER"]]
 
     return pd.DataFrame(
         data, columns=["name", "frame", "radius", "x", "y", "z", "points", "display"]
