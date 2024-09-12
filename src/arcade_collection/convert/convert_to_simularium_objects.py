@@ -8,16 +8,52 @@ def convert_to_simularium_objects(
     series_key: str,
     simulation_type: str,
     categories: pd.DataFrame,
-    frame_spec: tuple[int, int, int],
     regions: list[str],
+    frame_spec: tuple[int, int, int],
     box: tuple[int, int, int],
-    ds: float,
-    dz: float,
+    ds: tuple[float, float, float],
     dt: float,
     colors: dict[str, str],
     group_size: int,
     url: str,
+    jitter: float = 1.0,
 ) -> str:
+    """
+    Convert data to Simularium trajectory using mesh objects.
+
+    Parameters
+    ----------
+    series_key
+        Simulation series key.
+    simulation_type : {'potts'}
+        Simulation type.
+    categories
+        Simulation data containing ID, FRAME, and CATEGORY.
+    regions
+        List of regions.
+    frame_spec
+        Specification for simulation ticks.
+    box
+        Size of bounding box.
+    ds
+        Spatial scaling in units/um.
+    dt
+        Temporal scaling in hours/tick.
+    colors
+        Map of category to colors.
+    group_size
+        Number of objects in each mesh group.
+    url
+        URL for mesh object files.
+    jitter
+        Relative jitter applied to colors (set to 0 for exact colors).
+
+    Returns
+    -------
+    :
+        Simularium trajectory.
+    """
+
     if simulation_type == "potts":
         frames = list(map(int, np.arange(*frame_spec)))
         length, width, height = box
@@ -25,10 +61,11 @@ def convert_to_simularium_objects(
             categories, frames, group_size, regions, length, width, height
         )
     else:
-        raise ValueError(f"invalid simulation type {simulation_type}")
+        message = f"invalid simulation type {simulation_type}"
+        raise ValueError(message)
 
     return convert_to_simularium(
-        series_key, simulation_type, data, length, width, height, ds, dz, dt, colors, url
+        series_key, simulation_type, data, length, width, height, ds, dt, colors, url, jitter
     )
 
 
@@ -41,6 +78,32 @@ def format_potts_for_objects(
     width: int,
     height: int,
 ) -> pd.DataFrame:
+    """
+    Format ``potts`` simulation data for object-based Simularium trajectory.
+
+    Parameters
+    ----------
+    categories
+        Simulation data containing ID, FRAME, and CATEGORY.
+    frames
+        List of frames.
+    group_size
+        Number of objects in each mesh group.
+    regions
+        List of regions.
+    length
+        Length of bounding box.
+    width
+        Width of bounding box.
+    height
+        Height of bounding box.
+
+    Returns
+    -------
+    :
+        Data formatted for trajectory.
+    """
+
     data: list[list[object]] = []
     center = [length / 2, width / 2, height / 2]
 
@@ -57,8 +120,10 @@ def format_potts_for_objects(
 
                 for region in regions:
                     name = f"{region}#{category}#{index}#{frame}"
-                    data = data + [[name, int(frame), 1] + center + [[]]]
+                    data = [*data, [name, int(frame), 1, *center, [], "OBJ"]]
 
             index_offset = index_offset + len(group_ids)
 
-    return pd.DataFrame(data, columns=["name", "frame", "radius", "x", "y", "z", "points"])
+    return pd.DataFrame(
+        data, columns=["name", "frame", "radius", "x", "y", "z", "points", "display"]
+    )

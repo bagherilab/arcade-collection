@@ -43,7 +43,7 @@ build-backend = "poetry.core.masonry.api"
 disable = [
     "missing-module-docstring",
 ]
-good-names = ["i", "j", "k", "x", "y", "z", "u", "v", "w", "ds", "dt", "ax"]
+good-names = ["i", "j", "k", "x", "y", "z", "u", "v", "w", "ds", "dt", "dx", "dy", "dz", "ax"]
 
 [tool.pylint.design]
 max-args = 10 # maximum number of arguments for function / method
@@ -95,6 +95,8 @@ max-args = 10
     "INP001", # implicit-namespace-package
     "ANN201", # missing-return-type-undocumented-public-function
     "S311",   # suspicious-non-cryptographic-random-usage
+    "ANN001", # missing-type-function-argument
+    "ANN202"  # missing-type-args
 ]
 
 [tool.coverage.report]
