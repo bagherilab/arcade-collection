@@ -1,7 +1,5 @@
-import io
 import json
 import sys
-import tarfile
 import unittest
 from math import sqrt
 from unittest import mock
@@ -18,18 +16,7 @@ from arcade_collection.convert.convert_to_simularium_shapes import (
     convert_to_simularium_shapes,
 )
 
-
-def build_tar_instance(contents):
-    buffer = io.BytesIO()
-
-    with tarfile.open(fileobj=buffer, mode="w") as tar:
-        for file_key, content in contents.items():
-            byte_array = json.dumps(content).encode("utf-8")
-            info = tarfile.TarInfo(file_key)
-            info.size = len(byte_array)
-            tar.addfile(info, io.BytesIO(byte_array))
-
-    return tarfile.open(fileobj=io.BytesIO(buffer.getvalue()), mode="r")
+from .utilities import build_tar_instance
 
 
 class TestConvertToSimulariumShapes(unittest.TestCase):
