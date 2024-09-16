@@ -10,7 +10,7 @@ from arcade_collection.convert.convert_to_simularium_objects import convert_to_s
 
 
 class TestConvertToSimulariumObjects(unittest.TestCase):
-    def test_convert_to_simularium_objects_potts(self) -> None:
+    def test_convert_to_simularium_objects_potts(self):
         series_key = "SERIES_KEY"
         simulation_type = "potts"
         categories = pd.DataFrame(
@@ -150,7 +150,7 @@ class TestConvertToSimulariumObjects(unittest.TestCase):
         self.assertDictEqual(model_info, trajectory_info["modelInfo"])
         self.assertListEqual(bundle_data, simularium["spatialData"]["bundleData"])
 
-    def test_convert_to_simularium_objects_invalid_type_throws_exception(self) -> None:
+    def test_convert_to_simularium_objects_invalid_type_throws_exception(self):
         with self.assertRaises(ValueError):
             simulation_type = "invalid_type"
             convert_to_simularium_objects(

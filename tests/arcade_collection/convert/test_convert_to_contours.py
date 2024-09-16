@@ -11,7 +11,7 @@ class TestConvertToContours(unittest.TestCase):
         self.frame = 5
         self.file = f"{self.series_key}_{self.frame:06d}.LOCATIONS.json"
 
-    def test_convert_to_contours_no_voxels(self) -> None:
+    def test_convert_to_contours_no_voxels(self):
         regions = ["DEFAULT"]
         box = (1, 1, 1)
         indices = {"top": [1]}
@@ -34,7 +34,7 @@ class TestConvertToContours(unittest.TestCase):
 
         self.assertDictEqual(expected_contours, contours)
 
-    def test_convert_to_contours_no_index(self) -> None:
+    def test_convert_to_contours_no_index(self):
         regions = ["DEFAULT"]
         box = (3, 3, 3)
         indices = {"top": [1]}
@@ -57,7 +57,7 @@ class TestConvertToContours(unittest.TestCase):
 
         self.assertDictEqual(expected_contours, contours)
 
-    def test_convert_to_contours_different_views(self) -> None:
+    def test_convert_to_contours_different_views(self):
         regions = ["DEFAULT"]
         box = (4, 5, 6)
         indices = {"top": [1], "side1": [1], "side2": [1]}
@@ -148,7 +148,7 @@ class TestConvertToContours(unittest.TestCase):
 
         self.assertDictEqual(expected_contours, contours)
 
-    def test_convert_to_contours_multiple_regions(self) -> None:
+    def test_convert_to_contours_multiple_regions(self):
         regions = ["DEFAULT", "REGION_A", "REGION_B"]
         box = (4, 5, 6)
         indices = {"top": [1]}
@@ -199,7 +199,7 @@ class TestConvertToContours(unittest.TestCase):
 
         self.assertDictEqual(expected_contours, contours)
 
-    def test_convert_to_contours_disconnected_location(self) -> None:
+    def test_convert_to_contours_disconnected_location(self):
         regions = ["DEFAULT"]
         box = (5, 6, 6)
         indices = {"top": [1]}
@@ -261,7 +261,7 @@ class TestConvertToContours(unittest.TestCase):
 
         self.assertDictEqual(expected_contours, contours)
 
-    def test_convert_to_contours_multiple_locations(self) -> None:
+    def test_convert_to_contours_multiple_locations(self):
         regions = ["DEFAULT"]
         box = (4, 5, 6)
         indices = {"top": [1]}

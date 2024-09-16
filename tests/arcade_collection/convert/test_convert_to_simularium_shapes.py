@@ -20,7 +20,7 @@ from .utilities import build_tar_instance
 
 
 class TestConvertToSimulariumShapes(unittest.TestCase):
-    def test_convert_to_simularium_shapes_patch_invalid_data(self) -> None:
+    def test_convert_to_simularium_shapes_patch_invalid_data(self):
         simulation_type = "patch"
         simularium = convert_to_simularium_shapes(
             "", simulation_type, {"invalid": None}, (0, 0, 0), (0, 0, 0), (0, 0, 0), 0, {}
@@ -32,7 +32,7 @@ class TestConvertToSimulariumShapes(unittest.TestCase):
         "random",
         return_value=mock.Mock(),
     )
-    def test_convert_to_simularium_shapes_patch_with_cells(self, random_mock) -> None:
+    def test_convert_to_simularium_shapes_patch_with_cells(self, random_mock):
         series_key = "SERIES_KEY"
 
         contents = {
@@ -172,7 +172,7 @@ class TestConvertToSimulariumShapes(unittest.TestCase):
         "random",
         return_value=mock.Mock(),
     )
-    def test_convert_to_simularium_shapes_patch_with_graph(self, random_mock) -> None:
+    def test_convert_to_simularium_shapes_patch_with_graph(self, random_mock):
         series_key = "SERIES_KEY"
 
         contents = {
@@ -333,14 +333,14 @@ class TestConvertToSimulariumShapes(unittest.TestCase):
         self.assertDictEqual(type_mapping, trajectory_info["typeMapping"])
         self.assertListEqual(bundle_data, simularium["spatialData"]["bundleData"])
 
-    def test_convert_to_simularium_shapes_potts_invalid_data(self) -> None:
+    def test_convert_to_simularium_shapes_potts_invalid_data(self):
         simulation_type = "potts"
         simularium = convert_to_simularium_shapes(
             "", simulation_type, {"invalid": None}, (0, 0, 0), (0, 0, 0), (0, 0, 0), 0, {}
         )
         self.assertEqual("", simularium)
 
-    def test_convert_to_simularium_shapes_potts_resolution_zero(self) -> None:
+    def test_convert_to_simularium_shapes_potts_resolution_zero(self):
         series_key = "SERIES_KEY"
 
         cells_contents = {
@@ -492,7 +492,7 @@ class TestConvertToSimulariumShapes(unittest.TestCase):
         self.assertDictEqual(type_mapping, trajectory_info["typeMapping"])
         self.assertListEqual(bundle_data, simularium["spatialData"]["bundleData"])
 
-    def test_convert_to_simularium_shapes_potts_resolution_one(self) -> None:
+    def test_convert_to_simularium_shapes_potts_resolution_one(self):
         series_key = "SERIES_KEY"
 
         hollow_cube_voxels = [[x, y, z] for x in range(3) for y in range(3) for z in range(3)]
@@ -628,7 +628,7 @@ class TestConvertToSimulariumShapes(unittest.TestCase):
         self.assertDictEqual(type_mapping, trajectory_info["typeMapping"])
         self.assertListEqual(bundle_data, simularium["spatialData"]["bundleData"])
 
-    def test_convert_to_simularium_shapes_potts_resolution_two(self) -> None:
+    def test_convert_to_simularium_shapes_potts_resolution_two(self):
         series_key = "SERIES_KEY"
 
         hollow_cube_voxels = [[x, y, z] for x in range(6) for y in range(6) for z in range(6)]
@@ -769,7 +769,7 @@ class TestConvertToSimulariumShapes(unittest.TestCase):
         self.assertDictEqual(type_mapping, trajectory_info["typeMapping"])
         self.assertListEqual(bundle_data, simularium["spatialData"]["bundleData"])
 
-    def test_convert_to_simularium_shapes_invalid_type_throws_exception(self) -> None:
+    def test_convert_to_simularium_shapes_invalid_type_throws_exception(self):
         with self.assertRaises(ValueError):
             simulation_type = "invalid_type"
             convert_to_simularium_shapes(
