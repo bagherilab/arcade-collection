@@ -5,7 +5,7 @@ from unittest import mock
 import numpy as np
 import pandas as pd
 
-from arcade_collection.convert.convert_to_meshes import MAX_ARRAY_LEVEL, convert_to_meshes
+from arcade_collection.convert.convert_to_meshes import MAX_ARRAY_LEVEL, MeshType, convert_to_meshes
 
 from .utilities import build_tar_instance
 
@@ -73,8 +73,8 @@ class TestConvertToMeshes(unittest.TestCase):
         "measure",
         return_value=mock.Mock(),
     )
-    def test_convert_to_meshes_no_invert_no_group(self, measure_mock):
-        invert = False
+    def test_convert_to_meshes_default_no_group(self, measure_mock):
+        mesh_type = MeshType.DEFAULT
         group_size = None
         categories = None
 
@@ -122,7 +122,7 @@ class TestConvertToMeshes(unittest.TestCase):
             self.frame_spec,
             self.regions,
             self.box,
-            invert,
+            mesh_type,
             group_size,
             categories,
         )
@@ -134,8 +134,8 @@ class TestConvertToMeshes(unittest.TestCase):
         "measure",
         return_value=mock.Mock(),
     )
-    def test_convert_to_meshes_all_invert_no_group(self, measure_mock):
-        invert = True
+    def test_convert_to_meshes_all_mesh_type_no_group(self, measure_mock):
+        mesh_type = MeshType.INVERTED
         group_size = None
         categories = None
 
@@ -183,7 +183,7 @@ class TestConvertToMeshes(unittest.TestCase):
             self.frame_spec,
             self.regions,
             self.box,
-            invert,
+            mesh_type,
             group_size,
             categories,
         )
@@ -195,8 +195,8 @@ class TestConvertToMeshes(unittest.TestCase):
         "measure",
         return_value=mock.Mock(),
     )
-    def test_convert_to_meshes_region_invert_no_group(self, measure_mock):
-        invert = {"DEFAULT": False, "REGION": True}
+    def test_convert_to_meshes_region_mesh_type_no_group(self, measure_mock):
+        mesh_type = {"DEFAULT": MeshType.DEFAULT, "REGION": MeshType.INVERTED}
         group_size = None
         categories = None
 
@@ -257,7 +257,7 @@ class TestConvertToMeshes(unittest.TestCase):
             self.frame_spec,
             self.regions,
             self.box,
-            invert,
+            mesh_type,
             group_size,
             categories,
         )
@@ -269,8 +269,8 @@ class TestConvertToMeshes(unittest.TestCase):
         "measure",
         return_value=mock.Mock(),
     )
-    def test_convert_to_meshes_no_invert_with_group_same_category(self, measure_mock):
-        invert = False
+    def test_convert_to_meshes_default_mesh_type_with_group_same_category(self, measure_mock):
+        mesh_type = MeshType.DEFAULT
         group_size = 2
         categories = pd.DataFrame(
             {"FRAME": [5, 5, 10, 15], "CATEGORY": ["A", "A", "A", "A"], "ID": [1, 2, 3, 4]}
@@ -344,7 +344,7 @@ class TestConvertToMeshes(unittest.TestCase):
             self.frame_spec,
             self.regions,
             self.box,
-            invert,
+            mesh_type,
             group_size,
             categories,
         )
@@ -356,8 +356,8 @@ class TestConvertToMeshes(unittest.TestCase):
         "measure",
         return_value=mock.Mock(),
     )
-    def test_convert_to_meshes_no_invert_with_group_different_category(self, measure_mock):
-        invert = False
+    def test_convert_to_meshes_default_mesh_type_with_group_different_category(self, measure_mock):
+        mesh_type = MeshType.DEFAULT
         group_size = 2
         categories = pd.DataFrame(
             {"FRAME": [5, 5, 10, 15], "CATEGORY": ["A", "B", "A", "A"], "ID": [1, 2, 3, 4]}
@@ -420,7 +420,7 @@ class TestConvertToMeshes(unittest.TestCase):
             self.frame_spec,
             self.regions,
             self.box,
-            invert,
+            mesh_type,
             group_size,
             categories,
         )

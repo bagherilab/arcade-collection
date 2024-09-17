@@ -1,15 +1,31 @@
-import tarfile
-from typing import Optional, Union
+from __future__ import annotations
+
+from enum import Enum
+from typing import TYPE_CHECKING
 
 import numpy as np
-import pandas as pd
 from skimage import measure
 
 from arcade_collection.output.extract_tick_json import extract_tick_json
 from arcade_collection.output.get_location_voxels import get_location_voxels
 
+if TYPE_CHECKING:
+    import tarfile
+
+    import pandas as pd
+
 MAX_ARRAY_LEVEL = 7
 """Maximum array level for conversion to meshes."""
+
+
+class MeshType(Enum):
+    """Mesh face types."""
+
+    DEFAULT = False
+    """Mesh with default faces."""
+
+    INVERTED = True
+    """Mesh with inverted faces."""
 
 
 def convert_to_meshes(
@@ -18,9 +34,9 @@ def convert_to_meshes(
     frame_spec: tuple[int, int, int],
     regions: list[str],
     box: tuple[int, int, int],
-    invert: Union[bool, dict[str, bool]] = False,
-    group_size: Optional[int] = None,
-    categories: Optional[pd.DataFrame] = None,
+    mesh_type: MeshType | dict[str, MeshType] = MeshType.DEFAULT,
+    group_size: int | None = None,
+    categories: pd.DataFrame | None = None,
 ) -> list[tuple[int, int, str, str]]:
     """
     Convert data to mesh OBJ contents.
@@ -37,8 +53,8 @@ def convert_to_meshes(
         List of regions.
     box
         Size of bounding box.
-    invert
-        True to invert the order of faces, False otherwise.
+    mesh_type
+        Mesh face type.
     group_size
         Number of objects in each group (if grouping meshes).
     categories
@@ -54,23 +70,19 @@ def convert_to_meshes(
     meshes = []
 
     length, width, height = box
-
-    if group_size is not None:
-        groups = make_mesh_groups(categories, frames, group_size)
-    else:
-        groups = None
+    groups = make_mesh_groups(categories, frames, group_size) if group_size is not None else None
 
     for frame in frames:
         locations = extract_tick_json(locations_tar, series_key, frame, "LOCATIONS")
 
         for region in regions:
-            region_invert = invert[region] if isinstance(invert, dict) else invert
+            region_mesh_type = mesh_type[region] if isinstance(mesh_type, dict) else mesh_type
 
             if groups is None:
                 for location in locations:
                     location_id = location["id"]
                     mesh = make_individual_mesh(
-                        location, length, width, height, region, region_invert
+                        location, length, width, height, region, region_mesh_type
                     )
 
                     if mesh is None:
@@ -83,7 +95,7 @@ def convert_to_meshes(
                         location for location in locations if location["id"] in group
                     ]
                     mesh = make_combined_mesh(
-                        group_locations, length, width, height, region, region_invert
+                        group_locations, length, width, height, region, region_mesh_type
                     )
 
                     if mesh is None:
@@ -133,8 +145,13 @@ def make_mesh_groups(
 
 
 def make_individual_mesh(
-    location: dict, length: int, width: int, height: int, region: str, invert: bool
-) -> Optional[str]:
+    location: dict,
+    length: int,
+    width: int,
+    height: int,
+    region: str,
+    mesh_type: MeshType = MeshType.DEFAULT,
+) -> str | None:
     """
     Create mesh containing a single object.
 
@@ -150,8 +167,8 @@ def make_individual_mesh(
         Bounding box height.
     region
         Region name.
-    invert
-        True to invert the order of faces, False otherwise.
+    mesh_type
+        Mesh face type.
 
     Returns
     -------
@@ -170,14 +187,17 @@ def make_individual_mesh(
     center = list(np.array(voxels).mean(axis=0))
     array = make_mesh_array(voxels, length, width, height)
     verts, faces, normals = make_mesh_geometry(array, center)
-    mesh = make_mesh_file(verts, faces, normals, invert)
-
-    return mesh
+    return make_mesh_file(verts, faces, normals, mesh_type)
 
 
 def make_combined_mesh(
-    locations: list[dict], length: int, width: int, height: int, region: str, invert: bool
-) -> Optional[str]:
+    locations: list[dict],
+    length: int,
+    width: int,
+    height: int,
+    region: str,
+    mesh_type: MeshType = MeshType.DEFAULT,
+) -> str | None:
     """
     Create mesh containing multiple objects.
 
@@ -193,8 +213,8 @@ def make_combined_mesh(
         Bounding box height.
     region
         Region name.
-    invert
-        True to invert the order of faces, False otherwise.
+    mesh_type
+        Mesh face type.
 
     Returns
     -------
@@ -217,7 +237,7 @@ def make_combined_mesh(
         center = [length / 2, width / 2, height / 2]
         array = make_mesh_array(voxels, length, width, height)
         verts, faces, normals = make_mesh_geometry(array, center, offset)
-        mesh = make_mesh_file(verts, faces, normals, invert)
+        mesh = make_mesh_file(verts, faces, normals, mesh_type)
 
         meshes.append(mesh)
         offset = offset + len(verts)
@@ -318,7 +338,10 @@ def make_mesh_geometry(
 
 
 def make_mesh_file(
-    verts: np.ndarray, faces: np.ndarray, normals: np.ndarray, invert: bool = False
+    verts: np.ndarray,
+    faces: np.ndarray,
+    normals: np.ndarray,
+    mesh_type: MeshType = MeshType.DEFAULT,
 ) -> str:
     """
     Create mesh OBJ file contents from marching cubes output.
@@ -333,8 +356,8 @@ def make_mesh_file(
         Array of mesh faces.
     normals
         Array of mesh normals.
-    invert
-        True to invert the order of faces, False otherwise.
+    mesh_type
+        Mesh face type.
 
     Returns
     -------
@@ -351,7 +374,7 @@ def make_mesh_file(
         mesh += f"vn {item[0]} {item[1]} {item[2]}\n"
 
     for item in faces:
-        if invert:
+        if mesh_type == MeshType.INVERTED:
             mesh += f"f {item[0]}//{item[0]} {item[1]}//{item[1]} {item[2]}//{item[2]}\n"
         else:
             mesh += f"f {item[2]}//{item[2]} {item[1]}//{item[1]} {item[0]}//{item[0]}\n"
