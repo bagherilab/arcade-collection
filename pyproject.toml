@@ -96,7 +96,8 @@ max-args = 10
     "ANN201", # missing-return-type-undocumented-public-function
     "S311",   # suspicious-non-cryptographic-random-usage
     "ANN001", # missing-type-function-argument
-    "ANN202"  # missing-type-args
+    "ANN003", # missing-type-kwargs
+    "ANN202", # missing-type-args
 ]
 
 [tool.coverage.report]
