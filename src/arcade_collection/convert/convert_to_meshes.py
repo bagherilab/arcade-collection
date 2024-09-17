@@ -8,10 +8,13 @@ from skimage import measure
 from arcade_collection.output.extract_tick_json import extract_tick_json
 from arcade_collection.output.get_location_voxels import get_location_voxels
 
+MAX_ARRAY_LEVEL = 7
+"""Maximum array level for conversion to meshes."""
+
 
 def convert_to_meshes(
     series_key: str,
-    data_tar: tarfile.TarFile,
+    locations_tar: tarfile.TarFile,
     frame_spec: tuple[int, int, int],
     regions: list[str],
     box: tuple[int, int, int],
@@ -19,6 +22,33 @@ def convert_to_meshes(
     group_size: Optional[int] = None,
     categories: Optional[pd.DataFrame] = None,
 ) -> list[tuple[int, int, str, str]]:
+    """
+    Convert data to mesh OBJ contents.
+
+    Parameters
+    ----------
+    series_key
+        Simulation series key.
+    locations_tar
+        Archive of location data.
+    frame_spec
+        Specification for mesh frames.
+    regions
+        List of regions.
+    box
+        Size of bounding box.
+    invert
+        True to invert the order of faces, False otherwise.
+    group_size
+        Number of objects in each group (if grouping meshes).
+    categories
+        Simulation data containing ID, FRAME, and CATEGORY.
+
+    Returns
+    -------
+    :
+        List of mesh frames, indices, regions, and OBJ contents.
+    """
 
     frames = list(np.arange(*frame_spec))
     meshes = []
@@ -31,7 +61,7 @@ def convert_to_meshes(
         groups = None
 
     for frame in frames:
-        locations = extract_tick_json(data_tar, series_key, frame, "LOCATIONS")
+        locations = extract_tick_json(locations_tar, series_key, frame, "LOCATIONS")
 
         for region in regions:
             region_invert = invert[region] if isinstance(invert, dict) else invert
@@ -67,6 +97,24 @@ def convert_to_meshes(
 def make_mesh_groups(
     categories: pd.DataFrame, frames: list[int], group_size: int
 ) -> dict[int, dict[int, list[int]]]:
+    """
+    Group objects based on group size and categories.
+
+    Parameters
+    ----------
+    categories
+        Simulation data containing ID, FRAME, and CATEGORY.
+    frames
+        List of frames.
+    group_size
+        Number of objects in each group.
+
+    Returns
+    -------
+    :
+        Map of frame to map of index to location ids.
+    """
+
     groups: dict[int, dict[int, list[int]]] = {}
 
     for frame in frames:
@@ -87,6 +135,30 @@ def make_mesh_groups(
 def make_individual_mesh(
     location: dict, length: int, width: int, height: int, region: str, invert: bool
 ) -> Optional[str]:
+    """
+    Create mesh containing a single object.
+
+    Parameters
+    ----------
+    location
+        Location object.
+    length
+        Bounding box length.
+    width
+        Bounding box width.
+    height
+        Bounding box height.
+    region
+        Region name.
+    invert
+        True to invert the order of faces, False otherwise.
+
+    Returns
+    -------
+    :
+        Single mesh OBJ file contents.
+    """
+
     voxels = [
         (x, width - y - 1, z)
         for x, y, z in get_location_voxels(location, region if region != "DEFAULT" else None)
@@ -106,6 +178,30 @@ def make_individual_mesh(
 def make_combined_mesh(
     locations: list[dict], length: int, width: int, height: int, region: str, invert: bool
 ) -> Optional[str]:
+    """
+    Create mesh containing multiple objects.
+
+    Parameters
+    ----------
+    locations
+        List of location objects.
+    length
+        Bounding box length.
+    width
+        Bounding box width.
+    height
+        Bounding box height.
+    region
+        Region name.
+    invert
+        True to invert the order of faces, False otherwise.
+
+    Returns
+    -------
+    :
+        Combined mesh OBJ file contents.
+    """
+
     meshes = []
     offset = 0
 
@@ -134,9 +230,32 @@ def make_combined_mesh(
 def make_mesh_array(
     voxels: list[tuple[int, int, int]], length: int, width: int, height: int
 ) -> np.ndarray:
+    """
+    Generate array from list of voxels.
+
+    Given voxel locations are set to the max array level. The array is smoothed
+    such that all other locations are set to the number of max-level neighbors.
+
+    Parameters
+    ----------
+    voxels
+        List of voxels representing object.
+    length
+        Bounding box length.
+    width
+        Bounding box width.
+    height
+        Bounding box height.
+
+    Returns
+    -------
+    :
+        Array representing object.
+    """
+
     # Create array.
     array = np.zeros((length, width, height), dtype=np.uint8)
-    array[tuple(np.transpose(voxels))] = 7
+    array[tuple(np.transpose(voxels))] = MAX_ARRAY_LEVEL
 
     # Get set of zero neighbors for all voxels.
     offsets = [(-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1)]
@@ -156,7 +275,9 @@ def make_mesh_array(
 
     # Smooth array levels based on neighbor counts.
     for x, y, z in neighbors:
-        array[x, y, z] = sum(array[x + i, y + j, z + k] == 7 for i, j, k in offsets) + 1
+        array[x, y, z] = (
+            sum(array[x + i, y + j, z + k] == MAX_ARRAY_LEVEL for i, j, k in offsets) + 1
+        )
 
     return array
 
@@ -164,7 +285,26 @@ def make_mesh_array(
 def make_mesh_geometry(
     array: np.ndarray, center: list[float], offset: int = 0
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    verts, faces, normals, _ = measure.marching_cubes(array, level=3, allow_degenerate=False)
+    """
+    Generate mesh from array.
+
+    Parameters
+    ----------
+    array
+        Array representing object.
+    center
+        Coordinate of object center.
+    offset
+        Offset for face indices.
+
+    Returns
+    -------
+    :
+        Arrays of mesh vertices, faces, and normals.
+    """
+
+    level = int(MAX_ARRAY_LEVEL / 2)
+    verts, faces, normals, _ = measure.marching_cubes(array, level=level, allow_degenerate=False)
 
     # Center the vertices.
     verts[:, 0] = verts[:, 0] - center[0]
@@ -180,6 +320,28 @@ def make_mesh_geometry(
 def make_mesh_file(
     verts: np.ndarray, faces: np.ndarray, normals: np.ndarray, invert: bool = False
 ) -> str:
+    """
+    Create mesh OBJ file contents from marching cubes output.
+
+    If
+
+    Parameters
+    ----------
+    verts
+        Array of mesh vertices.
+    faces
+        Array of mesh faces.
+    normals
+        Array of mesh normals.
+    invert
+        True to invert the order of faces, False otherwise.
+
+    Returns
+    -------
+    :
+        Mesh OBJ file.
+    """
+
     mesh = ""
 
     for item in verts:
