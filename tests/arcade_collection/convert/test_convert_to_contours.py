@@ -26,11 +26,13 @@ class TestConvertToContours(unittest.TestCase):
             ]
         }
 
-        data_tar = build_tar_instance(contents)
+        locations_tar = build_tar_instance(contents)
 
         expected_contours = {"DEFAULT": {"top": {}}}
 
-        contours = convert_to_contours(self.series_key, data_tar, self.frame, regions, box, indices)
+        contours = convert_to_contours(
+            self.series_key, locations_tar, self.frame, regions, box, indices
+        )
 
         self.assertDictEqual(expected_contours, contours)
 
@@ -49,11 +51,13 @@ class TestConvertToContours(unittest.TestCase):
             ]
         }
 
-        data_tar = build_tar_instance(contents)
+        locations_tar = build_tar_instance(contents)
 
         expected_contours = {"DEFAULT": {"top": {}}}
 
-        contours = convert_to_contours(self.series_key, data_tar, self.frame, regions, box, indices)
+        contours = convert_to_contours(
+            self.series_key, locations_tar, self.frame, regions, box, indices
+        )
 
         self.assertDictEqual(expected_contours, contours)
 
@@ -142,9 +146,11 @@ class TestConvertToContours(unittest.TestCase):
             }
         }
 
-        data_tar = build_tar_instance(contents)
+        locations_tar = build_tar_instance(contents)
 
-        contours = convert_to_contours(self.series_key, data_tar, self.frame, regions, box, indices)
+        contours = convert_to_contours(
+            self.series_key, locations_tar, self.frame, regions, box, indices
+        )
 
         self.assertDictEqual(expected_contours, contours)
 
@@ -193,9 +199,11 @@ class TestConvertToContours(unittest.TestCase):
             },
         }
 
-        data_tar = build_tar_instance(contents)
+        locations_tar = build_tar_instance(contents)
 
-        contours = convert_to_contours(self.series_key, data_tar, self.frame, regions, box, indices)
+        contours = convert_to_contours(
+            self.series_key, locations_tar, self.frame, regions, box, indices
+        )
 
         self.assertDictEqual(expected_contours, contours)
 
@@ -255,9 +263,11 @@ class TestConvertToContours(unittest.TestCase):
             }
         }
 
-        data_tar = build_tar_instance(contents)
+        locations_tar = build_tar_instance(contents)
 
-        contours = convert_to_contours(self.series_key, data_tar, self.frame, regions, box, indices)
+        contours = convert_to_contours(
+            self.series_key, locations_tar, self.frame, regions, box, indices
+        )
 
         self.assertDictEqual(expected_contours, contours)
 
@@ -313,9 +323,11 @@ class TestConvertToContours(unittest.TestCase):
             }
         }
 
-        data_tar = build_tar_instance(contents)
+        locations_tar = build_tar_instance(contents)
 
-        contours = convert_to_contours(self.series_key, data_tar, self.frame, regions, box, indices)
+        contours = convert_to_contours(
+            self.series_key, locations_tar, self.frame, regions, box, indices
+        )
 
         self.assertDictEqual(expected_contours, contours)
 

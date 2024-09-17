@@ -37,8 +37,8 @@ def convert_to_contours(
         Simulation series key.
     locations_tar
         Archive of location data.
-    frame : int
-        _description_
+    frame
+        Frame number.
     regions
         List of regions.
     box

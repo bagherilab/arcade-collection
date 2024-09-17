@@ -9,7 +9,7 @@ from arcade_collection.convert.convert_to_contours import convert_to_contours
 
 def convert_to_projection(
     series_key: str,
-    data_tar: tarfile.TarFile,
+    locations_tar: tarfile.TarFile,
     frame: int,
     regions: list[str],
     box: tuple[int, int, int],
@@ -47,7 +47,7 @@ def convert_to_projection(
         "side1": list(range(1, width)),
         "side2": list(range(1, length)),
     }
-    contours = convert_to_contours(series_key, data_tar, frame, regions, box, indices)
+    contours = convert_to_contours(series_key, locations_tar, frame, regions, box, indices)
 
     for region in regions:
         color = colors[region]
