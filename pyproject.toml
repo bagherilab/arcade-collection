@@ -13,7 +13,7 @@ python = "^3.9"
 prefect = "^2.14.3"
 numpy = "^1.24.2"
 pandas = "^1.5.3"
-scikit-image = "^0.19.3"
+scikit-image = "^0.24.0"
 simulariumio = "^1.7.0"
 matplotlib = "^3.7.2"
 
@@ -43,7 +43,7 @@ build-backend = "poetry.core.masonry.api"
 disable = [
     "missing-module-docstring",
 ]
-good-names = ["i", "j", "k", "x", "y", "z", "u", "v", "w", "ds", "dt", "ax"]
+good-names = ["i", "j", "k", "x", "y", "z", "u", "v", "w", "ds", "dt", "dx", "dy", "dz", "ax"]
 
 [tool.pylint.design]
 max-args = 10 # maximum number of arguments for function / method
@@ -95,6 +95,9 @@ max-args = 10
     "INP001", # implicit-namespace-package
     "ANN201", # missing-return-type-undocumented-public-function
     "S311",   # suspicious-non-cryptographic-random-usage
+    "ANN001", # missing-type-function-argument
+    "ANN003", # missing-type-kwargs
+    "ANN202", # missing-type-args
 ]
 
 [tool.coverage.report]
@@ -107,7 +110,7 @@ exclude_lines = [
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py{39,310}, format, lint, typecheck
+envlist = py{39,310,311}, format, lint, typecheck
 skipsdist=True
 
 [testenv]
