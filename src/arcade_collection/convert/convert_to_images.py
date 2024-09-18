@@ -15,23 +15,26 @@ if TYPE_CHECKING:
 class ImageType(Enum):
     """Image conversion types."""
 
-    FULL = (False, False, False)
+    FULL = (False, False, False, False)
     """Image with TCZYX dimensions."""
 
-    FULL_BINARY = (True, False, False)
+    FULL_BINARY = (True, False, False, False)
     """Binary image with TCZYX dimensions."""
 
-    FULL_BY_FRAME = (False, True, False)
+    FULL_BY_FRAME = (False, True, False, False)
     """Image with TCZYX dimensions separated by frame."""
 
-    FULL_BINARY_BY_FRAME = (True, True, False)
+    FULL_BINARY_BY_FRAME = (True, True, False, False)
     """Binary image with TCZYX dimensions separated by frame."""
 
-    FLAT_RGBA_BY_FRAME = (False, True, True)
-    """RGBA array flattened to YX dimensions separated by frame."""
+    FLAT_BY_FRAME = (False, True, True, False)
+    """Image array flattened to YX dimensions separated by frame."""
 
-    FLAT_BINARY_BY_FRAME = (True, True, True)
+    FLAT_BINARY_BY_FRAME = (True, True, True, False)
     """Binary array flattened to YX dimensions separated by frame."""
+
+    FLAT_RGBA_BY_FRAME = (False, True, True, True)
+    """RGBA array flattened to YX dimensions separated by frame ."""
 
 
 def convert_to_images(
@@ -74,16 +77,18 @@ def convert_to_images(
         List of image chunks, chunk indices, and frames.
     """
 
-    binary, separate, _ = image_type.value
+    binary, separate, _, reindex = image_type.value
     length, width, height = box
     frames = list(np.arange(*frame_spec))
     raw_array = np.zeros((len(frames), len(regions), height, width, length), "uint16")
+
+    object_id = 1
 
     for index, frame in enumerate(frames):
         locations = extract_tick_json(locations_tar, series_key, frame, "LOCATIONS")
 
         for location in locations:
-            value = 1 if binary else location["id"]
+            value = object_id if binary or reindex else location["id"]
 
             for channel, region in enumerate(regions):
                 voxels = [
@@ -97,6 +102,9 @@ def convert_to_images(
                     continue
 
                 raw_array[index, channel][tuple(np.transpose(voxels))] = value
+
+            if reindex:
+                object_id = object_id + 1
 
     # Remove 1 pixel border.
     array = raw_array[:, :, 1:-1, 1:-1, 1:-1].copy()
@@ -189,7 +197,7 @@ def flatten_array_chunk(array: np.ndarray, image_type: ImageType) -> np.ndarray:
         array_rgba[:, :, 3] = 255  # (array_flat & 0x00FF0000) >> 24
         return array_rgba
 
-    if image_type == ImageType.FLAT_BINARY_BY_FRAME:
+    if image_type in (ImageType.FLAT_BY_FRAME, ImageType.FLAT_BINARY_BY_FRAME):
         return array_flat
 
     return array
