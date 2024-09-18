@@ -743,7 +743,7 @@ class TestConvertToImages(unittest.TestCase):
             self.assertTrue(np.array_equal(expected_chunk[2], chunk[2]))
             self.assertEqual(expected_chunk[3], chunk[3])
 
-    def test_convert_to_images_flat_rgba_by_frame_with_chunks(self):
+    def test_convert_to_images_flat_by_frame_with_chunks(self):
         chunk_size = 3
         image_type = ImageType.FLAT_BY_FRAME
 
