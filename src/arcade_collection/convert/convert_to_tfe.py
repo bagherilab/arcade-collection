@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
-def convert_to_colorizer(
+def convert_to_tfe(
     all_data: pd.DataFrame, features: list[tuple[str, str, str]], frame_spec: tuple[int, int, int]
 ) -> dict:
     """
@@ -37,7 +37,7 @@ def convert_to_colorizer(
     tracks = get_tracks_from_data(frame_data)
     times = get_times_from_data(frame_data)
 
-    colorizer_json = {"manifest": manifest, "tracks": tracks, "times": times, "features": {}}
+    tfe_json = {"manifest": manifest, "tracks": tracks, "times": times, "features": {}}
 
     for index, (key, _, dtype) in enumerate(features):
         if dtype == "categorical":
@@ -46,9 +46,9 @@ def convert_to_colorizer(
         else:
             categories = None
 
-        colorizer_json["features"][key] = get_feature_from_data(frame_data, key, categories)
+        tfe_json["features"][key] = get_feature_from_data(frame_data, key, categories)
 
-    return colorizer_json
+    return tfe_json
 
 
 def get_manifest_data(features: list[tuple[str, str, str]], frames: list[int]) -> dict:
@@ -135,7 +135,7 @@ def get_feature_from_data(data: pd.DataFrame, feature: str, categories: list | N
     """
 
     if categories is not None:
-        feature_values = data[feature].apply(lambda x: categories.index(x))
+        feature_values = data[feature].apply(categories.index)
     else:
         feature_values = data[feature]
 

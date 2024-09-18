@@ -2,11 +2,11 @@ import unittest
 
 import pandas as pd
 
-from arcade_collection.convert.convert_to_colorizer import convert_to_colorizer
+from arcade_collection.convert.convert_to_tfe import convert_to_tfe
 
 
-class TestConvertToColorizer(unittest.TestCase):
-    def test_convert_to_colorizer(self):
+class TestConvertToTFE(unittest.TestCase):
+    def test_convert_to_tfe(self):
         all_data = pd.DataFrame(
             {
                 "TICK": [0, 0, 0, 0, 5, 5, 5, 10, 10, 10, 15, 15],
@@ -58,7 +58,7 @@ class TestConvertToColorizer(unittest.TestCase):
         expected_feature_b = {"data": [0, 0, 1, 0, 1, 2, 2, 0], "min": 0, "max": 2}
         expected_feature_c = {"data": [0, 1, 1.2, 1.4, 1.6, 1.1, 1.2, 1.5], "min": 1, "max": 1.6}
 
-        tfe = convert_to_colorizer(all_data, features, frame_spec)
+        tfe = convert_to_tfe(all_data, features, frame_spec)
 
         self.assertDictEqual(expected_manifest, tfe["manifest"])
         self.assertDictEqual(expected_tracks, tfe["tracks"])
