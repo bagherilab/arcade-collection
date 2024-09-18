@@ -157,7 +157,6 @@
   <p class="caption" role="heading"><span class="caption-text">Module reference</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
@@ -165,6 +164,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html">convert_to_simularium</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_objects.html">convert_to_simularium_objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html">convert_to_simularium_shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html">convert_to_tfe</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.input.html">arcade_collection.input</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of arcade_collection.input</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -237,16 +237,52 @@
     <span class="n">series_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">simulation_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">categories</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-    <span class="n">frame_spec</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">regions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">frame_spec</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">box</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-    <span class="n">ds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-    <span class="n">dz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">ds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
     <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">colors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">group_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">jitter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert data to Simularium trajectory using mesh objects.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    series_key</span>
+<span class="sd">        Simulation series key.</span>
+<span class="sd">    simulation_type : {&#39;potts&#39;}</span>
+<span class="sd">        Simulation type.</span>
+<span class="sd">    categories</span>
+<span class="sd">        Simulation data containing ID, FRAME, and CATEGORY.</span>
+<span class="sd">    regions</span>
+<span class="sd">        List of regions.</span>
+<span class="sd">    frame_spec</span>
+<span class="sd">        Specification for simulation ticks.</span>
+<span class="sd">    box</span>
+<span class="sd">        Size of bounding box.</span>
+<span class="sd">    ds</span>
+<span class="sd">        Spatial scaling in um/voxel.</span>
+<span class="sd">    dt</span>
+<span class="sd">        Temporal scaling in hours/tick.</span>
+<span class="sd">    colors</span>
+<span class="sd">        Map of category to colors.</span>
+<span class="sd">    group_size</span>
+<span class="sd">        Number of objects in each mesh group.</span>
+<span class="sd">    url</span>
+<span class="sd">        URL for mesh object files.</span>
+<span class="sd">    jitter</span>
+<span class="sd">        Relative jitter applied to colors (set to 0 for exact colors).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Simularium trajectory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="n">simulation_type</span> <span class="o">==</span> <span class="s2">&quot;potts&quot;</span><span class="p">:</span>
         <span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">frame_spec</span><span class="p">)))</span>
         <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">box</span>
@@ -254,10 +290,11 @@
             <span class="n">categories</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">group_size</span><span class="p">,</span> <span class="n">regions</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid simulation type </span><span class="si">{</span><span class="n">simulation_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;invalid simulation type </span><span class="si">{</span><span class="n">simulation_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">convert_to_simularium</span><span class="p">(</span>
-        <span class="n">series_key</span><span class="p">,</span> <span class="n">simulation_type</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">url</span>
+        <span class="n">series_key</span><span class="p">,</span> <span class="n">simulation_type</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">jitter</span>
     <span class="p">)</span></div>
 
 
@@ -270,6 +307,32 @@
     <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format ``potts`` simulation data for object-based Simularium trajectory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    categories</span>
+<span class="sd">        Simulation data containing ID, FRAME, and CATEGORY.</span>
+<span class="sd">    frames</span>
+<span class="sd">        List of frames.</span>
+<span class="sd">    group_size</span>
+<span class="sd">        Number of objects in each mesh group.</span>
+<span class="sd">    regions</span>
+<span class="sd">        List of regions.</span>
+<span class="sd">    length</span>
+<span class="sd">        Length of bounding box.</span>
+<span class="sd">    width</span>
+<span class="sd">        Width of bounding box.</span>
+<span class="sd">    height</span>
+<span class="sd">        Height of bounding box.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Data formatted for trajectory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">object</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">center</span> <span class="o">=</span> <span class="p">[</span><span class="n">length</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
 
@@ -286,11 +349,13 @@
 
                 <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">:</span>
                     <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">frame</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">+</span> <span class="p">[[</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">center</span> <span class="o">+</span> <span class="p">[[]]]</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">center</span><span class="p">,</span> <span class="p">[],</span> <span class="s2">&quot;OBJ&quot;</span><span class="p">]]</span>
 
             <span class="n">index_offset</span> <span class="o">=</span> <span class="n">index_offset</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_ids</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">])</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="s2">&quot;display&quot;</span><span class="p">]</span>
+    <span class="p">)</span></div>
 </pre></div>
         </article>
       </div>

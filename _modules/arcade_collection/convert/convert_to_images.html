@@ -157,7 +157,6 @@
   <p class="caption" role="heading"><span class="caption-text">Module reference</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
@@ -165,6 +164,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html">convert_to_simularium</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_objects.html">convert_to_simularium_objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html">convert_to_simularium_shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html">convert_to_tfe</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.input.html">arcade_collection.input</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of arcade_collection.input</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -227,35 +227,97 @@
         </div>
         <article role="main">
           <h1>Source code for arcade_collection.convert.convert_to_images</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">tarfile</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">arcade_collection.output.extract_tick_json</span> <span class="kn">import</span> <span class="n">extract_tick_json</span>
 <span class="kn">from</span> <span class="nn">arcade_collection.output.get_location_voxels</span> <span class="kn">import</span> <span class="n">get_location_voxels</span>
 
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">tarfile</span>
+
+
+<div class="viewcode-block" id="ImageType"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_images.html#arcade_collection.convert.convert_to_images.ImageType">[docs]</a><span class="k">class</span> <span class="nc">ImageType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Image conversion types.&quot;&quot;&quot;</span>
+
+    <span class="n">FULL</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Image with TCZYX dimensions.&quot;&quot;&quot;</span>
+
+    <span class="n">FULL_BINARY</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Binary image with TCZYX dimensions.&quot;&quot;&quot;</span>
+
+    <span class="n">FULL_BY_FRAME</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Image with TCZYX dimensions separated by frame.&quot;&quot;&quot;</span>
+
+    <span class="n">FULL_BINARY_BY_FRAME</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Binary image with TCZYX dimensions separated by frame.&quot;&quot;&quot;</span>
+
+    <span class="n">FLAT_BY_FRAME</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Image array flattened to YX dimensions separated by frame.&quot;&quot;&quot;</span>
+
+    <span class="n">FLAT_BINARY_BY_FRAME</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Binary array flattened to YX dimensions separated by frame.&quot;&quot;&quot;</span>
+
+    <span class="n">FLAT_RGBA_BY_FRAME</span> <span class="o">=</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;RGBA array flattened to YX dimensions separated by frame .&quot;&quot;&quot;</span></div>
+
 
 <div class="viewcode-block" id="convert_to_images"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_images.html#arcade_collection.convert.convert_to_images.convert_to_images">[docs]</a><span class="k">def</span> <span class="nf">convert_to_images</span><span class="p">(</span>
     <span class="n">series_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">data_tar</span><span class="p">:</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">,</span>
+    <span class="n">locations_tar</span><span class="p">:</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">,</span>
     <span class="n">frame_spec</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">regions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">box</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">binary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">separate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+    <span class="n">image_type</span><span class="p">:</span> <span class="n">ImageType</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert data to image arrays.</span>
+
+<span class="sd">    Images are extracted from lists of voxels. The initial converted image has</span>
+<span class="sd">    dimensions in TCZYX order, such that T encodes the specified frames and C</span>
+<span class="sd">    encodes the regions. The initial converted image is then further processed</span>
+<span class="sd">    based on selected image type.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    series_key</span>
+<span class="sd">        Simulation series key.</span>
+<span class="sd">    locations_tar</span>
+<span class="sd">        Archive of location data.</span>
+<span class="sd">    frame_spec</span>
+<span class="sd">        Specification for image frames.</span>
+<span class="sd">    regions</span>
+<span class="sd">        List of region channels.</span>
+<span class="sd">    box</span>
+<span class="sd">        Size of bounding box.</span>
+<span class="sd">    chunk_size</span>
+<span class="sd">        Size of each image chunk.</span>
+<span class="sd">    image_type</span>
+<span class="sd">        Image conversion type.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        List of image chunks, chunk indices, and frames.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">binary</span><span class="p">,</span> <span class="n">separate</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">reindex</span> <span class="o">=</span> <span class="n">image_type</span><span class="o">.</span><span class="n">value</span>
     <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">box</span>
     <span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">frame_spec</span><span class="p">))</span>
-    <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">regions</span><span class="p">),</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">),</span> <span class="s2">&quot;uint16&quot;</span><span class="p">)</span>
+    <span class="n">raw_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">regions</span><span class="p">),</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">),</span> <span class="s2">&quot;uint16&quot;</span><span class="p">)</span>
+
+    <span class="n">object_id</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">):</span>
-        <span class="n">locations</span> <span class="o">=</span> <span class="n">extract_tick_json</span><span class="p">(</span><span class="n">data_tar</span><span class="p">,</span> <span class="n">series_key</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;LOCATIONS&quot;</span><span class="p">)</span>
+        <span class="n">locations</span> <span class="o">=</span> <span class="n">extract_tick_json</span><span class="p">(</span><span class="n">locations_tar</span><span class="p">,</span> <span class="n">series_key</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;LOCATIONS&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">:</span>
-            <span class="n">location_id</span> <span class="o">=</span> <span class="n">location</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">object_id</span> <span class="k">if</span> <span class="n">binary</span> <span class="ow">or</span> <span class="n">reindex</span> <span class="k">else</span> <span class="n">location</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
 
             <span class="k">for</span> <span class="n">channel</span><span class="p">,</span> <span class="n">region</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">regions</span><span class="p">):</span>
                 <span class="n">voxels</span> <span class="o">=</span> <span class="p">[</span>
@@ -268,17 +330,17 @@
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">voxels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">continue</span>
 
-                <span class="n">array</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="n">channel</span><span class="p">][</span><span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">voxels</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">binary</span> <span class="k">else</span> <span class="n">location_id</span>
+                <span class="n">raw_array</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="n">channel</span><span class="p">][</span><span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">voxels</span><span class="p">))]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">if</span> <span class="n">separate</span> <span class="ow">and</span> <span class="n">flatten</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reindex</span><span class="p">:</span>
+                <span class="n">object_id</span> <span class="o">=</span> <span class="n">object_id</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># Remove 1 pixel border.</span>
+    <span class="n">array</span> <span class="o">=</span> <span class="n">raw_array</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">separate</span><span class="p">:</span>
         <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">flatten_array_chunk</span><span class="p">(</span><span class="n">chunk</span><span class="p">),</span> <span class="n">frame</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">split_array_chunks</span><span class="p">(</span><span class="n">array</span><span class="p">[[</span><span class="n">index</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">chunk_size</span><span class="p">)</span>
-        <span class="p">]</span>
-    <span class="k">elif</span> <span class="n">separate</span><span class="p">:</span>
-        <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">chunk</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">flatten_array_chunk</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">image_type</span><span class="p">),</span> <span class="n">frame</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">split_array_chunks</span><span class="p">(</span><span class="n">array</span><span class="p">[[</span><span class="n">index</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">chunk_size</span><span class="p">)</span>
         <span class="p">]</span>
@@ -289,18 +351,30 @@
 
 
 <div class="viewcode-block" id="split_array_chunks"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_images.html#arcade_collection.convert.convert_to_images.split_array_chunks">[docs]</a><span class="k">def</span> <span class="nf">split_array_chunks</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split arrays into smaller chunks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    array</span>
+<span class="sd">        Image array (dimensions in TCZYX order).</span>
+<span class="sd">    chunk_size</span>
+<span class="sd">        Size of each image chunk.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        List of array chunks and their relative indices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">length</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
     <span class="n">width</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 
     <span class="c1"># Calculate chunk splits.</span>
-    <span class="n">length_section</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">chunk_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">length</span> <span class="o">/</span> <span class="n">chunk_size</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="n">chunk_size</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">chunk_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="p">)</span>
+    <span class="n">length_section</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">length</span> <span class="o">/</span> <span class="n">chunk_size</span><span class="p">))</span> <span class="o">*</span> <span class="p">[</span><span class="n">chunk_size</span><span class="p">]</span>
     <span class="n">length_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">length_section</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
-    <span class="n">width_section</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">chunk_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="n">chunk_size</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="n">chunk_size</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">chunk_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="p">)</span>
+    <span class="n">width_section</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="n">chunk_size</span><span class="p">))</span> <span class="o">*</span> <span class="p">[</span><span class="n">chunk_size</span><span class="p">]</span>
     <span class="n">width_splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">width_section</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
 
     <span class="c1"># Iterate through each chunk split.</span>
@@ -321,16 +395,41 @@
     <span class="k">return</span> <span class="n">chunks</span></div>
 
 
-<div class="viewcode-block" id="flatten_array_chunk"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_images.html#arcade_collection.convert.convert_to_images.flatten_array_chunk">[docs]</a><span class="k">def</span> <span class="nf">flatten_array_chunk</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="flatten_array_chunk"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_images.html#arcade_collection.convert.convert_to_images.flatten_array_chunk">[docs]</a><span class="k">def</span> <span class="nf">flatten_array_chunk</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">image_type</span><span class="p">:</span> <span class="n">ImageType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flatten array chunk along z axis.</span>
+
+<span class="sd">    When flattening to an RGBA array, each object is encoded as a unique color</span>
+<span class="sd">    such that the object ID = R + G*256 + B*256*256 - 1 and background pixels</span>
+<span class="sd">    are black (R = 0, G = 0, B = 0).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    array</span>
+<span class="sd">        Image array (dimensions in TCZYX order).</span>
+<span class="sd">    image_type</span>
+<span class="sd">        Image conversion type.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Flattened image array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">array_flat</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="n">array_rgba</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="o">*</span><span class="n">array_flat</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-    <span class="n">array_rgba</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">array_flat</span> <span class="o">&amp;</span> <span class="mh">0x000000FF</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">0</span>
-    <span class="n">array_rgba</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">array_flat</span> <span class="o">&amp;</span> <span class="mh">0x0000FF00</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span>
-    <span class="n">array_rgba</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">array_flat</span> <span class="o">&amp;</span> <span class="mh">0x00FF0000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span>
-    <span class="n">array_rgba</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>  <span class="c1"># (array_flat &amp; 0x00FF0000) &gt;&gt; 24</span>
+    <span class="k">if</span> <span class="n">image_type</span> <span class="o">==</span> <span class="n">ImageType</span><span class="o">.</span><span class="n">FLAT_RGBA_BY_FRAME</span><span class="p">:</span>
+        <span class="n">array_rgba</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="o">*</span><span class="n">array_flat</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">array_rgba</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">array_flat</span> <span class="o">&amp;</span> <span class="mh">0x000000FF</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">0</span>
+        <span class="n">array_rgba</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">array_flat</span> <span class="o">&amp;</span> <span class="mh">0x0000FF00</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span>
+        <span class="n">array_rgba</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">array_flat</span> <span class="o">&amp;</span> <span class="mh">0x00FF0000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span>
+        <span class="n">array_rgba</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>  <span class="c1"># (array_flat &amp; 0x00FF0000) &gt;&gt; 24</span>
+        <span class="k">return</span> <span class="n">array_rgba</span>
 
-    <span class="k">return</span> <span class="n">array_rgba</span></div>
+    <span class="k">if</span> <span class="n">image_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">ImageType</span><span class="o">.</span><span class="n">FLAT_BY_FRAME</span><span class="p">,</span> <span class="n">ImageType</span><span class="o">.</span><span class="n">FLAT_BINARY_BY_FRAME</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">array_flat</span>
+
+    <span class="k">return</span> <span class="n">array</span></div>
 </pre></div>
         </article>
       </div>

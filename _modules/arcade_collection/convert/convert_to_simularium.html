@@ -157,7 +157,6 @@
   <p class="caption" role="heading"><span class="caption-text">Module reference</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
@@ -165,6 +164,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html">convert_to_simularium</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_objects.html">convert_to_simularium_objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html">convert_to_simularium_shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html">convert_to_tfe</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.input.html">arcade_collection.input</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of arcade_collection.input</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -227,12 +227,13 @@
         </div>
         <article role="main">
           <h1>Source code for arcade_collection.convert.convert_to_simularium</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">simulariumio</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DISPLAY_TYPE</span><span class="p">,</span>
     <span class="n">AgentData</span><span class="p">,</span>
@@ -245,58 +246,99 @@
     <span class="n">TrajectoryData</span><span class="p">,</span>
     <span class="n">UnitData</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">simulariumio.constants</span> <span class="kn">import</span> <span class="n">DEFAULT_CAMERA_SETTINGS</span><span class="p">,</span> <span class="n">VIZ_TYPE</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
 
 <span class="n">CAMERA_POSITIONS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;patch&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">900</span><span class="p">),</span>
     <span class="s2">&quot;potts&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">),</span>
 <span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Default camera positions for different simulation types.&quot;&quot;&quot;</span>
 
 <span class="n">CAMERA_LOOK_AT</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;patch&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
     <span class="s2">&quot;potts&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
 <span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Default camera look at positions for different simulation types.&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="convert_to_simularium"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html#arcade_collection.convert.convert_to_simularium.convert_to_simularium">[docs]</a><span class="k">def</span> <span class="nf">convert_to_simularium</span><span class="p">(</span>
     <span class="n">series_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">simulation_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-    <span class="n">length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-    <span class="n">width</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-    <span class="n">height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-    <span class="n">ds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-    <span class="n">dz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">height</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">ds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
     <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">colors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
-    <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">jitter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">meta_data</span> <span class="o">=</span> <span class="n">get_meta_data</span><span class="p">(</span><span class="n">series_key</span><span class="p">,</span> <span class="n">simulation_type</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dz</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert data to Simularium trajectory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    series_key</span>
+<span class="sd">        Simulation series key.</span>
+<span class="sd">    simulation_type</span>
+<span class="sd">        Simulation type.</span>
+<span class="sd">    data</span>
+<span class="sd">        Simulation trajectory data.</span>
+<span class="sd">    length</span>
+<span class="sd">        Bounding box length.</span>
+<span class="sd">    width</span>
+<span class="sd">        Bounding box width.</span>
+<span class="sd">    height</span>
+<span class="sd">        Bounding box height.</span>
+<span class="sd">    ds</span>
+<span class="sd">        Spatial scaling in um/voxel.</span>
+<span class="sd">    dt</span>
+<span class="sd">        Temporal scaling in hours/tick.</span>
+<span class="sd">    colors</span>
+<span class="sd">        Color mapping.</span>
+<span class="sd">    url</span>
+<span class="sd">        Url prefix for meshes.</span>
+<span class="sd">    jitter</span>
+<span class="sd">        Jitter applied to colors.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Simularium trajectory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">meta_data</span> <span class="o">=</span> <span class="n">get_meta_data</span><span class="p">(</span><span class="n">series_key</span><span class="p">,</span> <span class="n">simulation_type</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="o">*</span><span class="n">ds</span><span class="p">)</span>
     <span class="n">agent_data</span> <span class="o">=</span> <span class="n">get_agent_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">agent_data</span><span class="o">.</span><span class="n">display_data</span> <span class="o">=</span> <span class="n">get_display_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+    <span class="n">agent_data</span><span class="o">.</span><span class="n">display_data</span> <span class="o">=</span> <span class="n">get_display_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">jitter</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;frame&quot;</span><span class="p">)):</span>
         <span class="n">n_agents</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
         <span class="n">agent_data</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt</span>
         <span class="n">agent_data</span><span class="o">.</span><span class="n">n_agents</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_agents</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">unique_ids</span><span class="p">[</span><span class="n">index</span><span class="p">][:</span><span class="n">n_agents</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_agents</span><span class="p">)</span>
+        <span class="n">agent_data</span><span class="o">.</span><span class="n">unique_ids</span><span class="p">[</span><span class="n">index</span><span class="p">][:</span><span class="n">n_agents</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_agents</span><span class="p">)</span>
         <span class="n">agent_data</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">index</span><span class="p">][:</span><span class="n">n_agents</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
         <span class="n">agent_data</span><span class="o">.</span><span class="n">radii</span><span class="p">[</span><span class="n">index</span><span class="p">][:</span><span class="n">n_agents</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;radius&quot;</span><span class="p">]</span>
         <span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="n">index</span><span class="p">][:</span><span class="n">n_agents</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">]]</span>
         <span class="n">agent_data</span><span class="o">.</span><span class="n">n_subpoints</span><span class="p">[</span><span class="n">index</span><span class="p">][:</span><span class="n">n_agents</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">viz_types</span><span class="p">[</span><span class="n">index</span><span class="p">][:</span><span class="n">n_agents</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">points</span><span class="p">:</span> <span class="mi">1001</span> <span class="k">if</span> <span class="n">points</span> <span class="k">else</span> <span class="mi">1000</span>
+        <span class="n">agent_data</span><span class="o">.</span><span class="n">viz_types</span><span class="p">[</span><span class="n">index</span><span class="p">][:</span><span class="n">n_agents</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">display</span><span class="p">:</span> <span class="n">VIZ_TYPE</span><span class="o">.</span><span class="n">FIBER</span> <span class="k">if</span> <span class="n">display</span> <span class="o">==</span> <span class="s2">&quot;FIBER&quot;</span> <span class="k">else</span> <span class="n">VIZ_TYPE</span><span class="o">.</span><span class="n">DEFAULT</span>
         <span class="p">)</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[</span><span class="n">index</span><span class="p">][:</span><span class="n">n_agents</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">zip_longest</span><span class="p">(</span><span class="o">*</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">],</span> <span class="n">fillvalue</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">zip_longest</span><span class="p">(</span><span class="o">*</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">],</span> <span class="n">fillvalue</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[</span><span class="n">index</span><span class="p">][:</span><span class="n">n_agents</span><span class="p">]</span> <span class="o">=</span> <span class="n">points</span>
 
-    <span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">length</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">ds</span>
-    <span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">ds</span>
-    <span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">height</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">dz</span>
+    <span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">length</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">ds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">positions</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">height</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">ds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
-    <span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="n">ds</span>
-    <span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="n">ds</span>
-    <span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">::</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">::</span><span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="n">dz</span>
+    <span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="n">ds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">::</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">subpoints</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">::</span><span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="n">ds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">TrajectoryConverter</span><span class="p">(</span>
         <span class="n">TrajectoryData</span><span class="p">(</span>
@@ -311,31 +353,88 @@
 <div class="viewcode-block" id="get_meta_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html#arcade_collection.convert.convert_to_simularium.get_meta_data">[docs]</a><span class="k">def</span> <span class="nf">get_meta_data</span><span class="p">(</span>
     <span class="n">series_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">simulation_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-    <span class="n">width</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-    <span class="n">height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-    <span class="n">ds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">height</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">dx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">dy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">dz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetaData</span><span class="p">:</span>
-    <span class="n">meta_data</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">(</span>
-        <span class="n">box_size</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">length</span> <span class="o">*</span> <span class="n">ds</span><span class="p">,</span> <span class="n">width</span> <span class="o">*</span> <span class="n">ds</span><span class="p">,</span> <span class="n">height</span> <span class="o">*</span> <span class="n">dz</span><span class="p">]),</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create MetaData object.</span>
+
+<span class="sd">    If the simulation type has defined camera settings, those will be used.</span>
+<span class="sd">    Otherwise, the global camera defaults will be used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    series_key</span>
+<span class="sd">        Simulation series key.</span>
+<span class="sd">    simulation_type</span>
+<span class="sd">        Simulation type.</span>
+<span class="sd">    length</span>
+<span class="sd">        Bounding box length.</span>
+<span class="sd">    width</span>
+<span class="sd">        Bounding box width.</span>
+<span class="sd">    height</span>
+<span class="sd">        Bounding box height.</span>
+<span class="sd">    dx</span>
+<span class="sd">        Spatial scaling in the X direction in um/voxel.</span>
+<span class="sd">    dy</span>
+<span class="sd">        Spatial scaling in the Y direction in um/voxel.</span>
+<span class="sd">    dz</span>
+<span class="sd">        Spatial scaling in the Z direction in um/voxel.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        MetaData object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">MetaData</span><span class="p">(</span>
+        <span class="n">box_size</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">length</span> <span class="o">*</span> <span class="n">dx</span><span class="p">,</span> <span class="n">width</span> <span class="o">*</span> <span class="n">dy</span><span class="p">,</span> <span class="n">height</span> <span class="o">*</span> <span class="n">dz</span><span class="p">]),</span>
         <span class="n">camera_defaults</span><span class="o">=</span><span class="n">CameraData</span><span class="p">(</span>
-            <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">CAMERA_POSITIONS</span><span class="p">[</span><span class="n">simulation_type</span><span class="p">]),</span>
-            <span class="n">look_at_position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">CAMERA_LOOK_AT</span><span class="p">[</span><span class="n">simulation_type</span><span class="p">]),</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="n">CAMERA_POSITIONS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">simulation_type</span><span class="p">,</span> <span class="n">DEFAULT_CAMERA_SETTINGS</span><span class="o">.</span><span class="n">CAMERA_POSITION</span><span class="p">)</span>
+            <span class="p">),</span>
+            <span class="n">look_at_position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="n">CAMERA_LOOK_AT</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">simulation_type</span><span class="p">,</span> <span class="n">DEFAULT_CAMERA_SETTINGS</span><span class="o">.</span><span class="n">LOOK_AT_POSITION</span><span class="p">)</span>
+            <span class="p">),</span>
             <span class="n">fov_degrees</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">trajectory_title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ARCADE - </span><span class="si">{</span><span class="n">series_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="n">model_meta_data</span><span class="o">=</span><span class="n">ModelMetaData</span><span class="p">(</span>
             <span class="n">title</span><span class="o">=</span><span class="s2">&quot;ARCADE&quot;</span><span class="p">,</span>
             <span class="n">version</span><span class="o">=</span><span class="n">simulation_type</span><span class="p">,</span>
-            <span class="n">description</span><span class="o">=</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Agent-based modeling framework ARCADE for </span><span class="si">{</span><span class="n">series_key</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Agent-based modeling framework ARCADE for </span><span class="si">{</span><span class="n">series_key</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="p">),</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">meta_data</span></div>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_agent_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html#arcade_collection.convert.convert_to_simularium.get_agent_data">[docs]</a><span class="k">def</span> <span class="nf">get_agent_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create empty AgentData object.</span>
+
+<span class="sd">    Method uses the &quot;frame&quot;, &quot;name&quot;, and &quot;points&quot; columns in data to generate</span>
+<span class="sd">    the AgentData object.</span>
+
+<span class="sd">    The number of unique entries in the &quot;frame&quot; column determines the total</span>
+<span class="sd">    number of frames dimension. The maximum number of entries in the &quot;name&quot;</span>
+<span class="sd">    column (for a given frame) determines the maximum number of agents</span>
+<span class="sd">    dimension. The maximum number of subpoints is determined by the length of</span>
+<span class="sd">    the longest list in the &quot;points&quot; column (which may be zero).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data</span>
+<span class="sd">        Simulation trajectory data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        AgentData object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">total_frames</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;frame&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
     <span class="n">max_agents</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;frame&quot;</span><span class="p">)[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
     <span class="n">max_subpoints</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
@@ -343,43 +442,99 @@
 
 
 <div class="viewcode-block" id="get_display_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html#arcade_collection.convert.convert_to_simularium.get_display_data">[docs]</a><span class="k">def</span> <span class="nf">get_display_data</span><span class="p">(</span>
-    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">jitter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DisplayData</span><span class="p">:</span>
-    <span class="n">display_data</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create map of DisplayData objects.</span>
 
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+<span class="sd">    Method uses the &quot;name&quot; and &quot;display&quot; columns in data to generate the</span>
+<span class="sd">    DisplayData objects.</span>
+
+<span class="sd">    The &quot;name&quot; column should be a string in one of the following forms:</span>
+
+<span class="sd">    - ``(index)#(color_key)``</span>
+<span class="sd">    - ``(group)#(color_key)#(index)``</span>
+<span class="sd">    - ``(group)#(color_key)#(index)#(frame)``</span>
+
+<span class="sd">    where ``(index)`` becomes DisplayData object name and ``(color_key)`` is</span>
+<span class="sd">    passed to the color mapping to select the DisplayData color (optional color</span>
+<span class="sd">    jitter may be applied).</span>
+
+<span class="sd">    The &quot;display&quot; column should be a valid ``DISPLAY_TYPE``. For the</span>
+<span class="sd">    ``DISPLAY_TYPE.OBJ`` type, a URL prefix must be used and names should be in</span>
+<span class="sd">    the form ``(group)#(color_key)#(index)#(frame)``, which is used to generate</span>
+<span class="sd">    the full URL formatted as: ``(url)/(frame)_(group)_(index).MESH.obj``. Note</span>
+<span class="sd">    that ``(frame)`` is zero-padded to six digits and ``(index)`` is zero-padded</span>
+<span class="sd">    to three digits.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data</span>
+<span class="sd">        Simulation trajectory data.</span>
+<span class="sd">    colors</span>
+<span class="sd">        Color mapping.</span>
+<span class="sd">    url</span>
+<span class="sd">        Url prefix for meshes.</span>
+<span class="sd">    jitter</span>
+<span class="sd">        Jitter applied to colors.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Map of DisplayData objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">display_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">display_types</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">])))</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">display_type</span> <span class="ow">in</span> <span class="n">display_types</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">color_key</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">color_key</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
             <span class="n">group</span><span class="p">,</span> <span class="n">color_key</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">group</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">color_key</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">url</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">display_type</span> <span class="o">==</span> <span class="s2">&quot;OBJ&quot;</span><span class="p">:</span>
+            <span class="n">full_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="si">:</span><span class="s2">06d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">.MESH.obj&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">full_url</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
         <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">jitter</span> <span class="o">=</span> <span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">jitter</span> <span class="o">*</span> <span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>  <span class="c1"># noqa: S311</span>
 
-        <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">display_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">DisplayData</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
-                <span class="n">display_type</span><span class="o">=</span><span class="n">DISPLAY_TYPE</span><span class="o">.</span><span class="n">OBJ</span><span class="p">,</span>
-                <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="si">:</span><span class="s2">06d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">.MESH.obj&quot;</span><span class="p">,</span>
-                <span class="n">color</span><span class="o">=</span><span class="n">shade_color</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">color_key</span><span class="p">],</span> <span class="n">jitter</span><span class="p">),</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">display_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">DisplayData</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
-                <span class="n">display_type</span><span class="o">=</span><span class="n">DISPLAY_TYPE</span><span class="o">.</span><span class="n">FIBER</span><span class="p">,</span>
-                <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">color_key</span><span class="p">],</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">display_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">DisplayData</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
-                <span class="n">display_type</span><span class="o">=</span><span class="n">DISPLAY_TYPE</span><span class="o">.</span><span class="n">SPHERE</span><span class="p">,</span>
-                <span class="n">color</span><span class="o">=</span><span class="n">shade_color</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">color_key</span><span class="p">],</span> <span class="n">jitter</span><span class="p">),</span>
-            <span class="p">)</span>
+        <span class="n">display_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">DisplayData</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">display_type</span><span class="o">=</span><span class="n">DISPLAY_TYPE</span><span class="p">[</span><span class="n">display_type</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">shade_color</span><span class="p">(</span><span class="n">colors</span><span class="p">[</span><span class="n">color_key</span><span class="p">],</span> <span class="n">alpha</span><span class="p">),</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">full_url</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">display_data</span></div>
 
 
 <div class="viewcode-block" id="shade_color"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html#arcade_collection.convert.convert_to_simularium.shade_color">[docs]</a><span class="k">def</span> <span class="nf">shade_color</span><span class="p">(</span><span class="n">color</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shade color by specified alpha.</span>
+
+<span class="sd">    Positive values of alpha will blend the given color with white (alpha = 1.0</span>
+<span class="sd">    returns pure white), while negative values of alpha will blend the given</span>
+<span class="sd">    color with black (alpha = -1.0 returns pure black). An alpha = 0.0 will</span>
+<span class="sd">    leave the color unchanged.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    color</span>
+<span class="sd">        Original color as hex string.</span>
+<span class="sd">    alpha</span>
+<span class="sd">        Shading value between -1 and +1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Shaded color as hex string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">old_color</span> <span class="o">=</span> <span class="n">color</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="n">old_red</span><span class="p">,</span> <span class="n">old_green</span><span class="p">,</span> <span class="n">old_blue</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">old_color</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
     <span class="n">layer_color</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">alpha</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">255</span>

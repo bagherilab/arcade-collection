@@ -158,7 +158,6 @@
   <p class="caption" role="heading"><span class="caption-text">Module reference</span></p>
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="arcade_collection.convert.html">arcade_collection.convert</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
@@ -166,6 +165,7 @@
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">convert_to_simularium</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_simularium_objects.html">convert_to_simularium_objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_simularium_shapes.html">convert_to_simularium_shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_tfe.html">convert_to_tfe</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="arcade_collection.input.html">arcade_collection.input</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of arcade_collection.input</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -230,30 +230,146 @@
         <article role="main">
           <section id="module-arcade_collection.convert.convert_to_simularium">
 <span id="convert-to-simularium"></span><h1>convert_to_simularium<a class="headerlink" href="#module-arcade_collection.convert.convert_to_simularium" title="Permalink to this heading">#</a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium.CAMERA_POSITIONS">
+<span class="sig-name descname"><span class="pre">CAMERA_POSITIONS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'patch':</span> <span class="pre">(0.0,</span> <span class="pre">-0.5,</span> <span class="pre">900),</span> <span class="pre">'potts':</span> <span class="pre">(10.0,</span> <span class="pre">0.0,</span> <span class="pre">200.0)}</span></em><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.CAMERA_POSITIONS" title="Permalink to this definition">#</a></dt>
+<dd><p>Default camera positions for different simulation types.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium.CAMERA_LOOK_AT">
+<span class="sig-name descname"><span class="pre">CAMERA_LOOK_AT</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'patch':</span> <span class="pre">(0.0,</span> <span class="pre">-0.2,</span> <span class="pre">0.0),</span> <span class="pre">'potts':</span> <span class="pre">(10.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)}</span></em><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.CAMERA_LOOK_AT" title="Permalink to this definition">#</a></dt>
+<dd><p>Default camera look at positions for different simulation types.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium.convert_to_simularium">
-<span class="sig-name descname"><span class="pre">convert_to_simularium</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium.html#convert_to_simularium"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.convert_to_simularium" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">convert_to_simularium</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium.html#convert_to_simularium"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.convert_to_simularium" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert data to Simularium trajectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series_key</strong> – Simulation series key.</p></li>
+<li><p><strong>simulation_type</strong> – Simulation type.</p></li>
+<li><p><strong>data</strong> – Simulation trajectory data.</p></li>
+<li><p><strong>length</strong> – Bounding box length.</p></li>
+<li><p><strong>width</strong> – Bounding box width.</p></li>
+<li><p><strong>height</strong> – Bounding box height.</p></li>
+<li><p><strong>ds</strong> – Spatial scaling in um/voxel.</p></li>
+<li><p><strong>dt</strong> – Temporal scaling in hours/tick.</p></li>
+<li><p><strong>colors</strong> – Color mapping.</p></li>
+<li><p><strong>url</strong> – Url prefix for meshes.</p></li>
+<li><p><strong>jitter</strong> – Jitter applied to colors.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Simularium trajectory.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium.get_meta_data">
-<span class="sig-name descname"><span class="pre">get_meta_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MetaData</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium.html#get_meta_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.get_meta_data" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_meta_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MetaData</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium.html#get_meta_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.get_meta_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Create MetaData object.</p>
+<p>If the simulation type has defined camera settings, those will be used.
+Otherwise, the global camera defaults will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series_key</strong> – Simulation series key.</p></li>
+<li><p><strong>simulation_type</strong> – Simulation type.</p></li>
+<li><p><strong>length</strong> – Bounding box length.</p></li>
+<li><p><strong>width</strong> – Bounding box width.</p></li>
+<li><p><strong>height</strong> – Bounding box height.</p></li>
+<li><p><strong>dx</strong> – Spatial scaling in the X direction in um/voxel.</p></li>
+<li><p><strong>dy</strong> – Spatial scaling in the Y direction in um/voxel.</p></li>
+<li><p><strong>dz</strong> – Spatial scaling in the Z direction in um/voxel.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>MetaData object.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium.get_agent_data">
-<span class="sig-name descname"><span class="pre">get_agent_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AgentData</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium.html#get_agent_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.get_agent_data" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_agent_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AgentData</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium.html#get_agent_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.get_agent_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Create empty AgentData object.</p>
+<p>Method uses the “frame”, “name”, and “points” columns in data to generate
+the AgentData object.</p>
+<p>The number of unique entries in the “frame” column determines the total
+number of frames dimension. The maximum number of entries in the “name”
+column (for a given frame) determines the maximum number of agents
+dimension. The maximum number of subpoints is determined by the length of
+the longest list in the “points” column (which may be zero).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Simulation trajectory data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>AgentData object.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium.get_display_data">
-<span class="sig-name descname"><span class="pre">get_display_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DisplayData</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium.html#get_display_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.get_display_data" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_display_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pd.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DisplayData</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium.html#get_display_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.get_display_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Create map of DisplayData objects.</p>
+<p>Method uses the “name” and “display” columns in data to generate the
+DisplayData objects.</p>
+<p>The “name” column should be a string in one of the following forms:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">(index)#(color_key)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(group)#(color_key)#(index)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(group)#(color_key)#(index)#(frame)</span></code></p></li>
+</ul>
+<p>where <code class="docutils literal notranslate"><span class="pre">(index)</span></code> becomes DisplayData object name and <code class="docutils literal notranslate"><span class="pre">(color_key)</span></code> is
+passed to the color mapping to select the DisplayData color (optional color
+jitter may be applied).</p>
+<p>The “display” column should be a valid <code class="docutils literal notranslate"><span class="pre">DISPLAY_TYPE</span></code>. For the
+<code class="docutils literal notranslate"><span class="pre">DISPLAY_TYPE.OBJ</span></code> type, a URL prefix must be used and names should be in
+the form <code class="docutils literal notranslate"><span class="pre">(group)#(color_key)#(index)#(frame)</span></code>, which is used to generate
+the full URL formatted as: <code class="docutils literal notranslate"><span class="pre">(url)/(frame)_(group)_(index).MESH.obj</span></code>. Note
+that <code class="docutils literal notranslate"><span class="pre">(frame)</span></code> is zero-padded to six digits and <code class="docutils literal notranslate"><span class="pre">(index)</span></code> is zero-padded
+to three digits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Simulation trajectory data.</p></li>
+<li><p><strong>colors</strong> – Color mapping.</p></li>
+<li><p><strong>url</strong> – Url prefix for meshes.</p></li>
+<li><p><strong>jitter</strong> – Jitter applied to colors.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Map of DisplayData objects.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium.shade_color">
 <span class="sig-name descname"><span class="pre">shade_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium.html#shade_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium.shade_color" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Shade color by specified alpha.</p>
+<p>Positive values of alpha will blend the given color with white (alpha = 1.0
+returns pure white), while negative values of alpha will blend the given
+color with black (alpha = -1.0 returns pure black). An alpha = 0.0 will
+leave the color unchanged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>color</strong> – Original color as hex string.</p></li>
+<li><p><strong>alpha</strong> – Shading value between -1 and +1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Shaded color as hex string.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -313,6 +429,8 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">convert_to_simularium</a><ul>
+<li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium.CAMERA_POSITIONS"><code class="docutils literal notranslate"><span class="pre">CAMERA_POSITIONS</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium.CAMERA_LOOK_AT"><code class="docutils literal notranslate"><span class="pre">CAMERA_LOOK_AT</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium.convert_to_simularium"><code class="docutils literal notranslate"><span class="pre">convert_to_simularium()</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium.get_meta_data"><code class="docutils literal notranslate"><span class="pre">get_meta_data()</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium.get_agent_data"><code class="docutils literal notranslate"><span class="pre">get_agent_data()</span></code></a></li>

@@ -157,7 +157,6 @@
   <p class="caption" role="heading"><span class="caption-text">Module reference</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
@@ -165,6 +164,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html">convert_to_simularium</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_objects.html">convert_to_simularium_objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html">convert_to_simularium_shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html">convert_to_tfe</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.input.html">arcade_collection.input</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of arcade_collection.input</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -227,10 +227,11 @@
         </div>
         <article role="main">
           <h1>Source code for arcade_collection.convert.convert_to_simularium_shapes</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">tarfile</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">sqrt</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -238,6 +239,9 @@
 <span class="kn">from</span> <span class="nn">arcade_collection.convert.convert_to_simularium</span> <span class="kn">import</span> <span class="n">convert_to_simularium</span>
 <span class="kn">from</span> <span class="nn">arcade_collection.output.extract_tick_json</span> <span class="kn">import</span> <span class="n">extract_tick_json</span>
 <span class="kn">from</span> <span class="nn">arcade_collection.output.get_location_voxels</span> <span class="kn">import</span> <span class="n">get_location_voxels</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">tarfile</span>
 
 <span class="n">CELL_STATES</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;UNDEFINED&quot;</span><span class="p">,</span>
@@ -248,6 +252,7 @@
     <span class="s2">&quot;SENESCENT&quot;</span><span class="p">,</span>
     <span class="s2">&quot;NECROTIC&quot;</span><span class="p">,</span>
 <span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;Indexed cell states.&quot;&quot;&quot;</span>
 
 <span class="n">EDGE_TYPES</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ARTERIOLE&quot;</span><span class="p">,</span>
@@ -257,6 +262,7 @@
     <span class="s2">&quot;VENULE&quot;</span><span class="p">,</span>
     <span class="s2">&quot;UNDEFINED&quot;</span><span class="p">,</span>
 <span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;Indexed graph edge types.&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="convert_to_simularium_shapes"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html#arcade_collection.convert.convert_to_simularium_shapes.convert_to_simularium_shapes">[docs]</a><span class="k">def</span> <span class="nf">convert_to_simularium_shapes</span><span class="p">(</span>
@@ -265,73 +271,127 @@
     <span class="n">data_tars</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">],</span>
     <span class="n">frame_spec</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">box</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-    <span class="n">ds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-    <span class="n">dz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">ds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
     <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">colors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">jitter</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert data to Simularium trajectory using shapes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    series_key</span>
+<span class="sd">        Simulation series key.</span>
+<span class="sd">    simulation_type : {&#39;patch&#39;, &#39;potts&#39;}</span>
+<span class="sd">        Simulation type.</span>
+<span class="sd">    data_tars</span>
+<span class="sd">        Map of simulation data archives.</span>
+<span class="sd">    frame_spec</span>
+<span class="sd">        Specification for simulation ticks.</span>
+<span class="sd">    box</span>
+<span class="sd">        Size of bounding box.</span>
+<span class="sd">    ds</span>
+<span class="sd">        Spatial scaling in um/voxel.</span>
+<span class="sd">    dt</span>
+<span class="sd">        Temporal scaling in hours/tick.</span>
+<span class="sd">    colors</span>
+<span class="sd">        Map of category to colors.</span>
+<span class="sd">    resolution</span>
+<span class="sd">        Number of voxels represented by a sphere (0 for single sphere per cell).</span>
+<span class="sd">    jitter</span>
+<span class="sd">        Relative jitter applied to colors (set to 0 for exact colors).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Simularium trajectory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Throw exception if invalid simulation type.</span>
+    <span class="k">if</span> <span class="n">simulation_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;patch&quot;</span><span class="p">,</span> <span class="s2">&quot;potts&quot;</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;invalid simulation type </span><span class="si">{</span><span class="n">simulation_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">simulation_type</span> <span class="o">==</span> <span class="s2">&quot;patch&quot;</span><span class="p">:</span>
+        <span class="c1"># Simulation type must have either or both &quot;cells&quot; and &quot;graph&quot; data</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;cells&quot;</span> <span class="ow">in</span> <span class="n">data_tars</span> <span class="ow">or</span> <span class="s2">&quot;graph&quot;</span> <span class="ow">in</span> <span class="n">data_tars</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
         <span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">frame_spec</span><span class="p">)))</span>
         <span class="n">radius</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">box</span>
-        <span class="n">bounds</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">+</span> <span class="n">margin</span>
-        <span class="n">length</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">radius</span> <span class="o">+</span> <span class="n">margin</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">radius</span> <span class="o">+</span> <span class="n">margin</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
+        <span class="n">bounds</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">calculate_patch_size</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">margin</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">format_patch_for_shapes</span><span class="p">(</span>
-            <span class="n">series_key</span><span class="p">,</span> <span class="n">data_tars</span><span class="p">[</span><span class="s2">&quot;cells&quot;</span><span class="p">],</span> <span class="n">data_tars</span><span class="p">[</span><span class="s2">&quot;graph&quot;</span><span class="p">],</span> <span class="n">frames</span><span class="p">,</span> <span class="n">bounds</span>
+            <span class="n">series_key</span><span class="p">,</span> <span class="n">data_tars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cells&quot;</span><span class="p">),</span> <span class="n">data_tars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;graph&quot;</span><span class="p">),</span> <span class="n">frames</span><span class="p">,</span> <span class="n">bounds</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">simulation_type</span> <span class="o">==</span> <span class="s2">&quot;potts&quot;</span><span class="p">:</span>
+        <span class="c1"># Simulation type must have both &quot;cells&quot; and &quot;locations&quot; data</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;cells&quot;</span> <span class="ow">in</span> <span class="n">data_tars</span> <span class="ow">and</span> <span class="s2">&quot;locations&quot;</span> <span class="ow">in</span> <span class="n">data_tars</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
         <span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">frame_spec</span><span class="p">)))</span>
         <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">box</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">format_potts_for_shapes</span><span class="p">(</span>
             <span class="n">series_key</span><span class="p">,</span> <span class="n">data_tars</span><span class="p">[</span><span class="s2">&quot;cells&quot;</span><span class="p">],</span> <span class="n">data_tars</span><span class="p">[</span><span class="s2">&quot;locations&quot;</span><span class="p">],</span> <span class="n">frames</span><span class="p">,</span> <span class="n">resolution</span>
         <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid simulation type </span><span class="si">{</span><span class="n">simulation_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">convert_to_simularium</span><span class="p">(</span>
-        <span class="n">series_key</span><span class="p">,</span> <span class="n">simulation_type</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dz</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">colors</span>
+        <span class="n">series_key</span><span class="p">,</span> <span class="n">simulation_type</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">jitter</span><span class="o">=</span><span class="n">jitter</span>
     <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="format_patch_for_shapes"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html#arcade_collection.convert.convert_to_simularium_shapes.format_patch_for_shapes">[docs]</a><span class="k">def</span> <span class="nf">format_patch_for_shapes</span><span class="p">(</span>
     <span class="n">series_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">cells_tar</span><span class="p">:</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">,</span>
-    <span class="n">graph_tar</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">],</span>
-    <span class="n">frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">cells_tar</span><span class="p">:</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">graph_tar</span><span class="p">:</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">bounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format ``patch`` simulation data for shape-based Simularium trajectory.</span>
 
-    <span class="n">theta</span> <span class="o">=</span> <span class="p">[</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
-    <span class="n">dx</span> <span class="o">=</span> <span class="p">[</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">theta</span><span class="p">]</span>
-    <span class="n">dy</span> <span class="o">=</span> <span class="p">[</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">theta</span><span class="p">]</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    series_key</span>
+<span class="sd">        Simulation series key.</span>
+<span class="sd">    cells_tar</span>
+<span class="sd">        Archive of cell agent data.</span>
+<span class="sd">    graph_tar</span>
+<span class="sd">        Archive of vascular graph data.</span>
+<span class="sd">    frames</span>
+<span class="sd">        List of frames.</span>
+<span class="sd">    bounds</span>
+<span class="sd">        Simulation bounds size (radius + margin).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Data formatted for trajectory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
-        <span class="n">cell_timepoint</span> <span class="o">=</span> <span class="n">extract_tick_json</span><span class="p">(</span><span class="n">cells_tar</span><span class="p">,</span> <span class="n">series_key</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s2">&quot;cells&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cells_tar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cell_timepoint</span> <span class="o">=</span> <span class="n">extract_tick_json</span><span class="p">(</span><span class="n">cells_tar</span><span class="p">,</span> <span class="n">series_key</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s2">&quot;cells&quot;</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">cells</span> <span class="ow">in</span> <span class="n">cell_timepoint</span><span class="p">:</span>
-            <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">location</span>
-            <span class="n">rotation</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">cells</span> <span class="ow">in</span> <span class="n">cell_timepoint</span><span class="p">:</span>
+                <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">location</span>
+                <span class="n">rotation</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>  <span class="c1"># noqa: S311</span>
 
-            <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">:</span>
-                <span class="n">_</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cell</span>
-                <span class="n">cell_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">u</span><span class="si">}{</span><span class="n">v</span><span class="si">}{</span><span class="n">w</span><span class="si">}{</span><span class="n">z</span><span class="si">}{</span><span class="n">position</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cell</span>
+                    <span class="n">cell_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">u</span><span class="si">}{</span><span class="n">v</span><span class="si">}{</span><span class="n">w</span><span class="si">}{</span><span class="n">z</span><span class="si">}{</span><span class="n">position</span><span class="si">}</span><span class="s2">&quot;</span>
 
-                <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;POPULATION</span><span class="si">{</span><span class="n">population</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">cell_id</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">CELL_STATES</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="n">radius</span> <span class="o">=</span> <span class="p">(</span><span class="n">volume</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mi">3</span><span class="p">))</span> <span class="o">/</span> <span class="mf">1.5</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;POPULATION</span><span class="si">{</span><span class="n">population</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">CELL_STATES</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">cell_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">radius</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.2g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">volume</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mi">3</span><span class="p">))</span> <span class="o">/</span> <span class="mf">1.5</span><span class="p">))</span>  <span class="c1"># round to 2 sig figs</span>
 
-                <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span> <span class="o">+</span> <span class="n">bounds</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-                <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">bounds</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">position</span> <span class="o">+</span> <span class="n">rotation</span><span class="p">)</span> <span class="o">%</span> <span class="mi">6</span>
+                    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">convert_hexagonal_to_rectangular_coordinates</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+                    <span class="n">center</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
 
-                <span class="n">center</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">dx</span><span class="p">[(</span><span class="n">position</span> <span class="o">+</span> <span class="n">rotation</span><span class="p">)</span> <span class="o">%</span> <span class="mi">6</span><span class="p">]),</span>
-                    <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">dy</span><span class="p">[(</span><span class="n">position</span> <span class="o">+</span> <span class="n">rotation</span><span class="p">)</span> <span class="o">%</span> <span class="mi">6</span><span class="p">]),</span>
-                    <span class="n">z</span><span class="p">,</span>
-                <span class="p">]</span>
-
-                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">+</span> <span class="p">[[</span><span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">radius</span><span class="p">]</span> <span class="o">+</span> <span class="n">center</span> <span class="o">+</span> <span class="p">[[]]]</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="o">*</span><span class="n">center</span><span class="p">,</span> <span class="p">[],</span> <span class="s2">&quot;SPHERE&quot;</span><span class="p">]]</span>
 
         <span class="k">if</span> <span class="n">graph_tar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">graph_timepoint</span> <span class="o">=</span> <span class="n">extract_tick_json</span><span class="p">(</span>
@@ -341,7 +401,7 @@
             <span class="k">for</span> <span class="n">from_node</span><span class="p">,</span> <span class="n">to_node</span><span class="p">,</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">graph_timepoint</span><span class="p">:</span>
                 <span class="n">edge_type</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">flow</span> <span class="o">=</span> <span class="n">edge</span>
 
-                <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;VASCULATURE##</span><span class="si">{</span><span class="s1">&#39;UNDEFINED&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">isnan</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="n">EDGE_TYPES</span><span class="p">[</span><span class="n">edge_type</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;VASCULATURE#</span><span class="si">{</span><span class="s1">&#39;UNDEFINED&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">isnan</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="n">EDGE_TYPES</span><span class="p">[</span><span class="n">edge_type</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
 
                 <span class="n">subpoints</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="n">from_node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
@@ -352,18 +412,112 @@
                     <span class="n">to_node</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
                 <span class="p">]</span>
 
-                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">+</span> <span class="p">[[</span><span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">radius</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">subpoints</span><span class="p">]]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">subpoints</span><span class="p">,</span> <span class="s2">&quot;FIBER&quot;</span><span class="p">]]</span>
 
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">])</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="s2">&quot;display&quot;</span><span class="p">]</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_hexagonal_to_rectangular_coordinates"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html#arcade_collection.convert.convert_to_simularium_shapes.convert_hexagonal_to_rectangular_coordinates">[docs]</a><span class="k">def</span> <span class="nf">convert_hexagonal_to_rectangular_coordinates</span><span class="p">(</span>
+    <span class="n">uvw</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">bounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert hexagonal (u, v, w) coordinates to rectangular (x, y) coordinates.</span>
+
+<span class="sd">    Conversion is based on the bounds of the simulation,</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    uvw</span>
+<span class="sd">        Hexagonal (u, v, w) coordinates.</span>
+<span class="sd">    bounds</span>
+<span class="sd">        Simulation bounds size (radius + margin).</span>
+<span class="sd">    offset</span>
+<span class="sd">        Index of hexagonal offset.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Rectangular (x, y) coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">uvw</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="p">[</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="p">[</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">theta</span><span class="p">]</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="p">[</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">theta</span><span class="p">]</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span> <span class="o">+</span> <span class="n">bounds</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">bounds</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">dx</span><span class="p">[</span><span class="n">offset</span><span class="p">],</span> <span class="n">y</span> <span class="o">+</span> <span class="n">dy</span><span class="p">[</span><span class="n">offset</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="calculate_patch_size"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html#arcade_collection.convert.convert_to_simularium_shapes.calculate_patch_size">[docs]</a><span class="k">def</span> <span class="nf">calculate_patch_size</span><span class="p">(</span><span class="n">radius</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">margin</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate hexagonal patch simulation sizes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    radius</span>
+<span class="sd">        Number of hexagonal patches from the center patch.</span>
+<span class="sd">    margin</span>
+<span class="sd">        Number of hexagonal patches in the margin.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Bounds, length, and width of the simulation bounding box.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bounds</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">+</span> <span class="n">margin</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">bounds</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">bounds</span> <span class="o">-</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">width</span></div>
 
 
 <div class="viewcode-block" id="format_potts_for_shapes"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html#arcade_collection.convert.convert_to_simularium_shapes.format_potts_for_shapes">[docs]</a><span class="k">def</span> <span class="nf">format_potts_for_shapes</span><span class="p">(</span>
     <span class="n">series_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">cells_tar</span><span class="p">:</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">,</span>
     <span class="n">locations_tar</span><span class="p">:</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">,</span>
-    <span class="n">frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format `potts` simulation data for shape-based Simularium trajectory.</span>
+
+<span class="sd">    The resolution parameter can be used to tune how many spheres are used to</span>
+<span class="sd">    represent each cell. Resolution = 0 displays each cell as a single sphere</span>
+<span class="sd">    centered on the average voxel position. Resolution = 1 displays each</span>
+<span class="sd">    individual voxel of each cell as a single sphere.</span>
+
+<span class="sd">    Resolution = N will aggregate voxels by dividing the voxels into NxNxN</span>
+<span class="sd">    cubes, and replacing cubes with at least 50% of those voxels occupied with a</span>
+<span class="sd">    single sphere centered at the center of the cube.</span>
+
+<span class="sd">    For resolution &gt; 0, interior voxels (fully surrounded voxels) are not</span>
+<span class="sd">    removed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    series_key</span>
+<span class="sd">        Simulation series key.</span>
+<span class="sd">    cells_tar</span>
+<span class="sd">        Archive of cell data.</span>
+<span class="sd">    locations_tar</span>
+<span class="sd">        Archive of location data.</span>
+<span class="sd">    frames</span>
+<span class="sd">        List of frames.</span>
+<span class="sd">    resolution</span>
+<span class="sd">        Number of voxels represented by a sphere (0 for single sphere per cell).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Data formatted for trajectory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">object</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
@@ -374,14 +528,13 @@
             <span class="n">regions</span> <span class="o">=</span> <span class="p">[</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;region&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">location</span><span class="p">[</span><span class="s2">&quot;location&quot;</span><span class="p">]]</span>
 
             <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">:</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">cell</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">cell</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-
+                <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">region</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">cell</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">#</span><span class="si">{</span><span class="n">cell</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">all_voxels</span> <span class="o">=</span> <span class="n">get_location_voxels</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">region</span> <span class="k">if</span> <span class="n">region</span> <span class="o">!=</span> <span class="s2">&quot;DEFAULT&quot;</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">resolution</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">radius</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_voxels</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mi">3</span><span class="p">))</span> <span class="o">/</span> <span class="mf">1.5</span>
+                    <span class="n">radius</span> <span class="o">=</span> <span class="n">approximate_radius_from_voxels</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_voxels</span><span class="p">))</span>
                     <span class="n">center</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_voxels</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-                    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">+</span> <span class="p">[[</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span> <span class="n">radius</span><span class="p">]</span> <span class="o">+</span> <span class="n">center</span> <span class="o">+</span> <span class="p">[[]]]</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span> <span class="n">radius</span><span class="p">,</span> <span class="o">*</span><span class="n">center</span><span class="p">,</span> <span class="p">[],</span> <span class="s2">&quot;SPHERE&quot;</span><span class="p">]]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">radius</span> <span class="o">=</span> <span class="n">resolution</span> <span class="o">/</span> <span class="mi">2</span>
                     <span class="n">center_offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">resolution</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
@@ -394,25 +547,61 @@
                     <span class="p">]</span>
 
                     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">+</span> <span class="p">[</span>
-                        <span class="p">[</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span> <span class="n">radius</span><span class="p">]</span> <span class="o">+</span> <span class="n">voxel</span> <span class="o">+</span> <span class="p">[[]]</span> <span class="k">for</span> <span class="n">voxel</span> <span class="ow">in</span> <span class="n">center_voxels</span>
+                        <span class="p">[</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span> <span class="n">radius</span><span class="p">,</span> <span class="o">*</span><span class="n">voxel</span><span class="p">,</span> <span class="p">[],</span> <span class="s2">&quot;SPHERE&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">voxel</span> <span class="ow">in</span> <span class="n">center_voxels</span>
                     <span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">])</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="s2">&quot;display&quot;</span><span class="p">]</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="approximate_radius_from_voxels"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html#arcade_collection.convert.convert_to_simularium_shapes.approximate_radius_from_voxels">[docs]</a><span class="k">def</span> <span class="nf">approximate_radius_from_voxels</span><span class="p">(</span><span class="n">voxels</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Approximate display sphere radius from number of voxels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    voxels</span>
+<span class="sd">        Number of voxels.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Approximate radius.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">voxels</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mi">3</span><span class="p">))</span> <span class="o">/</span> <span class="mf">1.5</span></div>
 
 
 <div class="viewcode-block" id="get_resolution_voxels"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html#arcade_collection.convert.convert_to_simularium_shapes.get_resolution_voxels">[docs]</a><span class="k">def</span> <span class="nf">get_resolution_voxels</span><span class="p">(</span>
     <span class="n">voxels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">voxels</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">])</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get voxels at specified resolution.</span>
 
-    <span class="n">min_x</span><span class="p">,</span> <span class="n">min_y</span><span class="p">,</span> <span class="n">min_z</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-    <span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span><span class="p">,</span> <span class="n">max_z</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    voxels</span>
+<span class="sd">        List of voxels.</span>
+<span class="sd">    resolution</span>
+<span class="sd">        Resolution of voxels.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        List of voxels at specified resolution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">voxel_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">voxels</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">])</span>
+
+    <span class="n">min_x</span><span class="p">,</span> <span class="n">min_y</span><span class="p">,</span> <span class="n">min_z</span> <span class="o">=</span> <span class="n">voxel_df</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span><span class="p">,</span> <span class="n">max_z</span> <span class="o">=</span> <span class="n">voxel_df</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
     <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">sz</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">sx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">sy</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_y</span><span class="p">,</span> <span class="n">max_y</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">sz</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_z</span><span class="p">,</span> <span class="n">max_z</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_x</span><span class="p">,</span> <span class="n">max_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sy</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_y</span><span class="p">,</span> <span class="n">max_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sz</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">min_z</span><span class="p">,</span> <span class="n">max_z</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
     <span class="p">]</span>
 
     <span class="n">offsets</span> <span class="o">=</span> <span class="p">[</span>
@@ -436,6 +625,22 @@
 <div class="viewcode-block" id="filter_border_voxels"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html#arcade_collection.convert.convert_to_simularium_shapes.filter_border_voxels">[docs]</a><span class="k">def</span> <span class="nf">filter_border_voxels</span><span class="p">(</span>
     <span class="n">voxels</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">resolution</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter voxels to only include the border voxels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    voxels</span>
+<span class="sd">        List of voxels.</span>
+<span class="sd">    resolution</span>
+<span class="sd">        Resolution of voxels.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        List of filtered voxels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">offsets</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">(</span><span class="n">resolution</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
         <span class="p">(</span><span class="o">-</span><span class="n">resolution</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
@@ -451,7 +656,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">voxels</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">filtered_voxels</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="n">filtered_voxels</span></div>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">filtered_voxels</span><span class="p">)</span></div>
 </pre></div>
         </article>
       </div>

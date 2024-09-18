@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>arcade_collection.convert.convert_to_colorizer - ARCADE Collection 0.15.0</title>
+        <title>arcade_collection.convert.convert_to_tfe - ARCADE Collection 0.15.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
@@ -157,7 +157,6 @@
   <p class="caption" role="heading"><span class="caption-text">Module reference</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
@@ -165,6 +164,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html">convert_to_simularium</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_objects.html">convert_to_simularium_objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html">convert_to_simularium_shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html">convert_to_tfe</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.input.html">arcade_collection.input</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of arcade_collection.input</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -226,84 +226,152 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for arcade_collection.convert.convert_to_colorizer</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+          <h1>Source code for arcade_collection.convert.convert_to_tfe</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">arcade_collection.output.convert_model_units</span> <span class="kn">import</span> <span class="n">convert_model_units</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 
-<div class="viewcode-block" id="convert_to_colorizer"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html#arcade_collection.convert.convert_to_colorizer.convert_to_colorizer">[docs]</a><span class="k">def</span> <span class="nf">convert_to_colorizer</span><span class="p">(</span>
-    <span class="n">all_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-    <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">frame_spec</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-    <span class="n">ds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-    <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-    <span class="n">regions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+<div class="viewcode-block" id="convert_to_tfe"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html#arcade_collection.convert.convert_to_tfe.convert_to_tfe">[docs]</a><span class="k">def</span> <span class="nf">convert_to_tfe</span><span class="p">(</span>
+    <span class="n">all_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">frame_spec</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate TFE manifest and feature data for simulation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    all_data</span>
+<span class="sd">        Simulation data containing ID, TICK, and time.</span>
+<span class="sd">    features</span>
+<span class="sd">        List of feature keys, names, and data types.</span>
+<span class="sd">    frame_spec</span>
+<span class="sd">        Specification for frames.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        TFE manifest and feature data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">frame_spec</span><span class="p">))</span>
     <span class="n">manifest</span> <span class="o">=</span> <span class="n">get_manifest_data</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">frames</span><span class="p">)</span>
 
-    <span class="n">convert_model_units</span><span class="p">(</span><span class="n">all_data</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">regions</span><span class="p">)</span>
     <span class="n">frame_data</span> <span class="o">=</span> <span class="n">all_data</span><span class="p">[</span><span class="n">all_data</span><span class="p">[</span><span class="s2">&quot;TICK&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">frames</span><span class="p">)]</span>
 
-    <span class="n">outliers</span> <span class="o">=</span> <span class="n">get_outliers_from_data</span><span class="p">(</span><span class="n">frame_data</span><span class="p">)</span>
     <span class="n">tracks</span> <span class="o">=</span> <span class="n">get_tracks_from_data</span><span class="p">(</span><span class="n">frame_data</span><span class="p">)</span>
     <span class="n">times</span> <span class="o">=</span> <span class="n">get_times_from_data</span><span class="p">(</span><span class="n">frame_data</span><span class="p">)</span>
 
-    <span class="n">colorizer_json</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;manifest&quot;</span><span class="p">:</span> <span class="n">manifest</span><span class="p">,</span>
-        <span class="s2">&quot;outliers&quot;</span><span class="p">:</span> <span class="n">outliers</span><span class="p">,</span>
-        <span class="s2">&quot;tracks&quot;</span><span class="p">:</span> <span class="n">tracks</span><span class="p">,</span>
-        <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="n">times</span><span class="p">,</span>
-    <span class="p">}</span>
+    <span class="n">tfe_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;manifest&quot;</span><span class="p">:</span> <span class="n">manifest</span><span class="p">,</span> <span class="s2">&quot;tracks&quot;</span><span class="p">:</span> <span class="n">tracks</span><span class="p">,</span> <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="n">times</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">{}}</span>
 
-    <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
-        <span class="n">colorizer_json</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_feature_from_data</span><span class="p">(</span><span class="n">frame_data</span><span class="p">,</span> <span class="n">feature</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">features</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;categorical&quot;</span><span class="p">:</span>
+            <span class="n">categories</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+            <span class="n">manifest</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">][</span><span class="n">index</span><span class="p">][</span><span class="s2">&quot;categories&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">categories</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">categories</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">return</span> <span class="n">colorizer_json</span></div>
+        <span class="n">tfe_json</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_feature_from_data</span><span class="p">(</span><span class="n">frame_data</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">categories</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tfe_json</span></div>
 
 
-<div class="viewcode-block" id="get_manifest_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html#arcade_collection.convert.convert_to_colorizer.get_manifest_data">[docs]</a><span class="k">def</span> <span class="nf">get_manifest_data</span><span class="p">(</span><span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="n">manifest</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;frames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;frame_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.png&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">))],</span>
-        <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="n">feature</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;feature_</span><span class="si">{</span><span class="n">feature_index</span><span class="si">}</span><span class="s2">.json&quot;</span>
-            <span class="k">for</span> <span class="n">feature_index</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
-        <span class="p">},</span>
-        <span class="s2">&quot;outliers&quot;</span><span class="p">:</span> <span class="s2">&quot;outliers.json&quot;</span><span class="p">,</span>
+<div class="viewcode-block" id="get_manifest_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html#arcade_collection.convert.convert_to_tfe.get_manifest_data">[docs]</a><span class="k">def</span> <span class="nf">get_manifest_data</span><span class="p">(</span><span class="n">features</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build manifest for TFE.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    features</span>
+<span class="sd">        List of feature keys, names, and data types.</span>
+<span class="sd">    frames</span>
+<span class="sd">        List of frames.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Manifest in TFE format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;frames&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;frames/frame_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.png&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">))],</span>
+        <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;features/</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">dtype</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">features</span>
+        <span class="p">],</span>
         <span class="s2">&quot;tracks&quot;</span><span class="p">:</span> <span class="s2">&quot;tracks.json&quot;</span><span class="p">,</span>
         <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="s2">&quot;times.json&quot;</span><span class="p">,</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="n">manifest</span></div>
+    <span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="get_outliers_from_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html#arcade_collection.convert.convert_to_colorizer.get_outliers_from_data">[docs]</a><span class="k">def</span> <span class="nf">get_outliers_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="n">outliers</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">outliers_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">outliers</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">outliers_json</span></div>
+<div class="viewcode-block" id="get_tracks_from_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html#arcade_collection.convert.convert_to_tfe.get_tracks_from_data">[docs]</a><span class="k">def</span> <span class="nf">get_tracks_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract track ids from data and format for TFE.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data</span>
+<span class="sd">        Simulation data for selected frames.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Track data in TFE format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">])]}</span></div>
 
 
-<div class="viewcode-block" id="get_tracks_from_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html#arcade_collection.convert.convert_to_colorizer.get_tracks_from_data">[docs]</a><span class="k">def</span> <span class="nf">get_tracks_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="n">tracks</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">]</span>
-    <span class="n">tracks_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">tracks</span><span class="p">)}</span>
-    <span class="k">return</span> <span class="n">tracks_json</span></div>
+<div class="viewcode-block" id="get_times_from_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html#arcade_collection.convert.convert_to_tfe.get_times_from_data">[docs]</a><span class="k">def</span> <span class="nf">get_times_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract time points from data and format for TFE.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data</span>
+<span class="sd">        Simulation data for selected frames.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Time data in TFE format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">])]}</span></div>
 
 
-<div class="viewcode-block" id="get_times_from_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html#arcade_collection.convert.convert_to_colorizer.get_times_from_data">[docs]</a><span class="k">def</span> <span class="nf">get_times_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="n">times</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
-    <span class="n">times_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">times</span><span class="p">)}</span>
-    <span class="k">return</span> <span class="n">times_json</span></div>
+<div class="viewcode-block" id="get_feature_from_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html#arcade_collection.convert.convert_to_tfe.get_feature_from_data">[docs]</a><span class="k">def</span> <span class="nf">get_feature_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">feature</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract specified feature from data and format for TFE.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data</span>
+<span class="sd">        Simulation data for selected frames.</span>
+<span class="sd">    feature</span>
+<span class="sd">        Feature key.</span>
+<span class="sd">    categories</span>
+<span class="sd">        List of data categories (if data is categorical).</span>
 
-<div class="viewcode-block" id="get_feature_from_data"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html#arcade_collection.convert.convert_to_colorizer.get_feature_from_data">[docs]</a><span class="k">def</span> <span class="nf">get_feature_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">feature</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="n">feature_values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Feature data in TFE format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">feature_values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">categories</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">feature_values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span>
+
     <span class="n">feature_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">feature_values</span><span class="p">))</span>
     <span class="n">feature_max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">feature_values</span><span class="p">))</span>
 
-    <span class="n">feature_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">feature_values</span><span class="p">),</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="n">feature_min</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="n">feature_max</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">feature_json</span></div>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">feature_values</span><span class="p">)],</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="n">feature_min</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="n">feature_max</span><span class="p">}</span></div>
 </pre></div>
         </article>
       </div>

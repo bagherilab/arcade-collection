@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="arcade_collection.input" href="arcade_collection.input.html" /><link rel="prev" title="convert_to_simularium_objects" href="arcade_collection.convert.convert_to_simularium_objects.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="convert_to_tfe" href="arcade_collection.convert.convert_to_tfe.html" /><link rel="prev" title="convert_to_simularium_objects" href="arcade_collection.convert.convert_to_simularium_objects.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
         <title>convert_to_simularium_shapes - ARCADE Collection 0.15.0</title>
@@ -158,7 +158,6 @@
   <p class="caption" role="heading"><span class="caption-text">Module reference</span></p>
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="arcade_collection.convert.html">arcade_collection.convert</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
@@ -166,6 +165,7 @@
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_simularium.html">convert_to_simularium</a></li>
 <li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_simularium_objects.html">convert_to_simularium_objects</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">convert_to_simularium_shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arcade_collection.convert.convert_to_tfe.html">convert_to_tfe</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="arcade_collection.input.html">arcade_collection.input</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of arcade_collection.input</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -230,30 +230,175 @@
         <article role="main">
           <section id="module-arcade_collection.convert.convert_to_simularium_shapes">
 <span id="convert-to-simularium-shapes"></span><h1>convert_to_simularium_shapes<a class="headerlink" href="#module-arcade_collection.convert.convert_to_simularium_shapes" title="Permalink to this heading">#</a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_shapes.CELL_STATES">
+<span class="sig-name descname"><span class="pre">CELL_STATES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['UNDEFINED',</span> <span class="pre">'APOPTOTIC',</span> <span class="pre">'QUIESCENT',</span> <span class="pre">'MIGRATORY',</span> <span class="pre">'PROLIFERATIVE',</span> <span class="pre">'SENESCENT',</span> <span class="pre">'NECROTIC']</span></em><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.CELL_STATES" title="Permalink to this definition">#</a></dt>
+<dd><p>Indexed cell states.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_shapes.EDGE_TYPES">
+<span class="sig-name descname"><span class="pre">EDGE_TYPES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ARTERIOLE',</span> <span class="pre">'ARTERY',</span> <span class="pre">'CAPILLARY',</span> <span class="pre">'VEIN',</span> <span class="pre">'VENULE',</span> <span class="pre">'UNDEFINED']</span></em><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.EDGE_TYPES" title="Permalink to this definition">#</a></dt>
+<dd><p>Indexed graph edge types.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_shapes.convert_to_simularium_shapes">
-<span class="sig-name descname"><span class="pre">convert_to_simularium_shapes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_tars</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tarfile.TarFile</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#convert_to_simularium_shapes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.convert_to_simularium_shapes" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">convert_to_simularium_shapes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simulation_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_tars</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tarfile.TarFile</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_spec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#convert_to_simularium_shapes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.convert_to_simularium_shapes" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert data to Simularium trajectory using shapes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series_key</strong> – Simulation series key.</p></li>
+<li><p><strong>simulation_type</strong> (<em>{'patch'</em><em>, </em><em>'potts'}</em>) – Simulation type.</p></li>
+<li><p><strong>data_tars</strong> – Map of simulation data archives.</p></li>
+<li><p><strong>frame_spec</strong> – Specification for simulation ticks.</p></li>
+<li><p><strong>box</strong> – Size of bounding box.</p></li>
+<li><p><strong>ds</strong> – Spatial scaling in um/voxel.</p></li>
+<li><p><strong>dt</strong> – Temporal scaling in hours/tick.</p></li>
+<li><p><strong>colors</strong> – Map of category to colors.</p></li>
+<li><p><strong>resolution</strong> – Number of voxels represented by a sphere (0 for single sphere per cell).</p></li>
+<li><p><strong>jitter</strong> – Relative jitter applied to colors (set to 0 for exact colors).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Simularium trajectory.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_shapes.format_patch_for_shapes">
-<span class="sig-name descname"><span class="pre">format_patch_for_shapes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cells_tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TarFile</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#format_patch_for_shapes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.format_patch_for_shapes" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">format_patch_for_shapes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cells_tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tarfile.TarFile</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tarfile.TarFile</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pd.DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#format_patch_for_shapes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.format_patch_for_shapes" title="Permalink to this definition">#</a></dt>
+<dd><p>Format <code class="docutils literal notranslate"><span class="pre">patch</span></code> simulation data for shape-based Simularium trajectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series_key</strong> – Simulation series key.</p></li>
+<li><p><strong>cells_tar</strong> – Archive of cell agent data.</p></li>
+<li><p><strong>graph_tar</strong> – Archive of vascular graph data.</p></li>
+<li><p><strong>frames</strong> – List of frames.</p></li>
+<li><p><strong>bounds</strong> – Simulation bounds size (radius + margin).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Data formatted for trajectory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_shapes.convert_hexagonal_to_rectangular_coordinates">
+<span class="sig-name descname"><span class="pre">convert_hexagonal_to_rectangular_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uvw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#convert_hexagonal_to_rectangular_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.convert_hexagonal_to_rectangular_coordinates" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert hexagonal (u, v, w) coordinates to rectangular (x, y) coordinates.</p>
+<p>Conversion is based on the bounds of the simulation,</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uvw</strong> – Hexagonal (u, v, w) coordinates.</p></li>
+<li><p><strong>bounds</strong> – Simulation bounds size (radius + margin).</p></li>
+<li><p><strong>offset</strong> – Index of hexagonal offset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rectangular (x, y) coordinates.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_shapes.calculate_patch_size">
+<span class="sig-name descname"><span class="pre">calculate_patch_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#calculate_patch_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.calculate_patch_size" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate hexagonal patch simulation sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius</strong> – Number of hexagonal patches from the center patch.</p></li>
+<li><p><strong>margin</strong> – Number of hexagonal patches in the margin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bounds, length, and width of the simulation bounding box.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_shapes.format_potts_for_shapes">
-<span class="sig-name descname"><span class="pre">format_potts_for_shapes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cells_tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locations_tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#format_potts_for_shapes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.format_potts_for_shapes" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">format_potts_for_shapes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cells_tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tarfile.TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locations_tar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tarfile.TarFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pd.DataFrame</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#format_potts_for_shapes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.format_potts_for_shapes" title="Permalink to this definition">#</a></dt>
+<dd><p>Format <cite>potts</cite> simulation data for shape-based Simularium trajectory.</p>
+<p>The resolution parameter can be used to tune how many spheres are used to
+represent each cell. Resolution = 0 displays each cell as a single sphere
+centered on the average voxel position. Resolution = 1 displays each
+individual voxel of each cell as a single sphere.</p>
+<p>Resolution = N will aggregate voxels by dividing the voxels into NxNxN
+cubes, and replacing cubes with at least 50% of those voxels occupied with a
+single sphere centered at the center of the cube.</p>
+<p>For resolution &gt; 0, interior voxels (fully surrounded voxels) are not
+removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series_key</strong> – Simulation series key.</p></li>
+<li><p><strong>cells_tar</strong> – Archive of cell data.</p></li>
+<li><p><strong>locations_tar</strong> – Archive of location data.</p></li>
+<li><p><strong>frames</strong> – List of frames.</p></li>
+<li><p><strong>resolution</strong> – Number of voxels represented by a sphere (0 for single sphere per cell).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Data formatted for trajectory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_shapes.approximate_radius_from_voxels">
+<span class="sig-name descname"><span class="pre">approximate_radius_from_voxels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voxels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#approximate_radius_from_voxels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.approximate_radius_from_voxels" title="Permalink to this definition">#</a></dt>
+<dd><p>Approximate display sphere radius from number of voxels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>voxels</strong> – Number of voxels.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Approximate radius.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_shapes.get_resolution_voxels">
 <span class="sig-name descname"><span class="pre">get_resolution_voxels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voxels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#get_resolution_voxels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.get_resolution_voxels" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Get voxels at specified resolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voxels</strong> – List of voxels.</p></li>
+<li><p><strong>resolution</strong> – Resolution of voxels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of voxels at specified resolution.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="arcade_collection.convert.convert_to_simularium_shapes.filter_border_voxels">
 <span class="sig-name descname"><span class="pre">filter_border_voxels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voxels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/arcade_collection/convert/convert_to_simularium_shapes.html#filter_border_voxels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#arcade_collection.convert.convert_to_simularium_shapes.filter_border_voxels" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Filter voxels to only include the border voxels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voxels</strong> – List of voxels.</p></li>
+<li><p><strong>resolution</strong> – Resolution of voxels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of filtered voxels.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -262,12 +407,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="arcade_collection.input.html">
+          <a class="next-page" href="arcade_collection.convert.convert_to_tfe.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">arcade_collection.input</div>
+                <div class="title">convert_to_tfe</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -313,9 +458,14 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">convert_to_simularium_shapes</a><ul>
+<li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_shapes.CELL_STATES"><code class="docutils literal notranslate"><span class="pre">CELL_STATES</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_shapes.EDGE_TYPES"><code class="docutils literal notranslate"><span class="pre">EDGE_TYPES</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_shapes.convert_to_simularium_shapes"><code class="docutils literal notranslate"><span class="pre">convert_to_simularium_shapes()</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_shapes.format_patch_for_shapes"><code class="docutils literal notranslate"><span class="pre">format_patch_for_shapes()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_shapes.convert_hexagonal_to_rectangular_coordinates"><code class="docutils literal notranslate"><span class="pre">convert_hexagonal_to_rectangular_coordinates()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_shapes.calculate_patch_size"><code class="docutils literal notranslate"><span class="pre">calculate_patch_size()</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_shapes.format_potts_for_shapes"><code class="docutils literal notranslate"><span class="pre">format_potts_for_shapes()</span></code></a></li>
+<li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_shapes.approximate_radius_from_voxels"><code class="docutils literal notranslate"><span class="pre">approximate_radius_from_voxels()</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_shapes.get_resolution_voxels"><code class="docutils literal notranslate"><span class="pre">get_resolution_voxels()</span></code></a></li>
 <li><a class="reference internal" href="#arcade_collection.convert.convert_to_simularium_shapes.filter_border_voxels"><code class="docutils literal notranslate"><span class="pre">filter_border_voxels()</span></code></a></li>
 </ul>

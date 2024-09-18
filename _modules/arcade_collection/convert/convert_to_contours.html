@@ -157,7 +157,6 @@
   <p class="caption" role="heading"><span class="caption-text">Module reference</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.convert.html">arcade_collection.convert</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of arcade_collection.convert</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_colorizer.html">convert_to_colorizer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_contours.html">convert_to_contours</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_images.html">convert_to_images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_meshes.html">convert_to_meshes</a></li>
@@ -165,6 +164,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium.html">convert_to_simularium</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_objects.html">convert_to_simularium_objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_simularium_shapes.html">convert_to_simularium_shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_summary/arcade_collection.convert.convert_to_tfe.html">convert_to_tfe</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../_summary/arcade_collection.input.html">arcade_collection.input</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of arcade_collection.input</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -240,33 +240,64 @@
     <span class="s2">&quot;side1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="s2">&quot;side2&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 <span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Axis rotations for different contour views.&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="convert_to_contours"><a class="viewcode-back" href="../../../_summary/arcade_collection.convert.convert_to_contours.html#arcade_collection.convert.convert_to_contours.convert_to_contours">[docs]</a><span class="k">def</span> <span class="nf">convert_to_contours</span><span class="p">(</span>
     <span class="n">series_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">data_tar</span><span class="p">:</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">,</span>
+    <span class="n">locations_tar</span><span class="p">:</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">,</span>
     <span class="n">frame</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">regions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">box</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">indices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]]:</span>
-    <span class="n">locations</span> <span class="o">=</span> <span class="n">extract_tick_json</span><span class="p">(</span><span class="n">data_tar</span><span class="p">,</span> <span class="n">series_key</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;LOCATIONS&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert data to iso-valued contours.</span>
+
+<span class="sd">    Contours are calculated using &quot;marching squares&quot; method. Note that these</span>
+<span class="sd">    contours follow the iso-values, which means that a single &quot;square&quot; voxel</span>
+<span class="sd">    will produce a diamond-shaped contour. For the exact outline of a set of</span>
+<span class="sd">    voxels, consider using ``extract_voxel_contours`` from the</span>
+<span class="sd">    ``abm_shape_collection`` package.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    series_key</span>
+<span class="sd">        Simulation series key.</span>
+<span class="sd">    locations_tar</span>
+<span class="sd">        Archive of location data.</span>
+<span class="sd">    frame</span>
+<span class="sd">        Frame number.</span>
+<span class="sd">    regions</span>
+<span class="sd">        List of regions.</span>
+<span class="sd">    box</span>
+<span class="sd">        Size of bounding box.</span>
+<span class="sd">    indices</span>
+<span class="sd">        Map of view to slice indices.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        Map of region, view, and index to contours.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">locations</span> <span class="o">=</span> <span class="n">extract_tick_json</span><span class="p">(</span><span class="n">locations_tar</span><span class="p">,</span> <span class="n">series_key</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="s2">&quot;LOCATIONS&quot;</span><span class="p">)</span>
 
     <span class="n">contours</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">region</span><span class="p">:</span> <span class="p">{</span><span class="n">view</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">indices</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span> <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span>
+        <span class="n">region</span><span class="p">:</span> <span class="p">{</span><span class="n">view</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">}</span> <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span>
     <span class="p">}</span>
 
     <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">locations</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">:</span>
             <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-            <span class="n">voxels</span> <span class="o">=</span> <span class="n">get_location_voxels</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">region</span><span class="p">)</span>
+            <span class="n">voxels</span> <span class="o">=</span> <span class="n">get_location_voxels</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">region</span> <span class="k">if</span> <span class="n">region</span> <span class="o">!=</span> <span class="s2">&quot;DEFAULT&quot;</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">voxels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>
 
             <span class="n">array</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">voxels</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">1</span>
 
-            <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">indices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">view</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
                 <span class="n">array_rotated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ROTATIONS</span><span class="p">[</span><span class="n">view</span><span class="p">])</span>
 
                 <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[</span><span class="n">view</span><span class="p">]:</span>
@@ -278,7 +309,10 @@
                     <span class="k">if</span> <span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">contours</span><span class="p">[</span><span class="n">region</span><span class="p">][</span><span class="n">view</span><span class="p">]:</span>
                         <span class="n">contours</span><span class="p">[</span><span class="n">region</span><span class="p">][</span><span class="n">view</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-                    <span class="n">contours</span><span class="p">[</span><span class="n">region</span><span class="p">][</span><span class="n">view</span><span class="p">][</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">measure</span><span class="o">.</span><span class="n">find_contours</span><span class="p">(</span><span class="n">array_slice</span><span class="p">))</span>
+                    <span class="n">array_contours</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">contour</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">measure</span><span class="o">.</span><span class="n">find_contours</span><span class="p">(</span><span class="n">array_slice</span><span class="p">)</span>
+                    <span class="p">]</span>
+                    <span class="n">contours</span><span class="p">[</span><span class="n">region</span><span class="p">][</span><span class="n">view</span><span class="p">][</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">array_contours</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">contours</span></div>
 </pre></div>
