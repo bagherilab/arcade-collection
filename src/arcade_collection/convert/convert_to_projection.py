@@ -18,6 +18,36 @@ def convert_to_projection(
     scale: int,
     colors: dict[str, str],
 ) -> mpl.figure.Figure:
+    """
+    Convert data to projection figure.
+
+    Parameters
+    ----------
+    series_key
+        Simulation series key.
+    locations_tar
+        Archive of location data.
+    frame
+        Frame number.
+    regions
+        List of regions.
+    box
+        Size of bounding box.
+    ds
+        Spatial scaling in um/voxel.
+    dt
+        Temporal scaling in hours/tick.
+    scale
+        Size of scale bar (in um).
+    colors
+        Map of region to colors.
+
+    Returns
+    -------
+    :
+        Projection figure.
+    """
+
     fig = plt.figure(figsize=(10, 10), constrained_layout=True)
     length, width, height = box
 
@@ -73,6 +103,25 @@ def convert_to_projection(
 def add_frame_timestamp(
     ax: mpl.axes.Axes, length: int, width: int, dt: float, frame: int, color: str
 ) -> None:
+    """
+    Add a frame timestamp to figure axes.
+
+    Parameters
+    ----------
+    ax
+        Axes object.
+    length
+        Length of bounding box.
+    width
+        Width of bounding box.
+    dt
+        Temporal scaling in hours/tick.
+    frame
+        Frame number.
+    color
+        Timestamp color.
+    """
+
     hours, minutes = divmod(round(frame * dt, 2), 1)
     timestamp = f"{int(hours):02d}H:{round(minutes*60):02d}M"
 
@@ -90,6 +139,25 @@ def add_frame_timestamp(
 def add_frame_scalebar(
     ax: mpl.axes.Axes, length: int, width: int, ds: float, scale: int, color: str
 ) -> None:
+    """
+    Add a frame scalebar to figure axes.
+
+    Parameters
+    ----------
+    ax
+        Axes object.
+    length
+        Length of bounding box.
+    width
+        Width of bounding box.
+    ds
+        Spatial scaling in um/voxel.
+    scale
+        Size of scale bar (in um).
+    color
+        Scalebar color.
+    """
+
     scalebar = scale / ds
 
     ax.add_patch(

@@ -67,7 +67,7 @@ def convert_to_simularium(
     height
         Bounding box height.
     ds
-        Spatial scaling in units/um.
+        Spatial scaling in um/voxel.
     dt
         Temporal scaling in hours/tick.
     colors
@@ -150,11 +150,11 @@ def get_meta_data(
     height
         Bounding box height.
     dx
-        Spatial scaling in the X direction in units/um.
+        Spatial scaling in the X direction in um/voxel.
     dy
-        Spatial scaling in the Y direction in units/um.
+        Spatial scaling in the Y direction in um/voxel.
     dz
-        Spatial scaling in the Z direction in units/um.
+        Spatial scaling in the Z direction in um/voxel.
 
     Returns
     -------

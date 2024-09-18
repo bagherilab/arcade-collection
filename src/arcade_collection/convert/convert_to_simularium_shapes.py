@@ -64,7 +64,7 @@ def convert_to_simularium_shapes(
     box
         Size of bounding box.
     ds
-        Spatial scaling in units/um.
+        Spatial scaling in um/voxel.
     dt
         Temporal scaling in hours/tick.
     colors
