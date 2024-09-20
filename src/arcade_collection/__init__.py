@@ -1,1 +1,1 @@
-"""Tasks for working with ARCADE simulations."""
+"""Collection of tasks for working with ARCADE."""
