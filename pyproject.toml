@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "arcade-collection"
-version = "0.15.0"
+version = "0.16.0"
 description = "Collection of tasks for working with ARCADE."
 authors = [
     "Jessica S. Yu <jesyu@uw.edu>"
