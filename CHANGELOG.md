@@ -1,3 +1,21 @@
+# [v0.16.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.16.0) - 2024-09-25
+
+> Compare with [v0.15.0](https://github.com/bagherilab/arcade-collection/compare/v0.15.0...v0.16.0)
+
+### Tests
+
+- Add unit tests for arcade collection input tasks by [@jessicasyu](https://github.com/jessicasyu) in [#78](https://github.com/bagherilab/arcade-collection/pull/78)
+- Add unit tests for arcade collection output tasks by [@jessicasyu](https://github.com/jessicasyu) in [#79](https://github.com/bagherilab/arcade-collection/pull/79)
+- Add unit tests for arcade collection convert tasks by [@jessicasyu](https://github.com/jessicasyu) in [#80](https://github.com/bagherilab/arcade-collection/pull/80)
+
+### Admin
+
+- Fix release workflow by [@jessicasyu](https://github.com/jessicasyu) in [#75](https://github.com/bagherilab/arcade-collection/pull/75)
+- Update workflow action versions and badges by [@jessicasyu](https://github.com/jessicasyu) in [#76](https://github.com/bagherilab/arcade-collection/pull/76)
+- Bump dependency versions by [@jessicasyu](https://github.com/jessicasyu) in [#77](https://github.com/bagherilab/arcade-collection/pull/77)
+- Bump dependency versions and clean up docstrings by [@jessicasyu](https://github.com/jessicasyu) in [#81](https://github.com/bagherilab/arcade-collection/pull/81)
+- Update dependency requirements to work with other collections by [@jessicasyu](https://github.com/jessicasyu) in [#82](https://github.com/bagherilab/arcade-collection/pull/82)
+
 # [v0.15.0](https://github.com/bagherilab/arcade-collection/releases/tag/v0.15.0) - 2024-03-01
 
 > Compare with [v0.14.0](https://github.com/bagherilab/arcade-collection/compare/v0.14.0...v0.15.0)
