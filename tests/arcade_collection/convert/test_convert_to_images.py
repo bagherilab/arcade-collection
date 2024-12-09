@@ -70,6 +70,79 @@ class TestConvertToImages(unittest.TestCase):
 
         self.locations_tar = build_tar_instance(contents)
 
+    def test_convert_to_images_full_without_chunks_2d_image(self):
+        frame_spec = (5, 6, 1)
+        box = (8, 8, 1)
+        chunk_size = 6
+        image_type = ImageType.FULL
+
+        contents = {
+            f"{self.series_key}_000005.LOCATIONS.json": [
+                {
+                    "id": 1,
+                    "location": [
+                        {"region": "DEFAULT", "voxels": [[1, 1, 0], [2, 1, 0], [2, 2, 0]]},
+                        {"region": "REGION", "voxels": [[1, 2, 0]]},
+                    ],
+                },
+                {
+                    "id": 2,
+                    "location": [
+                        {"region": "DEFAULT", "voxels": [[5, 3, 0], [5, 4, 0]]},
+                        {"region": "REGION", "voxels": [[6, 3, 0], [6, 4, 0]]},
+                    ],
+                },
+            ]
+        }
+
+        locations_tar = build_tar_instance(contents)
+
+        chunk_00 = np.array(
+            [
+                [
+                    [
+                        [
+                            [1, 1, 0, 0, 0, 0],
+                            [1, 1, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 2, 2],
+                            [0, 0, 0, 0, 2, 2],
+                            [0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0],
+                        ]
+                    ],
+                    [
+                        [
+                            [0, 0, 0, 0, 0, 0],
+                            [1, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 2],
+                            [0, 0, 0, 0, 0, 2],
+                            [0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0],
+                        ]
+                    ],
+                ]
+            ]
+        )
+
+        expected_images = [(0, 0, chunk_00, None)]
+
+        images = convert_to_images(
+            self.series_key,
+            locations_tar,
+            frame_spec,
+            self.regions,
+            box,
+            chunk_size,
+            image_type,
+        )
+
+        self.assertEqual(len(expected_images), len(images))
+        for expected_chunk, chunk in zip(expected_images, images):
+            self.assertEqual(expected_chunk[0], chunk[0])
+            self.assertEqual(expected_chunk[1], chunk[1])
+            self.assertTrue(np.array_equal(expected_chunk[2], chunk[2]))
+            self.assertIsNone(chunk[3])
+
     def test_convert_to_images_full_without_chunks(self):
         chunk_size = 6
         image_type = ImageType.FULL
@@ -157,6 +230,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -258,6 +332,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -311,6 +386,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -366,6 +442,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -459,6 +536,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -560,6 +638,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -613,6 +692,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -669,6 +749,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -737,6 +818,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -783,6 +865,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -853,6 +936,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -909,6 +993,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -977,6 +1062,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])
@@ -1023,6 +1109,7 @@ class TestConvertToImages(unittest.TestCase):
             image_type,
         )
 
+        self.assertEqual(len(expected_images), len(images))
         for expected_chunk, chunk in zip(expected_images, images):
             self.assertEqual(expected_chunk[0], chunk[0])
             self.assertEqual(expected_chunk[1], chunk[1])

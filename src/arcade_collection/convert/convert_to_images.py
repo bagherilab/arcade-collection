@@ -107,7 +107,10 @@ def convert_to_images(
                 object_id = object_id + 1
 
     # Remove 1 pixel border.
-    array = raw_array[:, :, 1:-1, 1:-1, 1:-1].copy()
+    if height == 1:
+        array = raw_array[:, :, :, 1:-1, 1:-1].copy()
+    else:
+        array = raw_array[:, :, 1:-1, 1:-1, 1:-1].copy()
 
     if separate:
         chunks = [
